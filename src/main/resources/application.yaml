@@ -1,2 +1,9 @@
 server:
   port: 8080
+spring:
+  datasource:
+    username: root
+    password: pyh903903
+    url: jdbc:mysql://localhost:3306/platform?useSSL=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
