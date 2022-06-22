@@ -7,3 +7,12 @@ spring:
     url: jdbc:mysql://localhost:3306/platform?useSSL=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: pyh903903
+#    cluster:
+#      #各个节点
+#      nodes: 120.77.13.126:6371,120.77.13.126:6372,120.77.13.126:6373,120.77.13.126:6374,120.77.13.126:6375,120.77.13.126:6376
+#      # 最大重定向数
+#      max-redirects: 6
