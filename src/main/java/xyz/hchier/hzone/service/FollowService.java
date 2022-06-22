@@ -1,15 +1,13 @@
-package xyz.hchier.hzone.mapper;
+package xyz.hchier.hzone.service;
+
+import xyz.hchier.hzone.entity.Follow;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import xyz.hchier.hzone.entity.Follow;
 
 /**
  * @author Hchier
  */
-@Mapper
-public interface FollowMapper {
+public interface FollowService {
     int deleteByPrimaryKey(Integer id);
 
     int insert(Follow record);

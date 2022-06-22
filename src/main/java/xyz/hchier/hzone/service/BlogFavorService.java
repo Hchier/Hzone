@@ -1,15 +1,13 @@
-package xyz.hchier.hzone.mapper;
+package xyz.hchier.hzone.service;
+
+import xyz.hchier.hzone.entity.BlogFavor;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import xyz.hchier.hzone.entity.BlogFavor;
 
 /**
  * @author Hchier
  */
-@Mapper
-public interface BlogFavorMapper {
+public interface BlogFavorService {
     int deleteByPrimaryKey(Integer id);
 
     int insert(BlogFavor record);

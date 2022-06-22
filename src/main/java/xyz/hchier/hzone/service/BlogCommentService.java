@@ -1,15 +1,14 @@
-package xyz.hchier.hzone.mapper;
+package xyz.hchier.hzone.service;
+
+import xyz.hchier.hzone.entity.BlogComment;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import xyz.hchier.hzone.entity.BlogComment;
 
 /**
  * @author Hchier
  */
-@Mapper
-public interface BlogCommentMapper {
+
+public interface BlogCommentService {
     int deleteByPrimaryKey(Integer id);
 
     int insert(BlogComment record);

@@ -1,15 +1,13 @@
-package xyz.hchier.hzone.mapper;
+package xyz.hchier.hzone.service;
+
+import xyz.hchier.hzone.entity.Video;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import xyz.hchier.hzone.entity.Video;
 
 /**
  * @author Hchier
  */
-@Mapper
-public interface VideoMapper {
+public interface VideoService {
     int deleteByPrimaryKey(Integer id);
 
     int insert(Video record);

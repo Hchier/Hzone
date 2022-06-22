@@ -1,14 +1,13 @@
-package xyz.hchier.hzone.mapper;
+package xyz.hchier.hzone.service;
+
+import xyz.hchier.hzone.entity.Talk;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
-import xyz.hchier.hzone.entity.Talk;
 /**
  * @author Hchier
  */
-@Mapper
-public interface TalkMapper {
+public interface TalkService {
     int deleteByPrimaryKey(Integer id);
 
     int insert(Talk record);

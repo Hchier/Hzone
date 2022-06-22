@@ -1,14 +1,13 @@
-package xyz.hchier.hzone.mapper;
+package xyz.hchier.hzone.service;
+
+import xyz.hchier.hzone.entity.MessageBoard;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
-import xyz.hchier.hzone.entity.MessageBoard;
 /**
  * @author Hchier
  */
-@Mapper
-public interface MessageBoardMapper {
+public interface MessageBoardService {
     int deleteByPrimaryKey(Integer id);
 
     int insert(MessageBoard record);

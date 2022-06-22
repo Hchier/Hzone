@@ -1,14 +1,13 @@
-package xyz.hchier.hzone.mapper;
+package xyz.hchier.hzone.service;
+
+import xyz.hchier.hzone.entity.VideoCommentFavor;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
-import xyz.hchier.hzone.entity.VideoCommentFavor;
 /**
  * @author Hchier
  */
-@Mapper
-public interface VideoCommentFavorMapper {
+public interface VideoCommentFavorService {
     int deleteByPrimaryKey(Integer id);
 
     int insert(VideoCommentFavor record);

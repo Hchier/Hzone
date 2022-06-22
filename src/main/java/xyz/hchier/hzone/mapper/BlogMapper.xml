@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.hchier.hzone.mapper.BlogMapper">
+    <resultMap id="BaseResultMap" type="xyz.hchier.hzone.entity.Blog">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="publisher" jdbcType="VARCHAR" property="publisher"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="favor_num" jdbcType="INTEGER" property="favorNum"/>
+        <result column="comment_num" jdbcType="INTEGER" property="commentNum"/>
+        <result column="self_visible" jdbcType="BIT" property="selfVisible"/>
+        <result column="hidden" jdbcType="BIT" property="hidden"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="tags" jdbcType="LONGVARCHAR" property="tags"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from blog
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="xyz.hchier.hzone.entity.Blog">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into blog (
+        publisher,
+        title,
+        content,
+        self_visible,
+        update_time,
+        tags
+        )
+        values (
+        #{publisher,jdbcType=VARCHAR},
+        #{title,jdbcType=VARCHAR},
+        #{content,jdbcType=VARCHAR},
+        #{selfVisible,jdbcType=BIT},
+        #{updateTime,jdbcType=TIMESTAMP},
+        #{tags,jdbcType=LONGVARCHAR}
+        )
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="xyz.hchier.hzone.entity.Blog">
+        update blog
+        set publisher    = #{publisher,jdbcType=VARCHAR},
+            title        = #{title,jdbcType=VARCHAR},
+            content      = #{content,jdbcType=VARCHAR},
+            favor_num    = #{favorNum,jdbcType=INTEGER},
+            comment_num  = #{commentNum,jdbcType=INTEGER},
+            self_visible = #{selfVisible,jdbcType=BIT},
+            hidden       = #{hidden,jdbcType=BIT},
+            update_time  = #{updateTime,jdbcType=TIMESTAMP},
+            tags         = #{tags,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               publisher,
+               title,
+               content,
+               favor_num,
+               comment_num,
+               self_visible,
+               hidden,
+               update_time,
+               tags
+        from blog
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id,
+               publisher,
+               title,
+               content,
+               favor_num,
+               comment_num,
+               self_visible,
+               hidden,
+               update_time,
+               tags
+        from blog
+    </select>
+</mapper>
