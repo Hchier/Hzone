@@ -29,6 +29,7 @@ public interface UserService {
     @TestPass
     RestResponse notExist(String username);
 
+    @TestPass
     RestResponse login(User user, String sessionId) throws InterruptedException;
 
 }

@@ -3,6 +3,8 @@ package xyz.hchier.hzone.base;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author by Hchier
  * @Date 2022/6/22 16:51

@@ -8,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
   redis:
-    host: 120.77.13.126
+    host: 127.0.0.1
     port: 6379
     password: pyh903903
 #    cluster:
@@ -16,3 +16,10 @@ spring:
 #      nodes: 120.77.13.126:6371,120.77.13.126:6372,120.77.13.126:6373,120.77.13.126:6374,120.77.13.126:6375,120.77.13.126:6376
 #      # 最大重定向数
 #      max-redirects: 6
+
+
+mybatis:
+  #mapper-locations: classpath:hchier\springboot\mapper\*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #输出sql到控制台
+    map-underscore-to-camel-case: true

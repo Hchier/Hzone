@@ -1,9 +1,13 @@
 package xyz.hchier.hzone.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import xyz.hchier.hzone.base.RestResponse;
+import xyz.hchier.hzone.base.TestPass;
+import xyz.hchier.hzone.dto.BlogDTO;
 import xyz.hchier.hzone.entity.Blog;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -11,13 +15,10 @@ import java.util.List;
  * @author Hchier
  */
 public interface BlogService {
-    RestResponse deleteByPrimaryKey(Integer id);
+    @TestPass
+    RestResponse publish(BlogDTO blogDTO, HttpServletRequest request) throws JsonProcessingException;
 
-    RestResponse insert(Blog record);
+    RestResponse update(BlogDTO blogDTO,HttpServletRequest request) throws JsonProcessingException;
 
-    RestResponse<Blog> selectByPrimaryKey(Integer id);
-
-    RestResponse<List<Blog>> selectAll();
-
-    RestResponse updateByPrimaryKey(Blog record);
+    RestResponse getBlog(Integer id);
 }

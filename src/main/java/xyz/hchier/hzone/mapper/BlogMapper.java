@@ -19,4 +19,6 @@ public interface BlogMapper {
     List<Blog> selectAll();
 
     int updateByPrimaryKey(Blog record);
+
+    String selectUsernameById(Integer id);
 }

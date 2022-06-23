@@ -1,23 +1,40 @@
 package xyz.hchier.hzone.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.bind.annotation.*;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.User;
+import xyz.hchier.hzone.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * @author by Hchier
  * @Date 2022/6/23 13:39
  */
-@RestController("/user")
+@RestController
 public class UserController {
-    @PostMapping("/login")
-    public RestResponse login(@RequestBody User user, HttpServletRequest request){
-        HttpSession session = request.getSession();
-        session.getId()
+    private UserService userService;
+    private ObjectMapper objectMapper;
+
+    public UserController(UserService userService, ObjectMapper objectMapper) {
+        this.userService = userService;
+        this.objectMapper = objectMapper;
     }
+
+    @PostMapping("/register")
+    public RestResponse register(@RequestBody User user){
+        return userService.register(user);
+    }
+
+    @PostMapping("/login")
+    public RestResponse login(@RequestBody User user, HttpServletRequest request) throws InterruptedException {
+        return userService.login(user,request.getSession().getId());
+    }
+
+    @GetMapping("/userNotExist/{username}")
+    public RestResponse userNotExist(@PathVariable String username){
+        return userService.notExist(username);
+    }
+
 }

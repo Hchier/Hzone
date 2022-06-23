@@ -41,15 +41,13 @@
     </insert>
     <update id="updateByPrimaryKey" parameterType="xyz.hchier.hzone.entity.Blog">
         update blog
-        set publisher    = #{publisher,jdbcType=VARCHAR},
-            title        = #{title,jdbcType=VARCHAR},
-            content      = #{content,jdbcType=VARCHAR},
-            favor_num    = #{favorNum,jdbcType=INTEGER},
-            comment_num  = #{commentNum,jdbcType=INTEGER},
-            self_visible = #{selfVisible,jdbcType=BIT},
-            hidden       = #{hidden,jdbcType=BIT},
-            update_time  = #{updateTime,jdbcType=TIMESTAMP},
-            tags         = #{tags,jdbcType=LONGVARCHAR}
+        <set>
+            <if test="title != null">title = #{title,jdbcType=VARCHAR},</if>
+            <if test="content != null">content = #{content,jdbcType=VARCHAR},</if>
+            <if test="selfVisible != null">self_visible = #{selfVisible,jdbcType=BIT},</if>
+            <if test="updateTime != null">update_time  = #{updateTime,jdbcType=TIMESTAMP},</if>
+            <if test="tags != null">tags = #{tags,jdbcType=LONGVARCHAR}</if>
+        </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -78,5 +76,8 @@
                update_time,
                tags
         from blog
+    </select>
+    <select id="selectUsernameById" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select publisher from blog where id = #{id}
     </select>
 </mapper>
