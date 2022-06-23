@@ -18,4 +18,6 @@ public interface UserMapper {
     List<User> selectAll();
 
     int updateByPrimaryKey(User record);
+
+    String selectPasswordByUsername(String username);
 }

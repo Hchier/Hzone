@@ -1,6 +1,7 @@
 package xyz.hchier.hzone.service;
 
 
+import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.BlogCommentFavor;
 
 import java.util.List;
@@ -10,13 +11,13 @@ import java.util.List;
  * @author Hchier
  */
 public interface BlogCommentFavorService {
-    int deleteByPrimaryKey(Integer id);
+    RestResponse deleteByPrimaryKey(Integer id);
 
-    int insert(BlogCommentFavor record);
+    RestResponse insert(BlogCommentFavor record);
 
-    BlogCommentFavor selectByPrimaryKey(Integer id);
+    RestResponse<BlogCommentFavor> selectByPrimaryKey(Integer id);
 
-    List<BlogCommentFavor> selectAll();
+    RestResponse<List<BlogCommentFavor>> selectAll();
 
-    int updateByPrimaryKey(BlogCommentFavor record);
+    RestResponse updateByPrimaryKey(BlogCommentFavor record);
 }

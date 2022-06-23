@@ -1,5 +1,6 @@
 package xyz.hchier.hzone.service;
 
+import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.MessageBoard;
 
 import java.util.List;
@@ -8,13 +9,13 @@ import java.util.List;
  * @author Hchier
  */
 public interface MessageBoardService {
-    int deleteByPrimaryKey(Integer id);
+    RestResponse deleteByPrimaryKey(Integer id);
 
-    int insert(MessageBoard record);
+    RestResponse insert(MessageBoard record);
 
-    MessageBoard selectByPrimaryKey(Integer id);
+    RestResponse<MessageBoard> selectByPrimaryKey(Integer id);
 
-    List<MessageBoard> selectAll();
+    RestResponse<List<MessageBoard>> selectAll();
 
-    int updateByPrimaryKey(MessageBoard record);
+    RestResponse updateByPrimaryKey(MessageBoard record);
 }

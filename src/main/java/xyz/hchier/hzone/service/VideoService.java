@@ -1,5 +1,6 @@
 package xyz.hchier.hzone.service;
 
+import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.Video;
 
 import java.util.List;
@@ -8,13 +9,13 @@ import java.util.List;
  * @author Hchier
  */
 public interface VideoService {
-    int deleteByPrimaryKey(Integer id);
+    RestResponse deleteByPrimaryKey(Integer id);
 
-    int insert(Video record);
+    RestResponse insert(Video record);
 
-    Video selectByPrimaryKey(Integer id);
+    RestResponse<Video> selectByPrimaryKey(Integer id);
 
-    List<Video> selectAll();
+    RestResponse<List<Video>> selectAll();
 
-    int updateByPrimaryKey(Video record);
+    RestResponse updateByPrimaryKey(Video record);
 }

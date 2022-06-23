@@ -1,5 +1,6 @@
 package xyz.hchier.hzone.service;
 
+import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.Follow;
 
 import java.util.List;
@@ -8,13 +9,13 @@ import java.util.List;
  * @author Hchier
  */
 public interface FollowService {
-    int deleteByPrimaryKey(Integer id);
+    RestResponse deleteByPrimaryKey(Integer id);
 
-    int insert(Follow record);
+    RestResponse insert(Follow record);
 
-    Follow selectByPrimaryKey(Integer id);
+    RestResponse<Follow> selectByPrimaryKey(Integer id);
 
-    List<Follow> selectAll();
+    RestResponse<List<Follow>> selectAll();
 
-    int updateByPrimaryKey(Follow record);
+    RestResponse updateByPrimaryKey(Follow record);
 }

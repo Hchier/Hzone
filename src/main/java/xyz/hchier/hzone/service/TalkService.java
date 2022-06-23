@@ -1,5 +1,6 @@
 package xyz.hchier.hzone.service;
 
+import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.Talk;
 
 import java.util.List;
@@ -8,13 +9,13 @@ import java.util.List;
  * @author Hchier
  */
 public interface TalkService {
-    int deleteByPrimaryKey(Integer id);
+    RestResponse deleteByPrimaryKey(Integer id);
 
-    int insert(Talk record);
+    RestResponse insert(Talk record);
 
-    Talk selectByPrimaryKey(Integer id);
+    RestResponse<Talk> selectByPrimaryKey(Integer id);
 
-    List<Talk> selectAll();
+    RestResponse<List<Talk>> selectAll();
 
-    int updateByPrimaryKey(Talk record);
+    RestResponse updateByPrimaryKey(Talk record);
 }
