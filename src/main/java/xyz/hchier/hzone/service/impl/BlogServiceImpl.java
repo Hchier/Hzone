@@ -63,39 +63,55 @@ public class BlogServiceImpl implements BlogService {
             RestResponse.fail(ResponseCode.ERROR_UNKNOWN.getCode(), ResponseCode.ERROR_UNKNOWN.getMessage());
     }
 
+
+    /**
+     * 判断博客的作者是不是当前用户。是 返回 {true, null},，否 返回{false, 各种fail}。
+     *
+     * @param blogId  博客id
+     * @param request 请求
+     * @return 首先判断登陆没，再从redis中根据博客id拿到作者。
+     *如果从redis中能拿到作者且作者与当前用户不为同一人，返回{false, PERMISSION_DENIED}，
+     *如果从redis中拿不到作者，就取mysql中拿，如果该id压根儿就不存在，返回{false, BLOG_NOT_EXIST}。
+     *如果该id存在就把id和与之对应的username放入redis中。
+     *如果从mysql中拿到的作者与当前用户不为同一人，返回{false, PERMISSION_DENIED}。
+     *如果还没有返回任何fail，则说明该id存在且作者与当前用户为同一人，返回{true, null}。
+     */
+    public Object[] check(Integer blogId, HttpServletRequest request) {
+        String currentUser = (String) BaseUtils.getCurrentUser(request).getBody();
+        if (currentUser == null) {
+            return new Object[]{false, RestResponse.fail(ResponseCode.NOT_LOGGED_IN.getCode(), ResponseCode.NOT_LOGGED_IN.getMessage())};
+        }
+        String usernameInHash = (String) redisTemplate.opsForHash().get(ConstRedis.BLOG_ID_AND_USERNAME.getContent(), String.valueOf(blogId));
+        if (usernameInHash != null && !usernameInHash.equals(currentUser)) {
+            return new Object[]{false, RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage())};
+        }
+
+        if (usernameInHash == null) {
+            String username = blogMapper.selectUsernameById(blogId);
+            if (username == null) {
+                return new Object[]{false, RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage())};
+            }
+            redisTemplate.opsForHash().put(ConstRedis.BLOG_ID_AND_USERNAME.getContent(), String.valueOf(blogId), username);
+            if (!username.equals(currentUser)) {
+                return new Object[]{false, RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage())};
+            }
+        }
+        return new Object[]{true, null};
+    }
+
     /**
      * 更新
      *
      * @param blogDTO 博客dto
      * @param request 请求
-     * @return 首先判断登陆没，再从redis中根据博客id拿到作者。
-     * 如果从redis中能拿到作者且作者与当前用户不为同一人，返回PERMISSION_DENIED，
-     * 如果从redis中拿不到作者，就取mysql中拿，如果该id压根儿就不存在，返回BLOG_NOT_EXIST。
-     * 如果该id存在就把id和与之对应的username放入redis中。
-     * 如果从mysql中拿到的作者与当前用户不为同一人，返回PERMISSION_DENIED。
-     * 如果还没有返回任何fail，则说明该id存在且作者与当前用户为同一人，则更新博客。
+     * @return 判断博客的作者是不是当前用户，不是返回fail，是则更新博客。
      * @throws JsonProcessingException json处理异常
      */
     @Override
     public RestResponse update(BlogDTO blogDTO, HttpServletRequest request) throws JsonProcessingException {
-        String currentUser = (String) BaseUtils.getCurrentUser(request).getBody();
-        if (currentUser == null) {
-            return RestResponse.fail(ResponseCode.NOT_LOGGED_IN.getCode(), ResponseCode.NOT_LOGGED_IN.getMessage());
-        }
-        String usernameInHash = (String) redisTemplate.opsForHash().get(ConstRedis.BLOG_ID_AND_USERNAME.getContent(), String.valueOf(blogDTO.getId()));
-        if (usernameInHash != null && !usernameInHash.equals(currentUser)) {
-            return RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage());
-        }
-
-        if (usernameInHash == null) {
-            String username = blogMapper.selectUsernameById(blogDTO.getId());
-            if (username == null) {
-                return RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage());
-            }
-            redisTemplate.opsForHash().put(ConstRedis.BLOG_ID_AND_USERNAME.getContent(), String.valueOf(blogDTO.getId()), username);
-            if (!username.equals(currentUser)) {
-                return RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage());
-            }
+        Object[] check = check(blogDTO.getId(), request);
+        if (!(boolean) check[0]) {
+            return (RestResponse) check[1];
         }
         Blog blog = modelMapper.map(blogDTO, Blog.class);
         blog.setTags(objectMapper.writeValueAsString(blogDTO.getTagList()));
