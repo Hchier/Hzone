@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public enum ConstRedis {
+    /**
+     * 把博客id和用户名以hash的形式存入redis
+     */
     BLOG_ID_AND_USERNAME("blogIdAndUsername");
     private final String content;
 

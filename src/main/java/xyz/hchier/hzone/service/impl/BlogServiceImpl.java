@@ -13,9 +13,11 @@ import xyz.hchier.hzone.dto.BlogDTO;
 import xyz.hchier.hzone.entity.Blog;
 import xyz.hchier.hzone.mapper.BlogMapper;
 import xyz.hchier.hzone.service.BlogService;
+import xyz.hchier.hzone.vo.BlogVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author by Hchier
@@ -70,11 +72,11 @@ public class BlogServiceImpl implements BlogService {
      * @param blogId  博客id
      * @param request 请求
      * @return 首先判断登陆没，再从redis中根据博客id拿到作者。
-     *如果从redis中能拿到作者且作者与当前用户不为同一人，返回{false, PERMISSION_DENIED}，
-     *如果从redis中拿不到作者，就取mysql中拿，如果该id压根儿就不存在，返回{false, BLOG_NOT_EXIST}。
-     *如果该id存在就把id和与之对应的username放入redis中。
-     *如果从mysql中拿到的作者与当前用户不为同一人，返回{false, PERMISSION_DENIED}。
-     *如果还没有返回任何fail，则说明该id存在且作者与当前用户为同一人，返回{true, null}。
+     * 如果从redis中能拿到作者且作者与当前用户不为同一人，返回{false, PERMISSION_DENIED}，
+     * 如果从redis中拿不到作者，就取mysql中拿，如果该id压根儿就不存在，返回{false, BLOG_NOT_EXIST}。
+     * 如果该id存在就把id和与之对应的username放入redis中。
+     * 如果从mysql中拿到的作者与当前用户不为同一人，返回{false, PERMISSION_DENIED}。
+     * 如果还没有返回任何fail，则说明该id存在且作者与当前用户为同一人，返回{true, null}。
      */
     public Object[] check(Integer blogId, HttpServletRequest request) {
         String currentUser = (String) BaseUtils.getCurrentUser(request).getBody();
@@ -123,8 +125,14 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public RestResponse getBlog(Integer id) {
+    public RestResponse get(Integer id, HttpServletRequest request) throws JsonProcessingException {
+        Blog blog = blogMapper.selectByPrimaryKey(id);
+        if (blog == null) {
+            return RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage());
+        }
+        BlogVO blogVO = modelMapper.map(blog, BlogVO.class);
+        blogVO.setTagList(objectMapper.readValue(blog.getTags(), List.class));
+        return RestResponse.ok(blog);
 
-        return null;
     }
 }

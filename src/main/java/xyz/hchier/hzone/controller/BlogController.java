@@ -1,9 +1,7 @@
 package xyz.hchier.hzone.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.dto.BlogDTO;
 import xyz.hchier.hzone.entity.Blog;
@@ -31,5 +29,9 @@ public class BlogController {
     @PostMapping("/api/blog/update")
     public RestResponse update(@RequestBody BlogDTO blogDTO, HttpServletRequest request) throws JsonProcessingException {
         return blogService.update(blogDTO, request);
+    }
+    @GetMapping("/api/blog/get/{id}")
+    public RestResponse get(@PathVariable Integer id,HttpServletRequest request){
+        return blogService.get(id,request);
     }
 }
