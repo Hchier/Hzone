@@ -1122,3 +1122,51 @@
  INFO [http-nio-8080-exec-2] 2022-06-25 15:21:09 (DirectJDKLog.java:173) Initializing Spring DispatcherServlet 'dispatcherServlet'
  INFO [http-nio-8080-exec-2] 2022-06-25 15:21:09 (FrameworkServlet.java:525) Initializing Servlet 'dispatcherServlet'
  INFO [http-nio-8080-exec-2] 2022-06-25 15:21:09 (FrameworkServlet.java:547) Completed initialization in 3 ms
+ INFO [main] 2022-06-25 15:21:43 (StartupInfoLogger.java:55) Starting HzoneApplication using Java 1.8.0_251 on LAPTOP-MIK0SB0G with PID 61384 (E:\Hchier\javaProject\hzone\hzone\target\classes started by Hchier in E:\Hchier\javaProject\hzone\hzone)
+ INFO [main] 2022-06-25 15:21:43 (SpringApplication.java:659) No active profile set, falling back to default profiles: default
+ INFO [main] 2022-06-25 15:21:44 (RepositoryConfigurationDelegate.java:262) Multiple Spring Data modules found, entering strict repository configuration mode!
+ INFO [main] 2022-06-25 15:21:44 (RepositoryConfigurationDelegate.java:132) Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+ INFO [main] 2022-06-25 15:21:44 (RepositoryConfigurationDelegate.java:201) Finished Spring Data repository scanning in 25 ms. Found 0 Redis repository interfaces.
+ INFO [main] 2022-06-25 15:21:45 (TomcatWebServer.java:108) Tomcat initialized with port(s): 8080 (http)
+ INFO [main] 2022-06-25 15:21:45 (DirectJDKLog.java:173) Initializing ProtocolHandler ["http-nio-8080"]
+ INFO [main] 2022-06-25 15:21:45 (DirectJDKLog.java:173) Starting service [Tomcat]
+ INFO [main] 2022-06-25 15:21:45 (DirectJDKLog.java:173) Starting Servlet engine: [Apache Tomcat/9.0.54]
+ INFO [main] 2022-06-25 15:21:45 (DirectJDKLog.java:173) Initializing Spring embedded WebApplicationContext
+ INFO [main] 2022-06-25 15:21:45 (ServletWebServerApplicationContext.java:290) Root WebApplicationContext: initialization completed in 1619 ms
+ INFO [main] 2022-06-25 15:21:46 (DirectJDKLog.java:173) Starting ProtocolHandler ["http-nio-8080"]
+ INFO [main] 2022-06-25 15:21:46 (TomcatWebServer.java:220) Tomcat started on port(s): 8080 (http) with context path ''
+ INFO [main] 2022-06-25 15:21:46 (StartupInfoLogger.java:61) Started HzoneApplication in 3.725 seconds (JVM running for 5.821)
+ INFO [main] 2022-06-25 15:21:46 (DruidDataSource.java:928) {dataSource-1} inited
+ INFO [http-nio-8080-exec-2] 2022-06-25 15:22:12 (DirectJDKLog.java:173) Initializing Spring DispatcherServlet 'dispatcherServlet'
+ INFO [http-nio-8080-exec-2] 2022-06-25 15:22:12 (FrameworkServlet.java:525) Initializing Servlet 'dispatcherServlet'
+ INFO [http-nio-8080-exec-2] 2022-06-25 15:22:12 (FrameworkServlet.java:547) Completed initialization in 1 ms
+ INFO [main] 2022-06-25 15:59:29 (StartupInfoLogger.java:55) Starting HzoneApplication using Java 1.8.0_251 on LAPTOP-MIK0SB0G with PID 73896 (E:\Hchier\javaProject\hzone\hzone\target\classes started by Hchier in E:\Hchier\javaProject\hzone\hzone)
+ INFO [main] 2022-06-25 15:59:29 (SpringApplication.java:659) No active profile set, falling back to default profiles: default
+ INFO [main] 2022-06-25 15:59:30 (RepositoryConfigurationDelegate.java:262) Multiple Spring Data modules found, entering strict repository configuration mode!
+ INFO [main] 2022-06-25 15:59:30 (RepositoryConfigurationDelegate.java:132) Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+ INFO [main] 2022-06-25 15:59:30 (RepositoryConfigurationDelegate.java:201) Finished Spring Data repository scanning in 24 ms. Found 0 Redis repository interfaces.
+ INFO [main] 2022-06-25 15:59:31 (TomcatWebServer.java:108) Tomcat initialized with port(s): 8080 (http)
+ INFO [main] 2022-06-25 15:59:31 (DirectJDKLog.java:173) Initializing ProtocolHandler ["http-nio-8080"]
+ INFO [main] 2022-06-25 15:59:31 (DirectJDKLog.java:173) Starting service [Tomcat]
+ INFO [main] 2022-06-25 15:59:31 (DirectJDKLog.java:173) Starting Servlet engine: [Apache Tomcat/9.0.54]
+ INFO [main] 2022-06-25 15:59:31 (DirectJDKLog.java:173) Initializing Spring embedded WebApplicationContext
+ INFO [main] 2022-06-25 15:59:31 (ServletWebServerApplicationContext.java:290) Root WebApplicationContext: initialization completed in 1525 ms
+ INFO [main] 2022-06-25 15:59:32 (DirectJDKLog.java:173) Starting ProtocolHandler ["http-nio-8080"]
+ INFO [main] 2022-06-25 15:59:32 (TomcatWebServer.java:220) Tomcat started on port(s): 8080 (http) with context path ''
+ INFO [main] 2022-06-25 15:59:32 (StartupInfoLogger.java:61) Started HzoneApplication in 3.662 seconds (JVM running for 5.748)
+ INFO [main] 2022-06-25 15:59:32 (DruidDataSource.java:928) {dataSource-1} inited
+ INFO [main] 2022-06-25 16:00:17 (StartupInfoLogger.java:55) Starting HzoneApplication using Java 1.8.0_251 on LAPTOP-MIK0SB0G with PID 75632 (E:\Hchier\javaProject\hzone\hzone\target\classes started by Hchier in E:\Hchier\javaProject\hzone\hzone)
+ INFO [main] 2022-06-25 16:00:17 (SpringApplication.java:659) No active profile set, falling back to default profiles: default
+ INFO [main] 2022-06-25 16:00:18 (RepositoryConfigurationDelegate.java:262) Multiple Spring Data modules found, entering strict repository configuration mode!
+ INFO [main] 2022-06-25 16:00:18 (RepositoryConfigurationDelegate.java:132) Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+ INFO [main] 2022-06-25 16:00:18 (RepositoryConfigurationDelegate.java:201) Finished Spring Data repository scanning in 25 ms. Found 0 Redis repository interfaces.
+ INFO [main] 2022-06-25 16:00:19 (TomcatWebServer.java:108) Tomcat initialized with port(s): 8080 (http)
+ INFO [main] 2022-06-25 16:00:19 (DirectJDKLog.java:173) Initializing ProtocolHandler ["http-nio-8080"]
+ INFO [main] 2022-06-25 16:00:19 (DirectJDKLog.java:173) Starting service [Tomcat]
+ INFO [main] 2022-06-25 16:00:19 (DirectJDKLog.java:173) Starting Servlet engine: [Apache Tomcat/9.0.54]
+ INFO [main] 2022-06-25 16:00:19 (DirectJDKLog.java:173) Initializing Spring embedded WebApplicationContext
+ INFO [main] 2022-06-25 16:00:19 (ServletWebServerApplicationContext.java:290) Root WebApplicationContext: initialization completed in 1588 ms
+ INFO [main] 2022-06-25 16:00:21 (DirectJDKLog.java:173) Starting ProtocolHandler ["http-nio-8080"]
+ INFO [main] 2022-06-25 16:00:21 (TomcatWebServer.java:220) Tomcat started on port(s): 8080 (http) with context path ''
+ INFO [main] 2022-06-25 16:00:21 (StartupInfoLogger.java:61) Started HzoneApplication in 3.831 seconds (JVM running for 5.895)
+ INFO [main] 2022-06-25 16:00:21 (DruidDataSource.java:928) {dataSource-1} inited
