@@ -3,6 +3,7 @@ package xyz.hchier.hzone.service;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.BlogComment;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -10,13 +11,8 @@ import java.util.List;
  */
 
 public interface BlogCommentService {
-    RestResponse deleteByPrimaryKey(Integer id);
 
-    RestResponse insert(BlogComment record);
+    RestResponse publish(BlogComment record, HttpServletRequest request);
 
-    RestResponse<BlogComment> selectByPrimaryKey(Integer id);
 
-    RestResponse<List<BlogComment>> selectAll();
-
-    RestResponse updateByPrimaryKey(BlogComment record);
 }

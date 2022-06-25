@@ -1,6 +1,8 @@
 package xyz.hchier.hzone.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.User;
@@ -16,10 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
     private UserService userService;
     private ObjectMapper objectMapper;
+    private RedisTemplate redisTemplate;
 
-    public UserController(UserService userService, ObjectMapper objectMapper) {
+    public UserController(UserService userService, ObjectMapper objectMapper, RedisTemplate redisTemplate) {
         this.userService = userService;
         this.objectMapper = objectMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     @PostMapping("/register")

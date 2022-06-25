@@ -64,17 +64,9 @@
         from blog
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectAll" resultMap="BaseResultMap">
+    <select id="selectAllIdAndUsername" resultMap="BaseResultMap">
         select id,
-               publisher,
-               title,
-               content,
-               favor_num,
-               comment_num,
-               self_visible,
-               hidden,
-               update_time,
-               tags
+               publisher
         from blog
     </select>
     <select id="selectUsernameById" parameterType="java.lang.Integer" resultType="java.lang.String">

@@ -17,7 +17,7 @@ public class BaseUtils {
         BaseUtils.redisTemplate = redisTemplate;
     }
 
-    public static RestResponse getCurrentUser(HttpServletRequest request){
-        return RestResponse.ok(redisTemplate.opsForValue().get(request.getSession().getId()));
+    public static String getCurrentUser(HttpServletRequest request){
+        return (String)redisTemplate.opsForValue().get(request.getSession().getId());
     }
 }

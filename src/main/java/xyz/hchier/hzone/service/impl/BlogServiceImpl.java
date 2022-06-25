@@ -1,7 +1,11 @@
 package xyz.hchier.hzone.service.impl;
 
+
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ import java.util.List;
  * @author by Hchier
  * @Date 2022/6/23 16:13
  */
+@Slf4j
 @Service
 public class BlogServiceImpl implements BlogService {
     private BlogMapper blogMapper;
@@ -43,11 +48,11 @@ public class BlogServiceImpl implements BlogService {
      * @param blogDTO 博客
      * @return 发表者根据session从redis中取而不是从前端传来。
      * 可能刚过拦截器那关，刚来到这儿，key就失效了，所以还要判断一下。
-     * 成功发表后，带上博客id，返回RestResponse.ok()。否则返回RestResponse.fail();
+     * 成功发表后，将[id, username]插入redis，带上博客id，返回RestResponse.ok()。否则返回RestResponse.fail();
      */
     @Override
     public RestResponse publish(BlogDTO blogDTO, HttpServletRequest request) {
-        String username = (String) BaseUtils.getCurrentUser(request).getBody();
+        String username = BaseUtils.getCurrentUser(request);
         if (username == null) {
             RestResponse.fail(ResponseCode.NOT_LOGGED_IN.getCode(), ResponseCode.NOT_LOGGED_IN.getMessage());
         }
@@ -57,17 +62,20 @@ public class BlogServiceImpl implements BlogService {
         try {
             blog.setTags(objectMapper.writeValueAsString(blogDTO.getTagList()));
         } catch (JsonProcessingException e) {
-            RestResponse.fail(ResponseCode.ERROR_UNKNOWN.getCode(), ResponseCode.ERROR_UNKNOWN.getMessage());
+            log.error("List转json失败：" + blogDTO.getTagList());
+            return RestResponse.fail(ResponseCode.JSON_PROCESSING_EXCEPTION.getCode(), ResponseCode.JSON_PROCESSING_EXCEPTION.getMessage());
         }
         int res = blogMapper.insert(blog);
-        return res == 1 ?
-            RestResponse.ok(blog.getId()) :
-            RestResponse.fail(ResponseCode.ERROR_UNKNOWN.getCode(), ResponseCode.ERROR_UNKNOWN.getMessage());
+        if (res == 1) {
+            redisTemplate.opsForHash().put(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blog.getId()), blog.getPublisher());
+            return RestResponse.ok(blog.getId());
+        }
+        return RestResponse.fail(ResponseCode.ERROR_UNKNOWN.getCode(), ResponseCode.ERROR_UNKNOWN.getMessage());
     }
 
 
     /**
-     * 判断博客的作者是不是当前用户。是 返回 {true, null},，否 返回{false, 各种fail}。
+     * 判断该博客存不存在、判断博客的作者是不是当前用户。是 返回 {true, null},，否 返回{false, 各种fail}。
      *
      * @param blogId  博客id
      * @param request 请求
@@ -79,11 +87,11 @@ public class BlogServiceImpl implements BlogService {
      * 如果还没有返回任何fail，则说明该id存在且作者与当前用户为同一人，返回{true, null}。
      */
     public Object[] check(Integer blogId, HttpServletRequest request) {
-        String currentUser = (String) BaseUtils.getCurrentUser(request).getBody();
+        String currentUser = BaseUtils.getCurrentUser(request);
         if (currentUser == null) {
             return new Object[]{false, RestResponse.fail(ResponseCode.NOT_LOGGED_IN.getCode(), ResponseCode.NOT_LOGGED_IN.getMessage())};
         }
-        String usernameInHash = (String) redisTemplate.opsForHash().get(ConstRedis.BLOG_ID_AND_USERNAME.getContent(), String.valueOf(blogId));
+        String usernameInHash = (String) redisTemplate.opsForHash().get(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blogId));
         if (usernameInHash != null && !usernameInHash.equals(currentUser)) {
             return new Object[]{false, RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage())};
         }
@@ -93,7 +101,7 @@ public class BlogServiceImpl implements BlogService {
             if (username == null) {
                 return new Object[]{false, RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage())};
             }
-            redisTemplate.opsForHash().put(ConstRedis.BLOG_ID_AND_USERNAME.getContent(), String.valueOf(blogId), username);
+            redisTemplate.opsForHash().put(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blogId), username);
             if (!username.equals(currentUser)) {
                 return new Object[]{false, RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage())};
             }
@@ -110,13 +118,18 @@ public class BlogServiceImpl implements BlogService {
      * @throws JsonProcessingException json处理异常
      */
     @Override
-    public RestResponse update(BlogDTO blogDTO, HttpServletRequest request) throws JsonProcessingException {
+    public RestResponse update(BlogDTO blogDTO, HttpServletRequest request) {
         Object[] check = check(blogDTO.getId(), request);
         if (!(boolean) check[0]) {
             return (RestResponse) check[1];
         }
         Blog blog = modelMapper.map(blogDTO, Blog.class);
-        blog.setTags(objectMapper.writeValueAsString(blogDTO.getTagList()));
+        try {
+            blog.setTags(objectMapper.writeValueAsString(blogDTO.getTagList()));
+        } catch (JsonProcessingException e) {
+            log.error("json转String失败：" + blogDTO.getTagList());
+            return RestResponse.fail(ResponseCode.JSON_PROCESSING_EXCEPTION.getCode(), ResponseCode.JSON_PROCESSING_EXCEPTION.getMessage());
+        }
         blog.setUpdateTime(new Date());
         int res = blogMapper.updateByPrimaryKey(blog);
         return res == 1 ?
@@ -124,15 +137,91 @@ public class BlogServiceImpl implements BlogService {
             RestResponse.fail(ResponseCode.ERROR_UNKNOWN.getCode(), ResponseCode.ERROR_UNKNOWN.getMessage());
     }
 
+    /**
+     * 根据id获取博客
+     *
+     * @param id      博客id
+     * @param request 请求
+     * @return 当博客不存在时，返回RestResponse.fail(BLOG_NOT_EXIST)。
+     * 当 博客仅仅自我可见或被管理员强制隐藏 且当前用户不为作者时，返回RestResponse.fail(PERMISSION_DENIED)。
+     */
     @Override
-    public RestResponse get(Integer id, HttpServletRequest request) throws JsonProcessingException {
+    public RestResponse get(Integer id, HttpServletRequest request) {
         Blog blog = blogMapper.selectByPrimaryKey(id);
         if (blog == null) {
             return RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage());
         }
+
+        if ((blog.getSelfVisible() || blog.getHidden()) && !blog.getPublisher().equals(BaseUtils.getCurrentUser(request))) {
+            return RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage());
+        }
         BlogVO blogVO = modelMapper.map(blog, BlogVO.class);
-        blogVO.setTagList(objectMapper.readValue(blog.getTags(), List.class));
+        List<String> list = null;
+        try {
+            list = objectMapper.readValue(blog.getTags(), new TypeReference<List<String>>() {
+            });
+        } catch (JsonProcessingException e) {
+            log.error("String转json失败：" + blog.getTags());
+            return RestResponse.fail(ResponseCode.JSON_PROCESSING_EXCEPTION.getCode(), ResponseCode.JSON_PROCESSING_EXCEPTION.getMessage());
+        }
+        blogVO.setTagList(list);
         return RestResponse.ok(blog);
 
+    }
+
+    /**
+     * 删除
+     *
+     * @param id      id
+     * @param request 请求
+     * @return 先检查博客是否存在以及博客作者与当前用户是否为同一人，不是，返回fail。是，再删除。
+     * 删除成功，将redis “blogIdAndUsername”中的也删了。
+     * 删除失败，只有一种情况是可接受的，
+     * 即mysql中已经没有该blog了，但是redis中的“blogIdAndUsername”中还有[id, username]，将redis中的数据清了。
+     * 若并非这种上述情况即mysql中有数据却无法删除，见👻了，log.error()。
+     */
+    @Override
+    public RestResponse delete(Integer id, HttpServletRequest request) {
+        Object[] checkRes = check(id, request);
+        if (!(boolean) checkRes[0]) {
+            return (RestResponse) checkRes[1];
+        }
+        int res = blogMapper.deleteByPrimaryKey(id);
+        if (res == 0) {
+            if (redisTemplate.opsForHash().get(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id)) != null &&
+                blogMapper.selectUsernameById(id) == null
+            ) {
+                redisTemplate.opsForHash().delete(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id));
+            } else {
+                log.error("id为" + id + "的blog删除失败");
+            }
+            return RestResponse.fail(ResponseCode.BLOG_DELETE_FAIL.getCode(), ResponseCode.BLOG_DELETE_FAIL.getMessage());
+        }
+        redisTemplate.opsForHash().delete(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id));
+        return RestResponse.ok();
+    }
+
+    @Override
+    public List<Blog> selectAllIdAndPublisher() {
+        return blogMapper.selectAllIdAndUsername();
+    }
+
+    /**
+     * 博客是否存在
+     *
+     * @param id id
+     * @return 先去redis中找，有则返回返回true，无则去mysql中找，有则将相应记录插入redis并返回true，无则返回false。
+     */
+    @Override
+    public boolean blogExist(Integer id) {
+        if (redisTemplate.opsForHash().get(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id)) != null) {
+            return true;
+        }
+        String username = blogMapper.selectUsernameById(id);
+        if (username != null) {
+            redisTemplate.opsForHash().put(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), id, username);
+            return true;
+        }
+        return false;
     }
 }

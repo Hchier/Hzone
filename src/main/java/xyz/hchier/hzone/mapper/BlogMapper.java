@@ -16,7 +16,7 @@ public interface BlogMapper {
 
     Blog selectByPrimaryKey(Integer id);
 
-    List<Blog> selectAll();
+    List<Blog> selectAllIdAndUsername();
 
     int updateByPrimaryKey(Blog record);
 

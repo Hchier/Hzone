@@ -22,5 +22,14 @@ public interface BlogService {
     @TestPass
     RestResponse update(BlogDTO blogDTO, HttpServletRequest request) throws JsonProcessingException;
 
+    @TestPass
     RestResponse<BlogVO> get(Integer id, HttpServletRequest request) throws JsonProcessingException;
+
+    @TestPass
+    RestResponse delete(Integer id, HttpServletRequest request);
+
+    @TestPass
+    List<Blog> selectAllIdAndPublisher();
+
+    boolean blogExist(Integer id);
 }

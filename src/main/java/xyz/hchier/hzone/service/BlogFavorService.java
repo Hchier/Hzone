@@ -3,19 +3,26 @@ package xyz.hchier.hzone.service;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.BlogFavor;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
  * @author Hchier
  */
 public interface BlogFavorService {
-    RestResponse deleteByPrimaryKey(Integer id);
+    /**
+     * 将点赞情况插入redis中
+     *
+     * @return {@link RestResponse}
+     */
+    RestResponse favor(BlogFavor blogFavor, HttpServletRequest request);
 
-    RestResponse insert(BlogFavor record);
-
-    RestResponse<BlogFavor> selectByPrimaryKey(Integer id);
-
-    RestResponse<List<BlogFavor>> selectAll();
-
-    RestResponse updateByPrimaryKey(BlogFavor record);
+    /**
+     * 取消点赞
+     *
+     * @param blogFavor
+     * @param request   请求
+     * @return {@link RestResponse}
+     */
+    RestResponse cancelFavor(BlogFavor blogFavor, HttpServletRequest request);
 }

@@ -3,6 +3,7 @@ package xyz.hchier.hzone.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import xyz.hchier.hzone.entity.BlogFavor;
 
 /**
@@ -19,4 +20,5 @@ public interface BlogFavorMapper {
     List<BlogFavor> selectAll();
 
     int updateByPrimaryKey(BlogFavor record);
+
 }

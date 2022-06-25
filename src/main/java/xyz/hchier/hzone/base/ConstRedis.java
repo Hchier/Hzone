@@ -11,10 +11,23 @@ public enum ConstRedis {
     /**
      * 把博客id和用户名以hash的形式存入redis
      */
-    BLOG_ID_AND_USERNAME("blogIdAndUsername");
-    private final String content;
+    BLOG_ID_AND_USERNAME("blogIdAndUsername"),
+    /**
+     * 用户对博客的点赞情况
+     */
+    BLOG_FAVOR_OF("blogFavorOf"),
+    /**
+     * 用户新增的博客点赞情况
+     */
+    BLOG_FAVOR_TO_ADD_OF("blogFavorToAddOf"),
 
-    public String getContent() {
-        return content;
+    /**
+     * 用户取消的博客点赞情况
+     */
+    BLOG_FAVOR_TO_CANCEL_OF("blogFavorToCancelOf");
+    private final String key;
+
+    public String getKey() {
+        return key;
     }
 }

@@ -30,8 +30,14 @@ public class BlogController {
     public RestResponse update(@RequestBody BlogDTO blogDTO, HttpServletRequest request) throws JsonProcessingException {
         return blogService.update(blogDTO, request);
     }
+
     @GetMapping("/api/blog/get/{id}")
-    public RestResponse get(@PathVariable Integer id,HttpServletRequest request){
-        return blogService.get(id,request);
+    public RestResponse get(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
+        return blogService.get(id, request);
+    }
+
+    @GetMapping("/delete/{id}")
+    public RestResponse delete(@PathVariable Integer id, HttpServletRequest request) {
+        return blogService.delete(id, request);
     }
 }
