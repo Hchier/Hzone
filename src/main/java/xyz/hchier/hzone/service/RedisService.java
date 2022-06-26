@@ -13,4 +13,6 @@ public interface RedisService {
     @TestPass
     void loadBlogFavorOfUser(String username);
 
+    void updateBlogFavorToMysql();
+
 }

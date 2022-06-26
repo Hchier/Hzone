@@ -10,7 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import xyz.hchier.hzone.base.BaseUtils;
-import xyz.hchier.hzone.base.ConstRedis;
+import xyz.hchier.hzone.base.RedisKeys;
 import xyz.hchier.hzone.base.ResponseCode;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.dto.BlogDTO;
@@ -67,7 +67,7 @@ public class BlogServiceImpl implements BlogService {
         }
         int res = blogMapper.insert(blog);
         if (res == 1) {
-            redisTemplate.opsForHash().put(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blog.getId()), blog.getPublisher());
+            redisTemplate.opsForHash().put(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blog.getId()), blog.getPublisher());
             return RestResponse.ok(blog.getId());
         }
         return RestResponse.fail(ResponseCode.ERROR_UNKNOWN.getCode(), ResponseCode.ERROR_UNKNOWN.getMessage());
@@ -91,7 +91,7 @@ public class BlogServiceImpl implements BlogService {
         if (currentUser == null) {
             return new Object[]{false, RestResponse.fail(ResponseCode.NOT_LOGGED_IN.getCode(), ResponseCode.NOT_LOGGED_IN.getMessage())};
         }
-        String usernameInHash = (String) redisTemplate.opsForHash().get(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blogId));
+        String usernameInHash = (String) redisTemplate.opsForHash().get(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blogId));
         if (usernameInHash != null && !usernameInHash.equals(currentUser)) {
             return new Object[]{false, RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage())};
         }
@@ -101,7 +101,7 @@ public class BlogServiceImpl implements BlogService {
             if (username == null) {
                 return new Object[]{false, RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage())};
             }
-            redisTemplate.opsForHash().put(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blogId), username);
+            redisTemplate.opsForHash().put(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blogId), username);
             if (!username.equals(currentUser)) {
                 return new Object[]{false, RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage())};
             }
@@ -188,16 +188,16 @@ public class BlogServiceImpl implements BlogService {
         }
         int res = blogMapper.deleteByPrimaryKey(id);
         if (res == 0) {
-            if (redisTemplate.opsForHash().get(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id)) != null &&
+            if (redisTemplate.opsForHash().get(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id)) != null &&
                 blogMapper.selectUsernameById(id) == null
             ) {
-                redisTemplate.opsForHash().delete(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id));
+                redisTemplate.opsForHash().delete(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id));
             } else {
                 log.error("id为" + id + "的blog删除失败");
             }
             return RestResponse.fail(ResponseCode.BLOG_DELETE_FAIL.getCode(), ResponseCode.BLOG_DELETE_FAIL.getMessage());
         }
-        redisTemplate.opsForHash().delete(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id));
+        redisTemplate.opsForHash().delete(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id));
         return RestResponse.ok();
     }
 
@@ -214,12 +214,12 @@ public class BlogServiceImpl implements BlogService {
      */
     @Override
     public boolean blogExist(Integer id) {
-        if (redisTemplate.opsForHash().get(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id)) != null) {
+        if (redisTemplate.opsForHash().get(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id)) != null) {
             return true;
         }
         String username = blogMapper.selectUsernameById(id);
         if (username != null) {
-            redisTemplate.opsForHash().put(ConstRedis.BLOG_ID_AND_USERNAME.getKey(), id, username);
+            redisTemplate.opsForHash().put(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), id, username);
             return true;
         }
         return false;

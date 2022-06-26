@@ -1,7 +1,6 @@
 package xyz.hchier.hzone;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +9,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
-import xyz.hchier.hzone.base.ConstRedis;
-import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.Blog;
 import xyz.hchier.hzone.entity.BlogFavor;
 import xyz.hchier.hzone.entity.User;
@@ -22,7 +18,6 @@ import xyz.hchier.hzone.service.UserService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j

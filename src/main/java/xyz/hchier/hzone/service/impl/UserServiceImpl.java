@@ -3,14 +3,14 @@ package xyz.hchier.hzone.service.impl;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import xyz.hchier.hzone.Utils.Md5Util;
+import xyz.hchier.hzone.base.Const;
+import xyz.hchier.hzone.base.RedisKeys;
 import xyz.hchier.hzone.base.ResponseCode;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.User;
 import xyz.hchier.hzone.mapper.UserMapper;
 import xyz.hchier.hzone.service.RedisService;
 import xyz.hchier.hzone.service.UserService;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author by Hchier
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param user      用户
      * @param sessionId 会话id
-     * @return username与password匹配时，将(sessionId, username)存入redis、设置过期时间、加载用户点赞信息并返回RestResponse.ok()，
+     * @return username与password匹配时，将sessionId, username存入redis、用zset记录过期时间、加载用户点赞信息并返回RestResponse.ok()，
      * 否则返回RestResponse.fail();
      */
     @Override
@@ -76,7 +76,12 @@ public class UserServiceImpl implements UserService {
         if (!Md5Util.encode(user.getPassword()).equals(password)) {
             return RestResponse.fail(ResponseCode.AUTH_FAIL.getCode(), ResponseCode.AUTH_FAIL.getMessage());
         }
-        redisTemplate.opsForValue().set(sessionId, user.getUsername(), 60, TimeUnit.SECONDS);
+
+        redisTemplate.opsForHash().put(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), sessionId, user.getUsername());
+        redisTemplate.opsForZSet().add(
+            RedisKeys.SESSION_ID_AND_EXPIRE_TIME.getKey(),
+            sessionId,
+            System.currentTimeMillis() + Const.EXPIRE_TIME_OF_SESSION);
         redisService.loadBlogFavorOfUser(user.getUsername());
         return RestResponse.ok();
     }

@@ -7,7 +7,16 @@ import lombok.AllArgsConstructor;
  * @Date 2022/6/23 19:58
  */
 @AllArgsConstructor
-public enum ConstRedis {
+public enum RedisKeys {
+
+    /**
+     * 会话id和用户名
+     */
+    SESSION_ID_AND_USERNAME("sessionIdAndUsername"),
+    /**
+     * 会话id和到期时间
+     */
+    SESSION_ID_AND_EXPIRE_TIME("sessionIdAndExpireTime"),
     /**
      * 把博客id和用户名以hash的形式存入redis
      */
