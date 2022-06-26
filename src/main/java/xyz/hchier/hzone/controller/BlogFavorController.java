@@ -1,6 +1,5 @@
 package xyz.hchier.hzone.controller;
 
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +10,7 @@ import xyz.hchier.hzone.service.BlogFavorService;
 import xyz.hchier.hzone.service.BlogService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * @author by Hchier

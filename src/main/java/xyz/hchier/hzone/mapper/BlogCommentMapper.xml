@@ -14,10 +14,11 @@
         <result column="comment_of" jdbcType="INTEGER" property="commentOf"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-        delete
-        from blog_comment
-        where id = #{id,jdbcType=INTEGER}
+    <delete id="deleteByPrimaryKey">
+        update blog_comment
+        set deleted = 1
+        where id = #{id}
+          and publisher = #{username}
     </delete>
     <insert id="insert" parameterType="xyz.hchier.hzone.entity.BlogComment">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">

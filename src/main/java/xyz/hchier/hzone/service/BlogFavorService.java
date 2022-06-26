@@ -1,6 +1,7 @@
 package xyz.hchier.hzone.service;
 
 import xyz.hchier.hzone.base.RestResponse;
+import xyz.hchier.hzone.base.TestPass;
 import xyz.hchier.hzone.entity.BlogFavor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ public interface BlogFavorService {
      *
      * @return {@link RestResponse}
      */
+    @TestPass
     RestResponse favor(BlogFavor blogFavor, HttpServletRequest request);
 
     /**
@@ -24,5 +26,6 @@ public interface BlogFavorService {
      * @param request   请求
      * @return {@link RestResponse}
      */
+    @TestPass
     RestResponse cancelFavor(BlogFavor blogFavor, HttpServletRequest request);
 }

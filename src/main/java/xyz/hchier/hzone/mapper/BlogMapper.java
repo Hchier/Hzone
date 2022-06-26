@@ -21,4 +21,6 @@ public interface BlogMapper {
     int updateByPrimaryKey(Blog record);
 
     String selectUsernameById(Integer id);
+
+
 }

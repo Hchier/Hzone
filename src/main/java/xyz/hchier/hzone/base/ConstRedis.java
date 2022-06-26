@@ -24,7 +24,12 @@ public enum ConstRedis {
     /**
      * 用户取消的博客点赞情况
      */
-    BLOG_FAVOR_TO_CANCEL_OF("blogFavorToCancelOf");
+    BLOG_FAVOR_TO_CANCEL_OF("blogFavorToCancelOf"),
+    /**
+     * 博客id和点赞数量
+     */
+    BLOG_ID_AND_FAVOR_NUM("blogIdAndFavorNum");
+
     private final String key;
 
     public String getKey() {

@@ -17,8 +17,10 @@ public interface BlogFavorMapper {
 
     BlogFavor selectByPrimaryKey(Integer id);
 
-    List<BlogFavor> selectAll();
+    List<BlogFavor> selectFavorInfo(@Param("username") String username);
 
     int updateByPrimaryKey(BlogFavor record);
+
+
 
 }

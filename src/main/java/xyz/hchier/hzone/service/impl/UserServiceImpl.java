@@ -2,15 +2,14 @@ package xyz.hchier.hzone.service.impl;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 import xyz.hchier.hzone.Utils.Md5Util;
 import xyz.hchier.hzone.base.ResponseCode;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.User;
 import xyz.hchier.hzone.mapper.UserMapper;
+import xyz.hchier.hzone.service.RedisService;
 import xyz.hchier.hzone.service.UserService;
 
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,10 +20,12 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     private RedisTemplate redisTemplate;
+    private RedisService redisService;
 
-    public UserServiceImpl(UserMapper userMapper, RedisTemplate redisTemplate) {
+    public UserServiceImpl(UserMapper userMapper, RedisTemplate redisTemplate, RedisService redisService) {
         this.userMapper = userMapper;
         this.redisTemplate = redisTemplate;
+        this.redisService = redisService;
     }
 
 
@@ -66,7 +67,8 @@ public class UserServiceImpl implements UserService {
      *
      * @param user      用户
      * @param sessionId 会话id
-     * @return username与password匹配时，将(sessionId, username)存入redis、设置过期时间并返回RestResponse.ok()，否则返回RestResponse.fail();
+     * @return username与password匹配时，将(sessionId, username)存入redis、设置过期时间、加载用户点赞信息并返回RestResponse.ok()，
+     * 否则返回RestResponse.fail();
      */
     @Override
     public RestResponse login(User user, String sessionId) {
@@ -75,6 +77,7 @@ public class UserServiceImpl implements UserService {
             return RestResponse.fail(ResponseCode.AUTH_FAIL.getCode(), ResponseCode.AUTH_FAIL.getMessage());
         }
         redisTemplate.opsForValue().set(sessionId, user.getUsername(), 60, TimeUnit.SECONDS);
+        redisService.loadBlogFavorOfUser(user.getUsername());
         return RestResponse.ok();
     }
 }

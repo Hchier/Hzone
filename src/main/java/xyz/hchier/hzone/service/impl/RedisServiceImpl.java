@@ -6,6 +6,7 @@ import xyz.hchier.hzone.base.ConstRedis;
 import xyz.hchier.hzone.entity.Blog;
 import xyz.hchier.hzone.entity.BlogFavor;
 import xyz.hchier.hzone.mapper.BlogFavorMapper;
+import xyz.hchier.hzone.mapper.BlogMapper;
 import xyz.hchier.hzone.service.BlogService;
 import xyz.hchier.hzone.service.RedisService;
 
@@ -21,11 +22,13 @@ public class RedisServiceImpl implements RedisService {
     private BlogService blogService;
     private RedisTemplate redisTemplate;
     private BlogFavorMapper blogFavorMapper;
+    private BlogMapper blogMapper;
 
-    public RedisServiceImpl(BlogService blogService, RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper) {
+    public RedisServiceImpl(BlogService blogService, RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper, BlogMapper blogMapper) {
         this.blogService = blogService;
         this.redisTemplate = redisTemplate;
         this.blogFavorMapper = blogFavorMapper;
+        this.blogMapper = blogMapper;
     }
 
     /**
@@ -45,12 +48,14 @@ public class RedisServiceImpl implements RedisService {
      * 将用户的点赞过的blog的id加载到redis中
      */
     @Override
-    public void loadBlogFavorOfUser() {
-        List<BlogFavor> blogFavorList = blogFavorMapper.selectAll();
+    public void loadBlogFavorOfUser(String username) {
+        List<BlogFavor> blogFavorList = blogFavorMapper.selectFavorInfo(username);
         Iterator<BlogFavor> it = blogFavorList.iterator();
         while (it.hasNext()) {
             BlogFavor blogFavor = it.next();
             redisTemplate.opsForSet().add(ConstRedis.BLOG_FAVOR_OF.getKey() + blogFavor.getPraiser(), blogFavor.getBlogId());
         }
     }
+
+
 }

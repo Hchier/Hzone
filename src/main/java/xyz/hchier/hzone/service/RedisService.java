@@ -11,5 +11,6 @@ public interface RedisService {
     void loadBlogIdAndUsername();
 
     @TestPass
-    void loadBlogFavorOfUser();
+    void loadBlogFavorOfUser(String username);
+
 }

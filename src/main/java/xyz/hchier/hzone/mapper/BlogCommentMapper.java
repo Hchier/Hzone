@@ -3,6 +3,7 @@ package xyz.hchier.hzone.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import xyz.hchier.hzone.entity.BlogComment;
 
 /**
@@ -10,7 +11,7 @@ import xyz.hchier.hzone.entity.BlogComment;
  */
 @Mapper
 public interface BlogCommentMapper {
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(@Param("id") Integer id, @Param("username") String username);
 
     int insert(BlogComment record);
 
@@ -19,4 +20,6 @@ public interface BlogCommentMapper {
     List<BlogComment> selectAll();
 
     int updateByPrimaryKey(BlogComment record);
+
+
 }
