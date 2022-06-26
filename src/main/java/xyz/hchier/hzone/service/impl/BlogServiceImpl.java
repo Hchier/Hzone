@@ -165,6 +165,7 @@ public class BlogServiceImpl implements BlogService {
             return RestResponse.fail(ResponseCode.JSON_PROCESSING_EXCEPTION.getCode(), ResponseCode.JSON_PROCESSING_EXCEPTION.getMessage());
         }
         blogVO.setTagList(list);
+        redisTemplate.opsForHash().put(RedisKeys.BLOG_ID_AND_FAVOR_NUM.getKey(), String.valueOf(id), String.valueOf(blogVO.getFavorNum()));
         return RestResponse.ok(blog);
 
     }

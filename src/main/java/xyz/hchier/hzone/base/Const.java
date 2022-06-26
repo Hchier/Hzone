@@ -5,5 +5,5 @@ package xyz.hchier.hzone.base;
  * @Date 2022/6/26 10:24
  */
 public class Const {
-    public static final int EXPIRE_TIME_OF_SESSION = 120000;
+    public static final int EXPIRE_TIME_OF_SESSION = 60000;
 }

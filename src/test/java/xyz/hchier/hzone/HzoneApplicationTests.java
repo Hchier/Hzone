@@ -13,11 +13,14 @@ import org.springframework.util.DigestUtils;
 import xyz.hchier.hzone.entity.Blog;
 import xyz.hchier.hzone.entity.BlogFavor;
 import xyz.hchier.hzone.entity.User;
+import xyz.hchier.hzone.mapper.BlogFavorMapper;
 import xyz.hchier.hzone.mapper.BlogMapper;
+import xyz.hchier.hzone.mapper.TalkMapper;
 import xyz.hchier.hzone.service.UserService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -27,12 +30,16 @@ class HzoneApplicationTests {
     private RedisTemplate redisTemplate;
     private BlogMapper blogMapper;
     private UserService userService;
+    private TalkMapper talkMapper;
+    private BlogFavorMapper blogFavorMapper;
 
     @Autowired
-    public HzoneApplicationTests(RedisTemplate redisTemplate, BlogMapper blogMapper, UserService userService) {
+    public HzoneApplicationTests(RedisTemplate redisTemplate, BlogMapper blogMapper, UserService userService, TalkMapper talkMapper, BlogFavorMapper blogFavorMapper) {
         this.redisTemplate = redisTemplate;
         this.blogMapper = blogMapper;
         this.userService = userService;
+        this.talkMapper = talkMapper;
+        this.blogFavorMapper = blogFavorMapper;
     }
 
     @Test
@@ -88,8 +95,21 @@ class HzoneApplicationTests {
     @Test
     void log4jTest() {
         redisTemplate.opsForValue().set("k1", new BlogFavor());
-        BlogFavor blogFavor = (BlogFavor)redisTemplate.opsForValue().get("k1");
+        BlogFavor blogFavor = (BlogFavor) redisTemplate.opsForValue().get("k1");
         System.out.println(blogFavor.toString());
     }
 
+    @Test
+    void blogFavorMultiInsertTest() {
+        blogFavorMapper.multiInsert(new HashSet<BlogFavor>() {{
+            add(new BlogFavor(null, "jack", 8, new Date()));
+            add(new BlogFavor(null, "hchier", 8, new Date()));
+        }});
+    }
+
+    @Test
+    void HashTest() {
+
+        redisTemplate.opsForValue().set("1", 1);
+    }
 }

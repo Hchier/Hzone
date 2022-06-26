@@ -1,6 +1,7 @@
 package xyz.hchier.hzone.mapper;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -21,6 +22,8 @@ public interface BlogFavorMapper {
 
     int updateByPrimaryKey(BlogFavor record);
 
+    int multiInsert(Set<BlogFavor> insertSet);
 
+    int multiDelete(Set<Integer> deleteSet, @Param("username") String username);
 
 }

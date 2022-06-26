@@ -13,6 +13,13 @@ public interface RedisService {
     @TestPass
     void loadBlogFavorOfUser(String username);
 
-    void updateBlogFavorToMysql();
+    void updateBlogFavorToMysql(String username);
 
+    void removeExpiredSessionIds();
+
+    void addSessionIdAndUsername(String sessionId, String username);
+
+    void loadBlogIdAndFavorNum(Integer blogId, Integer favorNum);
+
+    void incrBlogFavorNum(Integer blogId, int incremen);
 }

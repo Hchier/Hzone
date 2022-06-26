@@ -72,4 +72,7 @@
     <select id="selectUsernameById" parameterType="java.lang.Integer" resultType="java.lang.String">
         select publisher from blog where id = #{id}
     </select>
+    <select id="selectBlogFavorNumById" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select favor_num from blog where id  = #{id}
+    </select>
 </mapper>

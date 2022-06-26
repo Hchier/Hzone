@@ -17,7 +17,7 @@ public class BaseUtils {
         BaseUtils.redisTemplate = redisTemplate;
     }
 
-    public static String getCurrentUser(HttpServletRequest request){
-        return (String)redisTemplate.opsForValue().get(request.getSession().getId());
+    public static String getCurrentUser(HttpServletRequest request) {
+        return (String) redisTemplate.opsForHash().get(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), request.getSession().getId());
     }
 }

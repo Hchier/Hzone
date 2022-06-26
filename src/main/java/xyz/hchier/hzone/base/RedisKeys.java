@@ -26,12 +26,12 @@ public enum RedisKeys {
      */
     BLOG_FAVOR_OF("blogFavorOf"),
     /**
-     * 用户新增的博客点赞情况
+     * 用户新增的博客点赞情况，set，存BlogFavor对象
      */
     BLOG_FAVOR_TO_ADD_OF("blogFavorToAddOf"),
 
     /**
-     * 用户取消的博客点赞情况
+     * 用户取消的博客点赞情况，set，存放点赞记录的id
      */
     BLOG_FAVOR_TO_CANCEL_OF("blogFavorToCancelOf"),
     /**

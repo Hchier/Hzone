@@ -38,5 +38,17 @@
         from blog_favor
         where praiser = #{username}
     </select>
-
+    <insert id="multiInsert" parameterType="java.util.Set">
+        insert into blog_favor (praiser, blog_id, create_time) values
+        <foreach collection="insertSet" open="" separator="," close="" item="blogFavor">
+            (#{blogFavor.praiser}, #{blogFavor.blogId}, #{blogFavor.createTime})
+        </foreach>
+    </insert>
+    <delete id="multiDelete" parameterType="java.util.Set">
+        delete from blog_favor where blog_id in
+        <foreach collection="deleteSet" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and praiser = #{username}
+    </delete>
 </mapper>

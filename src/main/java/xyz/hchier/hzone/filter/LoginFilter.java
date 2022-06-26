@@ -4,6 +4,7 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import xyz.hchier.hzone.base.BaseUtils;
 import xyz.hchier.hzone.base.ResponseCode;
 import xyz.hchier.hzone.base.RestResponse;
 
@@ -37,7 +38,7 @@ public class LoginFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         httpServletResponse.setCharacterEncoding("UTF-8");
-        if (redisTemplate.opsForValue().get(httpServletRequest.getSession().getId()) == null) {
+        if (BaseUtils.getCurrentUser(httpServletRequest) == null) {
             httpServletResponse.getWriter().println(
                 objectMapper.writeValueAsString(RestResponse.fail(ResponseCode.NOT_LOGGED_IN.getCode(), ResponseCode.NOT_LOGGED_IN.getMessage()))
             );

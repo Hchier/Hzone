@@ -76,13 +76,9 @@ public class UserServiceImpl implements UserService {
         if (!Md5Util.encode(user.getPassword()).equals(password)) {
             return RestResponse.fail(ResponseCode.AUTH_FAIL.getCode(), ResponseCode.AUTH_FAIL.getMessage());
         }
-
-        redisTemplate.opsForHash().put(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), sessionId, user.getUsername());
-        redisTemplate.opsForZSet().add(
-            RedisKeys.SESSION_ID_AND_EXPIRE_TIME.getKey(),
-            sessionId,
-            System.currentTimeMillis() + Const.EXPIRE_TIME_OF_SESSION);
+        redisService.addSessionIdAndUsername(sessionId, user.getUsername());
         redisService.loadBlogFavorOfUser(user.getUsername());
+        redisService.updateBlogFavorToMysql(user.getUsername());
         return RestResponse.ok();
     }
 }

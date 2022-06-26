@@ -1,9 +1,11 @@
 package xyz.hchier.hzone.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import xyz.hchier.hzone.entity.Talk;
+
 /**
  * @author Hchier
  */
@@ -18,4 +20,7 @@ public interface TalkMapper {
     List<Talk> selectAll();
 
     int updateByPrimaryKey(Talk record);
+
+    //    void test(Map<String, List<Talk>> map);
+    void test(List<Talk> talkList1, List<Talk> talkList2);
 }

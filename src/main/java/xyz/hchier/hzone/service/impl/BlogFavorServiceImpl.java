@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import xyz.hchier.hzone.base.*;
 import xyz.hchier.hzone.entity.BlogFavor;
 import xyz.hchier.hzone.mapper.BlogFavorMapper;
+import xyz.hchier.hzone.mapper.BlogMapper;
 import xyz.hchier.hzone.service.BlogFavorService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,10 +25,12 @@ import java.util.List;
 public class BlogFavorServiceImpl implements BlogFavorService {
     private RedisTemplate redisTemplate;
     private BlogFavorMapper blogFavorMapper;
+    private BlogMapper blogMapper;
 
-    public BlogFavorServiceImpl(RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper) {
+    public BlogFavorServiceImpl(RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper, BlogMapper blogMapper) {
         this.redisTemplate = redisTemplate;
         this.blogFavorMapper = blogFavorMapper;
+        this.blogMapper = blogMapper;
     }
 
     /**
@@ -35,7 +38,7 @@ public class BlogFavorServiceImpl implements BlogFavorService {
      *
      * @param blogFavor 博客有利
      * @param request   请求
-     * @return 若已经点了，返回fail。将点赞信息存入【用户新增的点赞情况】和【用户博客点赞情况】，
+     * @return 若已经点赞了，返回fail。将点赞信息存入【用户新增的点赞情况】和【用户博客点赞情况】，redis中存放的博客id对应的点赞量+1，
      * 事务成功执行返回执行情况的List，失败则log.error()并返回null。
      */
     @Override
@@ -54,6 +57,13 @@ public class BlogFavorServiceImpl implements BlogFavorService {
                     operations.multi();
                     operations.opsForSet().add(RedisKeys.BLOG_FAVOR_TO_ADD_OF.getKey() + blogFavor.getPraiser(), blogFavor);
                     operations.opsForSet().add(RedisKeys.BLOG_FAVOR_OF.getKey() + blogFavor.getPraiser(), blogFavor.getBlogId());
+                    if (operations.opsForHash().get(RedisKeys.BLOG_ID_AND_FAVOR_NUM.getKey(), String.valueOf(blogFavor.getBlogId())) == null) {
+                        operations.opsForHash().put(
+                            RedisKeys.BLOG_ID_AND_FAVOR_NUM.getKey(),
+                            String.valueOf(blogFavor.getBlogId()),
+                            blogMapper.selectBlogFavorNumById(blogFavor.getBlogId()));
+                    }
+                    operations.opsForHash().increment(RedisKeys.BLOG_ID_AND_FAVOR_NUM.getKey(), String.valueOf(blogFavor.getBlogId()), 1);
                     return operations.exec();
                 } catch (Exception e) {
                     e.printStackTrace();

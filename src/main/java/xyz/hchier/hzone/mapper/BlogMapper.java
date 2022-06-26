@@ -22,5 +22,5 @@ public interface BlogMapper {
 
     String selectUsernameById(Integer id);
 
-
+    int selectBlogFavorNumById(Integer id);
 }
