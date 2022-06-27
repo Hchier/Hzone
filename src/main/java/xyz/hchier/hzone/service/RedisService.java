@@ -1,6 +1,10 @@
 package xyz.hchier.hzone.service;
 
+import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.base.TestPass;
+import xyz.hchier.hzone.entity.BlogFavor;
+
+import java.util.List;
 
 /**
  * @author by Hchier
@@ -11,15 +15,27 @@ public interface RedisService {
     void loadBlogIdAndUsername();
 
     @TestPass
-    void loadBlogFavorOfUser(String username);
+    void loadBlogFavorByUsername(String username);
 
-    void updateBlogFavorToMysql(String username);
+    void writeBlogFavorOfUser(String username);
+
+    int writeBlogFavorNum();
 
     void removeExpiredSessionIds();
 
     void addSessionIdAndUsername(String sessionId, String username);
 
-    void loadBlogIdAndFavorNum(Integer blogId, Integer favorNum);
+    String getUsernameBySessionId(String sessionId);
 
-    void incrBlogFavorNum(Integer blogId, int incremen);
+    double incrValidTimeOfSession(String sessionId, int threshold, int increment);
+
+    RestResponse updateBlogFavor(BlogFavor blogFavor, String username);
+
+    RestResponse updateBlogFavorCancel(BlogFavor blogFavor, String username);
+
+    Integer loadBlogFavorNumById(Integer id);
+
+    void updateBlogFavorNum(Integer id, Integer favorNum);
+
+    int getBlogFavorNumById(Integer id);
 }

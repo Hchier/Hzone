@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import xyz.hchier.hzone.base.BaseUtils;
+import xyz.hchier.hzone.base.Const;
 import xyz.hchier.hzone.base.ResponseCode;
 import xyz.hchier.hzone.base.RestResponse;
+import xyz.hchier.hzone.service.RedisService;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -20,11 +22,11 @@ import java.io.IOException;
  */
 @WebFilter(urlPatterns = {"/api/*"}, filterName = "LoginFilter")
 public class LoginFilter implements Filter {
-    private RedisTemplate redisTemplate;
+    private RedisService redisService;
     private ObjectMapper objectMapper;
 
-    public LoginFilter(RedisTemplate redisTemplate, ObjectMapper objectMapper) {
-        this.redisTemplate = redisTemplate;
+    public LoginFilter(RedisService redisService, ObjectMapper objectMapper) {
+        this.redisService = redisService;
         this.objectMapper = objectMapper;
     }
 
@@ -43,6 +45,7 @@ public class LoginFilter implements Filter {
                 objectMapper.writeValueAsString(RestResponse.fail(ResponseCode.NOT_LOGGED_IN.getCode(), ResponseCode.NOT_LOGGED_IN.getMessage()))
             );
         } else {
+            redisService.incrValidTimeOfSession(httpServletRequest.getSession().getId(), Const.EXPIRE_TIME_OF_SESSION, Const.EXPIRE_TIME_OF_SESSION);
             filterChain.doFilter(servletRequest, servletResponse);
         }
 

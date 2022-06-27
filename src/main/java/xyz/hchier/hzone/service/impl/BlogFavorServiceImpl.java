@@ -11,6 +11,7 @@ import xyz.hchier.hzone.entity.BlogFavor;
 import xyz.hchier.hzone.mapper.BlogFavorMapper;
 import xyz.hchier.hzone.mapper.BlogMapper;
 import xyz.hchier.hzone.service.BlogFavorService;
+import xyz.hchier.hzone.service.RedisService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -26,15 +27,17 @@ public class BlogFavorServiceImpl implements BlogFavorService {
     private RedisTemplate redisTemplate;
     private BlogFavorMapper blogFavorMapper;
     private BlogMapper blogMapper;
+    private RedisService redisService;
 
-    public BlogFavorServiceImpl(RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper, BlogMapper blogMapper) {
+    public BlogFavorServiceImpl(RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper, BlogMapper blogMapper, RedisService redisService) {
         this.redisTemplate = redisTemplate;
         this.blogFavorMapper = blogFavorMapper;
         this.blogMapper = blogMapper;
+        this.redisService = redisService;
     }
 
     /**
-     * 将点赞情况插入redis中
+     * 将点赞情况插入redis中。保证博客存在
      *
      * @param blogFavor 博客有利
      * @param request   请求
@@ -44,62 +47,25 @@ public class BlogFavorServiceImpl implements BlogFavorService {
     @Override
     @SuppressWarnings("unchecked")
     public RestResponse favor(BlogFavor blogFavor, HttpServletRequest request) {
-        blogFavor.setPraiser(BaseUtils.getCurrentUser(request));
+        String currentUser = BaseUtils.getCurrentUser(request);
+        blogFavor.setPraiser(currentUser);
         if (redisTemplate.opsForSet().isMember(RedisKeys.BLOG_FAVOR_OF.getKey() + blogFavor.getPraiser(), blogFavor.getBlogId())) {
-            //讲真，在这里
             return RestResponse.fail(ResponseCode.BLOG_FAVOR_INFO_REPEAT.getCode(), ResponseCode.BLOG_FAVOR_INFO_REPEAT.getMessage());
         }
         blogFavor.setCreateTime(new Date());
-        List<Object> execRes = (List<Object>) redisTemplate.execute(new SessionCallback() {
-            @Override
-            public List<Object> execute(RedisOperations operations) throws DataAccessException {
-                try {
-                    operations.multi();
-                    operations.opsForSet().add(RedisKeys.BLOG_FAVOR_TO_ADD_OF.getKey() + blogFavor.getPraiser(), blogFavor);
-                    operations.opsForSet().add(RedisKeys.BLOG_FAVOR_OF.getKey() + blogFavor.getPraiser(), blogFavor.getBlogId());
-                    if (operations.opsForHash().get(RedisKeys.BLOG_ID_AND_FAVOR_NUM.getKey(), String.valueOf(blogFavor.getBlogId())) == null) {
-                        operations.opsForHash().put(
-                            RedisKeys.BLOG_ID_AND_FAVOR_NUM.getKey(),
-                            String.valueOf(blogFavor.getBlogId()),
-                            blogMapper.selectBlogFavorNumById(blogFavor.getBlogId()));
-                    }
-                    operations.opsForHash().increment(RedisKeys.BLOG_ID_AND_FAVOR_NUM.getKey(), String.valueOf(blogFavor.getBlogId()), 1);
-                    return operations.exec();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    operations.discard();
-                    log.error(String.format("插入BlogFavor失败，BlogFavor: %s，e: %s", blogFavor.toString(), e.getMessage()));
-                    return null;
-                }
-            }
-        });
-        return execRes != null ?
+        return redisService.updateBlogFavor(blogFavor, currentUser) != null ?
             RestResponse.ok() :
             RestResponse.fail(ResponseCode.BLOG_FAVOR_FAIL.getCode(), ResponseCode.BLOG_FAVOR_FAIL.getMessage());
     }
 
     @Override
     public RestResponse cancelFavor(BlogFavor blogFavor, HttpServletRequest request) {
-        blogFavor.setPraiser(BaseUtils.getCurrentUser(request));
+        String currentUser = BaseUtils.getCurrentUser(request);
+        blogFavor.setPraiser(currentUser);
         if (!redisTemplate.opsForSet().isMember(RedisKeys.BLOG_FAVOR_OF.getKey() + blogFavor.getPraiser(), blogFavor.getBlogId())) {
-            //讲真，在这里，redis中查不到应该去mysql中最后确认到底有没有，但是我不想做了。
             return RestResponse.fail(ResponseCode.BLOG_FAVOR_INFO_NOT_EXIST.getCode(), ResponseCode.BLOG_FAVOR_INFO_NOT_EXIST.getMessage());
         }
-        List res = (List) redisTemplate.execute(new SessionCallback() {
-            @Override
-            public Object execute(RedisOperations operations) throws DataAccessException {
-                try {
-                    operations.multi();
-                    operations.opsForSet().add(RedisKeys.BLOG_FAVOR_TO_CANCEL_OF.getKey() + blogFavor.getPraiser(), blogFavor.getBlogId());
-                    operations.opsForSet().remove(RedisKeys.BLOG_FAVOR_OF.getKey() + blogFavor.getPraiser(), blogFavor.getBlogId());
-                    return operations.exec();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        });
-        return res != null ?
+        return redisService.updateBlogFavorCancel(blogFavor, currentUser) != null ?
             RestResponse.ok() :
             RestResponse.fail(ResponseCode.BLOG_FAVOR_CANCEL_FAIL.getCode(), ResponseCode.BLOG_FAVOR_CANCEL_FAIL.getMessage());
     }

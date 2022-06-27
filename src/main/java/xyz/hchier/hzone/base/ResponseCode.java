@@ -25,6 +25,7 @@ public enum ResponseCode {
     PERMISSION_DENIED(456, "拒绝访问"),
     BLOG_NOT_EXIST(461, "博客不存在"),
     BLOG_DELETE_FAIL(462, "博客删除失败"),
+    BLOG_UPDATE_FAIL(463, "博客更新失败"),
     BLOG_FAVOR_FAIL(470, "博客点赞失败"),
     BLOG_FAVOR_CANCEL_FAIL(471, "博客取消点赞失败"),
     BLOG_FAVOR_INFO_NOT_EXIST(472, "博客点赞信息不存在"),

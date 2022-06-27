@@ -13,10 +13,11 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="tags" jdbcType="LONGVARCHAR" property="tags"/>
     </resultMap>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <delete id="delete" parameterType="java.lang.Integer">
         delete
         from blog
         where id = #{id,jdbcType=INTEGER}
+          and publisher = #{username}
     </delete>
     <insert id="insert" parameterType="xyz.hchier.hzone.entity.Blog">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -45,10 +46,10 @@
             <if test="title != null">title = #{title,jdbcType=VARCHAR},</if>
             <if test="content != null">content = #{content,jdbcType=VARCHAR},</if>
             <if test="selfVisible != null">self_visible = #{selfVisible,jdbcType=BIT},</if>
-            <if test="updateTime != null">update_time  = #{updateTime,jdbcType=TIMESTAMP},</if>
+            <if test="updateTime != null">update_time = #{updateTime,jdbcType=TIMESTAMP},</if>
             <if test="tags != null">tags = #{tags,jdbcType=LONGVARCHAR}</if>
         </set>
-        where id = #{id,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER} and publisher = #{publisher}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select id,
@@ -70,9 +71,25 @@
         from blog
     </select>
     <select id="selectUsernameById" parameterType="java.lang.Integer" resultType="java.lang.String">
-        select publisher from blog where id = #{id}
+        select publisher
+        from blog
+        where id = #{id}
     </select>
     <select id="selectBlogFavorNumById" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        select favor_num from blog where id  = #{id}
+        select favor_num
+        from blog
+        where id = #{id}
     </select>
+    <update id="multiUpdateBlogFavorNum">
+        update blog
+        set favor_num = CASE id
+        <foreach collection="blogList" open="" separator=" " close="" item="blog">
+            when #{blog.id} then #{blog.favorNum}
+        </foreach>
+        END
+        where id in
+        <foreach collection="blogList" item="blog" open="(" separator="," close=")">
+            #{blog.id}
+        </foreach>
+    </update>
 </mapper>

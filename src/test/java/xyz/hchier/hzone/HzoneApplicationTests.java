@@ -16,6 +16,7 @@ import xyz.hchier.hzone.entity.User;
 import xyz.hchier.hzone.mapper.BlogFavorMapper;
 import xyz.hchier.hzone.mapper.BlogMapper;
 import xyz.hchier.hzone.mapper.TalkMapper;
+import xyz.hchier.hzone.service.RedisService;
 import xyz.hchier.hzone.service.UserService;
 
 import java.nio.charset.StandardCharsets;
@@ -32,14 +33,16 @@ class HzoneApplicationTests {
     private UserService userService;
     private TalkMapper talkMapper;
     private BlogFavorMapper blogFavorMapper;
+    private RedisService redisService;
 
     @Autowired
-    public HzoneApplicationTests(RedisTemplate redisTemplate, BlogMapper blogMapper, UserService userService, TalkMapper talkMapper, BlogFavorMapper blogFavorMapper) {
+    public HzoneApplicationTests(RedisTemplate redisTemplate, BlogMapper blogMapper, UserService userService, TalkMapper talkMapper, BlogFavorMapper blogFavorMapper, RedisService redisService) {
         this.redisTemplate = redisTemplate;
         this.blogMapper = blogMapper;
         this.userService = userService;
         this.talkMapper = talkMapper;
         this.blogFavorMapper = blogFavorMapper;
+        this.redisService = redisService;
     }
 
     @Test
@@ -109,7 +112,11 @@ class HzoneApplicationTests {
 
     @Test
     void HashTest() {
-
-        redisTemplate.opsForValue().set("1", 1);
+        Integer blogFavorNumById = redisService.getBlogFavorNumById(1);
+        System.out.println(blogFavorNumById);
+    }
+    @Test
+    void writeBlogFavorNum(){
+        System.out.println(redisService.writeBlogFavorNum());
     }
 }

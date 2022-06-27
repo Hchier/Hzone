@@ -8,6 +8,7 @@ import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.BlogFavor;
 import xyz.hchier.hzone.service.BlogFavorService;
 import xyz.hchier.hzone.service.BlogService;
+import xyz.hchier.hzone.service.RedisService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -20,15 +21,17 @@ import javax.validation.Valid;
 public class BlogFavorController {
     private BlogFavorService blogFavorService;
     private BlogService blogService;
+    private RedisService redisService;
 
-    public BlogFavorController(BlogFavorService blogFavorService, BlogService blogService) {
+    public BlogFavorController(BlogFavorService blogFavorService, BlogService blogService, RedisService redisService) {
         this.blogFavorService = blogFavorService;
         this.blogService = blogService;
+        this.redisService = redisService;
     }
 
     @PostMapping("/api/blogFavor/favor")
-    public RestResponse favor(@Valid @RequestBody BlogFavor blogFavor, HttpServletRequest request) {
-        if (!blogService.blogExist(blogFavor.getBlogId())) {
+    public RestResponse favor(@Valid @RequestBody BlogFavor blogFavor, HttpServletRequest request) throws InterruptedException {
+        if (redisService.getBlogFavorNumById(blogFavor.getBlogId()) == -1) {
             return RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage());
         }
         return blogFavorService.favor(blogFavor, request);
@@ -36,7 +39,7 @@ public class BlogFavorController {
 
     @PostMapping("/api/blogFavor/favorCancel")
     public RestResponse favorCancel(@Valid @RequestBody BlogFavor blogFavor, HttpServletRequest request) {
-        if (!blogService.blogExist(blogFavor.getBlogId())) {
+        if (redisService.getBlogFavorNumById(blogFavor.getBlogId()) == -1) {
             return RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage());
         }
         return blogFavorService.cancelFavor(blogFavor, request);

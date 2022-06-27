@@ -1,7 +1,7 @@
 package xyz.hchier.hzone.base;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import xyz.hchier.hzone.service.RedisService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,13 +11,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component
 public class BaseUtils {
-    private static RedisTemplate redisTemplate;
+    private static RedisService redisService;
 
-    public BaseUtils(RedisTemplate redisTemplate) {
-        BaseUtils.redisTemplate = redisTemplate;
+    public BaseUtils(RedisService redisService) {
+        BaseUtils.redisService = redisService;
     }
 
     public static String getCurrentUser(HttpServletRequest request) {
-        return (String) redisTemplate.opsForHash().get(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), request.getSession().getId());
+        return redisService.getUsernameBySessionId(request.getSession().getId());
     }
 }

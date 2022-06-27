@@ -1,10 +1,7 @@
 package xyz.hchier.hzone.service.impl;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import xyz.hchier.hzone.Utils.Md5Util;
-import xyz.hchier.hzone.base.Const;
-import xyz.hchier.hzone.base.RedisKeys;
 import xyz.hchier.hzone.base.ResponseCode;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.entity.User;
@@ -19,12 +16,10 @@ import xyz.hchier.hzone.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
-    private RedisTemplate redisTemplate;
     private RedisService redisService;
 
-    public UserServiceImpl(UserMapper userMapper, RedisTemplate redisTemplate, RedisService redisService) {
+    public UserServiceImpl(UserMapper userMapper, RedisService redisService) {
         this.userMapper = userMapper;
-        this.redisTemplate = redisTemplate;
         this.redisService = redisService;
     }
 
@@ -77,8 +72,9 @@ public class UserServiceImpl implements UserService {
             return RestResponse.fail(ResponseCode.AUTH_FAIL.getCode(), ResponseCode.AUTH_FAIL.getMessage());
         }
         redisService.addSessionIdAndUsername(sessionId, user.getUsername());
-        redisService.loadBlogFavorOfUser(user.getUsername());
-        redisService.updateBlogFavorToMysql(user.getUsername());
+        redisService.loadBlogFavorByUsername(user.getUsername());
+        redisService.writeBlogFavorOfUser(user.getUsername());
+        redisService.writeBlogFavorNum();
         return RestResponse.ok();
     }
 }

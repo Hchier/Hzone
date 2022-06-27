@@ -17,6 +17,7 @@ import xyz.hchier.hzone.dto.BlogDTO;
 import xyz.hchier.hzone.entity.Blog;
 import xyz.hchier.hzone.mapper.BlogMapper;
 import xyz.hchier.hzone.service.BlogService;
+import xyz.hchier.hzone.service.RedisService;
 import xyz.hchier.hzone.vo.BlogVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,12 +35,14 @@ public class BlogServiceImpl implements BlogService {
     private ModelMapper modelMapper;
     private ObjectMapper objectMapper;
     private RedisTemplate redisTemplate;
+    private RedisService redisService;
 
-    public BlogServiceImpl(BlogMapper blogMapper, ModelMapper modelMapper, ObjectMapper objectMapper, RedisTemplate redisTemplate) {
+    public BlogServiceImpl(BlogMapper blogMapper, ModelMapper modelMapper, ObjectMapper objectMapper, RedisTemplate redisTemplate, RedisService redisService) {
         this.blogMapper = blogMapper;
         this.modelMapper = modelMapper;
         this.objectMapper = objectMapper;
         this.redisTemplate = redisTemplate;
+        this.redisService = redisService;
     }
 
     /**
@@ -65,10 +68,9 @@ public class BlogServiceImpl implements BlogService {
             log.error("List转json失败：" + blogDTO.getTagList());
             return RestResponse.fail(ResponseCode.JSON_PROCESSING_EXCEPTION.getCode(), ResponseCode.JSON_PROCESSING_EXCEPTION.getMessage());
         }
-        int res = blogMapper.insert(blog);
-        if (res == 1) {
-            redisTemplate.opsForHash().put(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blog.getId()), blog.getPublisher());
-            return RestResponse.ok(blog.getId());
+        if (blogMapper.insert(blog) == 1) {
+            redisService.updateBlogFavorNum(blog.getId(), 0);
+            return RestResponse.ok();
         }
         return RestResponse.fail(ResponseCode.ERROR_UNKNOWN.getCode(), ResponseCode.ERROR_UNKNOWN.getMessage());
     }
@@ -119,11 +121,8 @@ public class BlogServiceImpl implements BlogService {
      */
     @Override
     public RestResponse update(BlogDTO blogDTO, HttpServletRequest request) {
-        Object[] check = check(blogDTO.getId(), request);
-        if (!(boolean) check[0]) {
-            return (RestResponse) check[1];
-        }
         Blog blog = modelMapper.map(blogDTO, Blog.class);
+        blog.setPublisher(BaseUtils.getCurrentUser(request));
         try {
             blog.setTags(objectMapper.writeValueAsString(blogDTO.getTagList()));
         } catch (JsonProcessingException e) {
@@ -134,7 +133,7 @@ public class BlogServiceImpl implements BlogService {
         int res = blogMapper.updateByPrimaryKey(blog);
         return res == 1 ?
             RestResponse.ok() :
-            RestResponse.fail(ResponseCode.ERROR_UNKNOWN.getCode(), ResponseCode.ERROR_UNKNOWN.getMessage());
+            RestResponse.fail(ResponseCode.BLOG_UPDATE_FAIL.getCode(), ResponseCode.BLOG_UPDATE_FAIL.getMessage());
     }
 
     /**
@@ -165,7 +164,6 @@ public class BlogServiceImpl implements BlogService {
             return RestResponse.fail(ResponseCode.JSON_PROCESSING_EXCEPTION.getCode(), ResponseCode.JSON_PROCESSING_EXCEPTION.getMessage());
         }
         blogVO.setTagList(list);
-        redisTemplate.opsForHash().put(RedisKeys.BLOG_ID_AND_FAVOR_NUM.getKey(), String.valueOf(id), String.valueOf(blogVO.getFavorNum()));
         return RestResponse.ok(blog);
 
     }
@@ -183,23 +181,9 @@ public class BlogServiceImpl implements BlogService {
      */
     @Override
     public RestResponse delete(Integer id, HttpServletRequest request) {
-        Object[] checkRes = check(id, request);
-        if (!(boolean) checkRes[0]) {
-            return (RestResponse) checkRes[1];
-        }
-        int res = blogMapper.deleteByPrimaryKey(id);
-        if (res == 0) {
-            if (redisTemplate.opsForHash().get(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id)) != null &&
-                blogMapper.selectUsernameById(id) == null
-            ) {
-                redisTemplate.opsForHash().delete(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id));
-            } else {
-                log.error("id为" + id + "的blog删除失败");
-            }
-            return RestResponse.fail(ResponseCode.BLOG_DELETE_FAIL.getCode(), ResponseCode.BLOG_DELETE_FAIL.getMessage());
-        }
-        redisTemplate.opsForHash().delete(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id));
-        return RestResponse.ok();
+        return blogMapper.delete(id, BaseUtils.getCurrentUser(request)) == 1 ?
+            RestResponse.ok() :
+            RestResponse.fail(ResponseCode.BLOG_DELETE_FAIL.getCode(), ResponseCode.BLOG_DELETE_FAIL.getMessage());
     }
 
     @Override
@@ -215,14 +199,6 @@ public class BlogServiceImpl implements BlogService {
      */
     @Override
     public boolean blogExist(Integer id) {
-        if (redisTemplate.opsForHash().get(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(id)) != null) {
-            return true;
-        }
-        String username = blogMapper.selectUsernameById(id);
-        if (username != null) {
-            redisTemplate.opsForHash().put(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), id, username);
-            return true;
-        }
-        return false;
+        return blogMapper.selectUsernameById(id) != null;
     }
 }
