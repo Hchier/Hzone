@@ -14,13 +14,9 @@ import xyz.hchier.hzone.entity.Blog;
 import xyz.hchier.hzone.entity.BlogFavor;
 import xyz.hchier.hzone.mapper.BlogFavorMapper;
 import xyz.hchier.hzone.mapper.BlogMapper;
-import xyz.hchier.hzone.service.BlogService;
 import xyz.hchier.hzone.service.RedisService;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author by Hchier
@@ -29,30 +25,16 @@ import java.util.Set;
 @Slf4j
 @Service
 public class RedisServiceImpl implements RedisService {
-    private BlogService blogService;
     private RedisTemplate redisTemplate;
     private BlogFavorMapper blogFavorMapper;
     private BlogMapper blogMapper;
 
-    public RedisServiceImpl(BlogService blogService, RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper, BlogMapper blogMapper) {
-        this.blogService = blogService;
+    public RedisServiceImpl(RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper, BlogMapper blogMapper) {
         this.redisTemplate = redisTemplate;
         this.blogFavorMapper = blogFavorMapper;
         this.blogMapper = blogMapper;
     }
 
-    /**
-     * 将博客id和用户名加载到redis中
-     */
-    @Override
-    public void loadBlogIdAndUsername() {
-        List<Blog> blogList = blogService.selectAllIdAndPublisher();
-        Iterator<Blog> it = blogList.iterator();
-        while (it.hasNext()) {
-            Blog blog = it.next();
-            redisTemplate.opsForHash().put(RedisKeys.BLOG_ID_AND_USERNAME.getKey(), String.valueOf(blog.getId()), blog.getPublisher());
-        }
-    }
 
     /**
      * 将用户的点赞过的blog的id加载到redis中
@@ -66,7 +48,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     /**
-     * 将新增的用户点赞和取消点赞的信息更新至mysql中
+     * 将新增的用户点赞和取消点赞的信息更新至mysql中，写完后将key删了
      */
     @Override
     public void writeBlogFavorOfUser(String username) {
@@ -74,6 +56,7 @@ public class RedisServiceImpl implements RedisService {
         if (addSet != null && !addSet.isEmpty()) {
             if (blogFavorMapper.multiInsert(addSet) > 0) {
                 redisTemplate.delete(RedisKeys.BLOG_FAVOR_TO_ADD_OF.getKey() + username);
+                log.info(String.format("将用户%s新增的博客点赞信息%s插入mysql了", username, Arrays.toString(addSet.toArray())));
             }
 
         }
@@ -82,6 +65,7 @@ public class RedisServiceImpl implements RedisService {
         if (cancelSet != null && !cancelSet.isEmpty()) {
             if (blogFavorMapper.multiDelete(cancelSet, username) > 0) {
                 redisTemplate.delete(RedisKeys.BLOG_FAVOR_TO_CANCEL_OF.getKey() + username);
+                log.info(String.format("将用户%s新取消的博客点赞信息%s从mysql中移除了", username, Arrays.toString(addSet.toArray())));
             }
 
         }
@@ -111,21 +95,32 @@ public class RedisServiceImpl implements RedisService {
     }
 
     /**
-     * 删除过期的会话
+     * 检查 有没有过期了的session，有的话就删了
      */
     @Override
-    public void removeExpiredSessionIds() {
+    public void checkAndProcessExpiredSessions() {
         Set<String> set = redisTemplate.opsForZSet().rangeByScore(RedisKeys.SESSION_ID_AND_EXPIRE_TIME.getKey(), 0, System.currentTimeMillis());
-        if (set != null) {
-            String username;
+        if (set != null && !set.isEmpty()) {
             for (String sessionId : set) {
-                username = (String) redisTemplate.opsForHash().get(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), sessionId);
-                redisTemplate.opsForHash().delete(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), sessionId);
-                redisTemplate.opsForZSet().remove(RedisKeys.SESSION_ID_AND_EXPIRE_TIME.getKey(), sessionId);
-                log.info(String.format("删除了过期的sessionId: %s, username: %s", sessionId, username));
+                this.processExpiredSession(sessionId);
             }
-
         }
+    }
+
+    /**
+     * 处理过期的会话
+     * 删除过期的session、将该过期session对应的用户新增的博客点赞与取消点赞的情况写入redis
+     *
+     * @param sessionId 会话id
+     */
+    @Override
+    public void processExpiredSession(String sessionId) {
+        String username = (String) redisTemplate.opsForHash().get(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), sessionId);
+        redisTemplate.opsForHash().delete(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), sessionId);
+        redisTemplate.opsForZSet().remove(RedisKeys.SESSION_ID_AND_EXPIRE_TIME.getKey(), sessionId);
+        redisTemplate.delete(RedisKeys.BLOG_FAVOR_OF.getKey() + username);
+        log.info(String.format("删除了过期的sessionId: %s, username: %s", sessionId, username));
+        this.writeBlogFavorOfUser(username);
     }
 
     /**
@@ -136,6 +131,10 @@ public class RedisServiceImpl implements RedisService {
      */
     @Override
     public void addSessionIdAndUsername(String sessionId, String username) {
+        //
+        if (redisTemplate.opsForHash().hasKey(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), sessionId)) {
+            this.processExpiredSession(sessionId);
+        }
         redisTemplate.opsForHash().put(RedisKeys.SESSION_ID_AND_USERNAME.getKey(), sessionId, username);
         redisTemplate.opsForZSet().add(
             RedisKeys.SESSION_ID_AND_EXPIRE_TIME.getKey(),

@@ -11,8 +11,6 @@ import java.util.List;
  * @Date 2022/6/25 10:12
  */
 public interface RedisService {
-    @TestPass
-    void loadBlogIdAndUsername();
 
     @TestPass
     void loadBlogFavorByUsername(String username);
@@ -21,7 +19,9 @@ public interface RedisService {
 
     int writeBlogFavorNum();
 
-    void removeExpiredSessionIds();
+    void checkAndProcessExpiredSessions();
+    
+    void processExpiredSession(String sessionId);
 
     void addSessionIdAndUsername(String sessionId, String username);
 

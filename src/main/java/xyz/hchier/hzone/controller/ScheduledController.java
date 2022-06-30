@@ -16,8 +16,18 @@ public class ScheduledController {
         this.redisService = redisService;
     }
 
-    @Scheduled(fixedDelay = 60000)
-    public void removeExpiredSessions(){
-        redisService.removeExpiredSessionIds();
+
+    /**
+     * 处理过期的会话
+     * 移除过期的session
+     */
+    @Scheduled(fixedRate = 30000)
+    public void processExpiredSessions(){
+        redisService.checkAndProcessExpiredSessions();
+    }
+
+    @Scheduled(fixedDelay = 30000)
+    public void writeBlogFavorNum(){
+        redisService.writeBlogFavorNum();
     }
 }

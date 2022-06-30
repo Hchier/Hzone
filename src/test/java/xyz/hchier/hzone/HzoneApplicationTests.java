@@ -1,6 +1,8 @@
 package xyz.hchier.hzone;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import xyz.hchier.hzone.service.RedisService;
 import xyz.hchier.hzone.service.UserService;
 
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -34,15 +38,17 @@ class HzoneApplicationTests {
     private TalkMapper talkMapper;
     private BlogFavorMapper blogFavorMapper;
     private RedisService redisService;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public HzoneApplicationTests(RedisTemplate redisTemplate, BlogMapper blogMapper, UserService userService, TalkMapper talkMapper, BlogFavorMapper blogFavorMapper, RedisService redisService) {
+    public HzoneApplicationTests(RedisTemplate redisTemplate, BlogMapper blogMapper, UserService userService, TalkMapper talkMapper, BlogFavorMapper blogFavorMapper, RedisService redisService, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
         this.blogMapper = blogMapper;
         this.userService = userService;
         this.talkMapper = talkMapper;
         this.blogFavorMapper = blogFavorMapper;
         this.redisService = redisService;
+        this.objectMapper = objectMapper;
     }
 
     @Test
@@ -118,5 +124,23 @@ class HzoneApplicationTests {
     @Test
     void writeBlogFavorNum(){
         System.out.println(redisService.writeBlogFavorNum());
+    }
+    @Test
+    void blogRandomTest(){
+        List<Blog> blogList = blogMapper.selectRandom(10);
+        System.out.println(blogList.size());
+    }
+    @Test
+    void dateTest() throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateStr = simpleDateFormat.format(new Date());
+
+        System.out.println("dateStr:"+dateStr);
+        Date parse = simpleDateFormat.parse(dateStr);
+        System.out.println(simpleDateFormat.parse(dateStr));
+    }
+    @Test
+    void getBlogById() throws JsonProcessingException {
+        System.out.println(objectMapper.writeValueAsString(new Date()));
     }
 }

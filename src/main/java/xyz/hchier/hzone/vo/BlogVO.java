@@ -28,6 +28,8 @@ public class BlogVO implements Serializable {
 
     private Integer commentNum;
 
+    private Integer clickNum;
+
     private Boolean selfVisible;
 
     private Boolean hidden;
@@ -35,6 +37,8 @@ public class BlogVO implements Serializable {
     private Date updateTime;
 
     private List<String> tagList;
+
+    private Boolean favored;
 
     private static final long serialVersionUID = 1L;
 }

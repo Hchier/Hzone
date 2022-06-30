@@ -19,4 +19,5 @@ public interface BlogCommentService {
     @TestPass
     RestResponse delete(Integer id, HttpServletRequest request) throws InterruptedException;
 
+    RestResponse getLimit(int blogId, int pageNum, int pageSize);
 }

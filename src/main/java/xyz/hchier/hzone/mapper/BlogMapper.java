@@ -11,7 +11,7 @@ import xyz.hchier.hzone.entity.Blog;
  */
 @Mapper
 public interface BlogMapper {
-    int delete(@Param("id") Integer id, @Param("username") String username);
+    int delete(Blog blog);
 
     int insert(Blog record);
 
@@ -26,4 +26,8 @@ public interface BlogMapper {
     Integer selectBlogFavorNumById(Integer id);
 
     int multiUpdateBlogFavorNum(List<Blog> blogList);
+
+    List<Blog> selectRandom(@Param("size") int size);
+
+    int incrCommentNum(@Param("blogId") int blogId);
 }

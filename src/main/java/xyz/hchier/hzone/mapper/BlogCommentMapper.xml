@@ -83,4 +83,7 @@
                create_time
         from blog_comment
     </select>
+    <select id="getLimit" resultMap="BaseResultMap">
+        select * from blog_comment where blog_id = #{blogId} and source_comment = -1 limit #{startIndex}, #{pageSize}
+    </select>
 </mapper>

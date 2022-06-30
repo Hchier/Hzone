@@ -4,6 +4,7 @@ import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.base.TestPass;
 import xyz.hchier.hzone.entity.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -31,5 +32,7 @@ public interface UserService {
 
     @TestPass
     RestResponse login(User user, String sessionId) throws InterruptedException;
+
+    RestResponse logout(String sessionId);
 
 }

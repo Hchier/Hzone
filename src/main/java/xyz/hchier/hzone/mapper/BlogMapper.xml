@@ -13,11 +13,11 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="tags" jdbcType="LONGVARCHAR" property="tags"/>
     </resultMap>
-    <delete id="delete" parameterType="java.lang.Integer">
+    <delete id="delete" parameterType="xyz.hchier.hzone.entity.Blog">
         delete
         from blog
         where id = #{id,jdbcType=INTEGER}
-          and publisher = #{username}
+          and publisher = #{publisher}
     </delete>
     <insert id="insert" parameterType="xyz.hchier.hzone.entity.Blog">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -91,5 +91,13 @@
         <foreach collection="blogList" item="blog" open="(" separator="," close=")">
             #{blog.id}
         </foreach>
+    </update>
+    <select id="selectRandom" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT *
+        FROM blog
+        ORDER BY RAND() limit #{size}
+    </select>
+    <update id="incrCommentNum" parameterType="java.lang.Integer">
+        update blog set comment_num = comment_num + 1 where id = #{blogId}
     </update>
 </mapper>

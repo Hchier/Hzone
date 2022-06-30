@@ -22,6 +22,7 @@ import xyz.hchier.hzone.vo.BlogVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -136,6 +137,7 @@ public class BlogServiceImpl implements BlogService {
             RestResponse.fail(ResponseCode.BLOG_UPDATE_FAIL.getCode(), ResponseCode.BLOG_UPDATE_FAIL.getMessage());
     }
 
+
     /**
      * 根据id获取博客
      *
@@ -146,33 +148,33 @@ public class BlogServiceImpl implements BlogService {
      */
     @Override
     public RestResponse get(Integer id, HttpServletRequest request) {
+        String currentUser = BaseUtils.getCurrentUser(request);
         Blog blog = blogMapper.selectByPrimaryKey(id);
         if (blog == null) {
             return RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage());
         }
 
-        if ((blog.getSelfVisible() || blog.getHidden()) && !blog.getPublisher().equals(BaseUtils.getCurrentUser(request))) {
+        if ((blog.getSelfVisible() || blog.getHidden()) && !blog.getPublisher().equals(currentUser)) {
             return RestResponse.fail(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getMessage());
         }
-        BlogVO blogVO = modelMapper.map(blog, BlogVO.class);
-        List<String> list = null;
+        BlogVO blogVO;
         try {
-            list = objectMapper.readValue(blog.getTags(), new TypeReference<List<String>>() {
-            });
+            blogVO = changeBlogToBlogVO(blog);
         } catch (JsonProcessingException e) {
             log.error("String转json失败：" + blog.getTags());
             return RestResponse.fail(ResponseCode.JSON_PROCESSING_EXCEPTION.getCode(), ResponseCode.JSON_PROCESSING_EXCEPTION.getMessage());
         }
-        blogVO.setTagList(list);
-        return RestResponse.ok(blog);
+        blogVO.setFavorNum(redisService.getBlogFavorNumById(id));
+        blogVO.setClickNum(10);
+        blogVO.setFavored(redisTemplate.opsForSet().isMember(RedisKeys.BLOG_FAVOR_OF.getKey() + currentUser, blogVO.getId()));
+        return RestResponse.ok(blogVO);
 
     }
 
     /**
      * 删除
      *
-     * @param id      id
-     * @param request 请求
+     * @param blog blog
      * @return 先检查博客是否存在以及博客作者与当前用户是否为同一人，不是，返回fail。是，再删除。
      * 删除成功，将redis “blogIdAndUsername”中的也删了。
      * 删除失败，只有一种情况是可接受的，
@@ -180,8 +182,8 @@ public class BlogServiceImpl implements BlogService {
      * 若并非这种上述情况即mysql中有数据却无法删除，见👻了，log.error()。
      */
     @Override
-    public RestResponse delete(Integer id, HttpServletRequest request) {
-        return blogMapper.delete(id, BaseUtils.getCurrentUser(request)) == 1 ?
+    public RestResponse delete(Blog blog) {
+        return blogMapper.delete(blog) == 1 ?
             RestResponse.ok() :
             RestResponse.fail(ResponseCode.BLOG_DELETE_FAIL.getCode(), ResponseCode.BLOG_DELETE_FAIL.getMessage());
     }
@@ -200,5 +202,41 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public boolean blogExist(Integer id) {
         return blogMapper.selectUsernameById(id) != null;
+    }
+
+    @Override
+    public RestResponse selectRandom(int size, HttpServletRequest request) {
+        String currentUser = BaseUtils.getCurrentUser(request);
+        List<Blog> blogList = blogMapper.selectRandom(5);
+        List<BlogVO> blogVOList = new LinkedList<>();
+        for (Blog blog : blogList) {
+            if ((blog.getSelfVisible() || blog.getHidden()) && !blog.getPublisher().equals(currentUser)) {
+                continue;
+            }
+            BlogVO blogVO;
+            try {
+                blogVO = changeBlogToBlogVO(blog);
+            } catch (JsonProcessingException e) {
+                log.error("String转json失败：" + blog.getTags());
+                return RestResponse.fail(ResponseCode.JSON_PROCESSING_EXCEPTION.getCode(), ResponseCode.JSON_PROCESSING_EXCEPTION.getMessage());
+            }
+            blogVO.setFavorNum(redisService.getBlogFavorNumById(blog.getId()));
+            blogVO.setClickNum(10);
+            blogVO.setFavored(redisTemplate.opsForSet().isMember(RedisKeys.BLOG_FAVOR_OF.getKey() + currentUser, blogVO.getId()));
+            blogVOList.add(blogVO);
+        }
+        return RestResponse.ok(blogVOList);
+    }
+
+    @Override
+    public BlogVO changeBlogToBlogVO(Blog blog) throws JsonProcessingException {
+        if (blog == null) {
+            return null;
+        }
+        BlogVO blogVO = modelMapper.map(blog, BlogVO.class);
+        List<String> list = objectMapper.readValue(blog.getTags(), new TypeReference<List<String>>() {
+        });
+        blogVO.setTagList(list);
+        return blogVO;
     }
 }

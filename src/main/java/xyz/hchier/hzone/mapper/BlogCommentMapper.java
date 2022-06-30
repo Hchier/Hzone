@@ -21,5 +21,6 @@ public interface BlogCommentMapper {
 
     int updateByPrimaryKey(BlogComment record);
 
+    List<BlogComment> getLimit(@Param("blogId") Integer blogId, @Param("startIndex") int startIndex, @Param("pageSize") int pageSize);
 
 }

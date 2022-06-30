@@ -2,6 +2,8 @@ package xyz.hchier.hzone.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.bind.annotation.*;
+import xyz.hchier.hzone.base.BaseUtils;
+import xyz.hchier.hzone.base.ResponseCode;
 import xyz.hchier.hzone.base.RestResponse;
 import xyz.hchier.hzone.dto.BlogDTO;
 import xyz.hchier.hzone.entity.Blog;
@@ -36,8 +38,14 @@ public class BlogController {
         return blogService.get(id, request);
     }
 
-    @GetMapping("/delete/{id}")
-    public RestResponse delete(@PathVariable Integer id, HttpServletRequest request) {
-        return blogService.delete(id, request);
+    @PostMapping("/api/blog/delete")
+    public RestResponse delete(@RequestBody Blog blog, HttpServletRequest request) {
+        blog.setPublisher(BaseUtils.getCurrentUser(request));
+        return blogService.delete(blog);
+    }
+
+    @GetMapping("/api/blog/getRandom")
+    public RestResponse getRandom(HttpServletRequest request) {
+        return blogService.selectRandom(5, request);
     }
 }

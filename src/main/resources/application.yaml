@@ -1,6 +1,9 @@
 server:
   port: 8080
 spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss  #时间戳统一转换为指定格式
+    time-zone: GMT+8  # 时区修改为东8区
   datasource:
     username: root
     password: pyh903903
@@ -16,6 +19,8 @@ spring:
 #      nodes: 120.77.13.126:6371,120.77.13.126:6372,120.77.13.126:6373,120.77.13.126:6374,120.77.13.126:6375,120.77.13.126:6376
 #      # 最大重定向数
 #      max-redirects: 6
+
+
 
 
 mybatis:

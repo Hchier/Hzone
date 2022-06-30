@@ -41,5 +41,10 @@ public class BlogCommentController {
         return blogCommentService.delete(id, request);
     }
 
+    @GetMapping("/api/blogComment/getLimit/{blogId}/{pageNum}")
+    public RestResponse getLimit(@PathVariable Integer blogId, @PathVariable Integer pageNum){
+        return blogCommentService.getLimit(blogId,pageNum,5);
+    }
+
 
 }

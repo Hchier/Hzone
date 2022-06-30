@@ -26,10 +26,15 @@ public interface BlogService {
     RestResponse<BlogVO> get(Integer id, HttpServletRequest request) throws JsonProcessingException;
 
     @TestPass
-    RestResponse delete(Integer id, HttpServletRequest request);
+    RestResponse delete(Blog blog);
 
     @TestPass
     List<Blog> selectAllIdAndPublisher();
 
     boolean blogExist(Integer id);
+
+    RestResponse selectRandom(int size,HttpServletRequest request);
+
+    BlogVO changeBlogToBlogVO(Blog blog) throws JsonProcessingException;
+
 }

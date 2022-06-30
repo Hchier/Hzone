@@ -9,6 +9,8 @@ import xyz.hchier.hzone.mapper.UserMapper;
 import xyz.hchier.hzone.service.RedisService;
 import xyz.hchier.hzone.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author by Hchier
  * @Date 2022/6/23 12:34
@@ -74,7 +76,16 @@ public class UserServiceImpl implements UserService {
         redisService.addSessionIdAndUsername(sessionId, user.getUsername());
         redisService.loadBlogFavorByUsername(user.getUsername());
         redisService.writeBlogFavorOfUser(user.getUsername());
+
         redisService.writeBlogFavorNum();
         return RestResponse.ok();
     }
+
+    @Override
+    public RestResponse logout(String sessionId) {
+        redisService.processExpiredSession(sessionId);
+        return RestResponse.ok();
+    }
+
+
 }

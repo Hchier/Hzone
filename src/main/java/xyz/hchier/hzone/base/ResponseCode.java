@@ -31,7 +31,8 @@ public enum ResponseCode {
     BLOG_FAVOR_INFO_NOT_EXIST(472, "博客点赞信息不存在"),
     BLOG_FAVOR_INFO_REPEAT(473, "博客点赞信息已存在"),
     BLOG_COMMENT_PUBLISH_FAIL(475, "博客评论发表失败"),
-    BLOG_COMMENT_DELETE_FAIL(476, "博客评论删除失败");
+    BLOG_COMMENT_DELETE_FAIL(476, "博客评论删除失败"),
+    BLOG_HAS_NO_COMMENT(477,"博客暂无评论或已全部加载完成");
     private final int code;
     private final String message;
 
