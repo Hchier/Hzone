@@ -98,6 +98,6 @@
         ORDER BY RAND() limit #{size}
     </select>
     <update id="incrCommentNum" parameterType="java.lang.Integer">
-        update blog set comment_num = comment_num + 1 where id = #{blogId}
+        update blog set comment_num = comment_num + #{incrBy} where id = #{blogId}
     </update>
 </mapper>

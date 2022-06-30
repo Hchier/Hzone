@@ -11,7 +11,7 @@ import xyz.hchier.hzone.entity.BlogComment;
  */
 @Mapper
 public interface BlogCommentMapper {
-    int deleteByPrimaryKey(@Param("id") Integer id, @Param("username") String username);
+    int deleteByPrimaryKey(@Param("id") Integer id, @Param("username") String username, @Param("blogId") int blogId);
 
     int insert(BlogComment record);
 

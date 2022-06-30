@@ -30,7 +30,6 @@ public class BlogCommentController {
     @PostMapping("/api/blogComment/publish")
     public RestResponse publish(@Valid @RequestBody BlogComment blogComment, HttpServletRequest request) {
         System.out.println(blogComment.toString());
-        System.out.println(1111);
         if (!blogService.blogExist(blogComment.getBlogId())) {
             return RestResponse.fail(ResponseCode.BLOG_NOT_EXIST.getCode(), ResponseCode.BLOG_NOT_EXIST.getMessage());
         }
@@ -38,8 +37,8 @@ public class BlogCommentController {
     }
 
     @PostMapping("/api/blogComment/delete")
-    public RestResponse delete(Integer id, HttpServletRequest request) throws InterruptedException {
-        return blogCommentService.delete(id, request);
+    public RestResponse delete(@RequestBody BlogComment blogComment, HttpServletRequest request) throws InterruptedException {
+        return blogCommentService.delete(blogComment, request);
     }
 
     @GetMapping("/api/blogComment/getLimit/{blogId}/{pageNum}")

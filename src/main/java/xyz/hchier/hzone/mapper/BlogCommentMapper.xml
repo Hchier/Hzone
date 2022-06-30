@@ -19,6 +19,7 @@
         set deleted = 1
         where id = #{id}
           and publisher = #{username}
+          and blog_id = #{blogId}
     </delete>
     <insert id="insert" parameterType="xyz.hchier.hzone.entity.BlogComment">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -84,6 +85,10 @@
         from blog_comment
     </select>
     <select id="getLimit" resultMap="BaseResultMap">
-        select * from blog_comment where blog_id = #{blogId} and source_comment = -1 limit #{startIndex}, #{pageSize}
+        select *
+        from blog_comment
+        where blog_id = #{blogId}
+          and source_comment = -1 limit #{startIndex}
+            , #{pageSize}
     </select>
 </mapper>

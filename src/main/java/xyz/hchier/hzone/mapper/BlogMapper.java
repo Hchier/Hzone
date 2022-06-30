@@ -29,5 +29,5 @@ public interface BlogMapper {
 
     List<Blog> selectRandom(@Param("size") int size);
 
-    int incrCommentNum(@Param("blogId") int blogId);
+    int incrCommentNum(@Param("blogId") int blogId, @Param("incrBy") int incrBy);
 }

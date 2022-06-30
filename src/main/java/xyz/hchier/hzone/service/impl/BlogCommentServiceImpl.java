@@ -41,7 +41,7 @@ public class BlogCommentServiceImpl implements BlogCommentService {
         blogComment.setPublisher(BaseUtils.getCurrentUser(request));
         blogComment.setCreateTime(new Date());
         int insertRes = blogCommentMapper.insert(blogComment);
-        int updateRes = blogMapper.incrCommentNum(blogComment.getBlogId());
+        int updateRes = blogMapper.incrCommentNum(blogComment.getBlogId(), 1);
         if (insertRes == 0 || updateRes == 0) {
             return RestResponse.fail(
                 ResponseCode.BLOG_COMMENT_PUBLISH_FAIL.getCode(),
@@ -53,16 +53,18 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     /**
      * 删除评论
      *
-     * @param id      评论id
+     * @param blogComment      评论
      * @param request 请求
      * @return 不是真的将记录删除，而是将deleted置为true，
      * 删除评论之前不用检验用户身份，因为只有删除自己的评论时才会满足 “id = ? and username = ?”
      */
+    @Transactional
     @Override
-    public RestResponse delete(Integer id, HttpServletRequest request) {
+    public RestResponse delete(BlogComment blogComment, HttpServletRequest request) {
         String currentUser = BaseUtils.getCurrentUser(request);
-        int res = blogCommentMapper.deleteByPrimaryKey(id, currentUser);
-        if (res == 0) {
+        int deleteRes = blogCommentMapper.deleteByPrimaryKey(blogComment.getId(), currentUser,blogComment.getBlogId());
+        int updateRes = blogMapper.incrCommentNum(blogComment.getBlogId(), -1);
+        if (deleteRes == 0 || updateRes == 0) {
             return RestResponse.fail(
                 ResponseCode.BLOG_COMMENT_DELETE_FAIL.getCode(),
                 ResponseCode.BLOG_COMMENT_DELETE_FAIL.getMessage());
