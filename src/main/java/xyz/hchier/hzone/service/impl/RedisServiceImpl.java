@@ -14,6 +14,8 @@ import xyz.hchier.hzone.entity.Blog;
 import xyz.hchier.hzone.entity.BlogFavor;
 import xyz.hchier.hzone.mapper.BlogFavorMapper;
 import xyz.hchier.hzone.mapper.BlogMapper;
+import xyz.hchier.hzone.mapper.UserMapper;
+import xyz.hchier.hzone.service.MqProducerService;
 import xyz.hchier.hzone.service.RedisService;
 
 import java.util.*;
@@ -28,11 +30,15 @@ public class RedisServiceImpl implements RedisService {
     private RedisTemplate redisTemplate;
     private BlogFavorMapper blogFavorMapper;
     private BlogMapper blogMapper;
+    private UserMapper userMapper;
+    private MqProducerService mqProducerService;
 
-    public RedisServiceImpl(RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper, BlogMapper blogMapper) {
+    public RedisServiceImpl(RedisTemplate redisTemplate, BlogFavorMapper blogFavorMapper, BlogMapper blogMapper, UserMapper userMapper, MqProducerService mqProducerService) {
         this.redisTemplate = redisTemplate;
         this.blogFavorMapper = blogFavorMapper;
         this.blogMapper = blogMapper;
+        this.userMapper = userMapper;
+        this.mqProducerService = mqProducerService;
     }
 
 
@@ -85,6 +91,10 @@ public class RedisServiceImpl implements RedisService {
             int favorNum = (int) redisTemplate.opsForHash().get(RedisKeys.BLOG_ID_AND_FAVOR_NUM.getKey(), id);
             if (favorNum != -1) {
                 blogList.add(new Blog().setId(Integer.valueOf(id)).setFavorNum(favorNum));
+                mqProducerService.sendMsgToDirectExchange(
+                    "directExchange",
+                    "sendEmail",
+                    userMapper.selectEmailByBlogId(Integer.valueOf(id)));
             }
         }
         int res = 0;

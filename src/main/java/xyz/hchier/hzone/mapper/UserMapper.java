@@ -20,4 +20,6 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     String selectPasswordByUsername(String username);
+
+    String selectEmailByBlogId(Integer id);
 }

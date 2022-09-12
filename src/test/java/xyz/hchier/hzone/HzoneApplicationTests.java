@@ -11,6 +11,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.util.DigestUtils;
 import xyz.hchier.hzone.entity.Blog;
 import xyz.hchier.hzone.entity.BlogFavor;
@@ -18,9 +20,13 @@ import xyz.hchier.hzone.entity.User;
 import xyz.hchier.hzone.mapper.BlogFavorMapper;
 import xyz.hchier.hzone.mapper.BlogMapper;
 import xyz.hchier.hzone.mapper.TalkMapper;
+import xyz.hchier.hzone.service.MqProducerService;
 import xyz.hchier.hzone.service.RedisService;
 import xyz.hchier.hzone.service.UserService;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,9 +45,11 @@ class HzoneApplicationTests {
     private BlogFavorMapper blogFavorMapper;
     private RedisService redisService;
     private ObjectMapper objectMapper;
+    private MqProducerService mqProducerService;
+    private JavaMailSender javaMailSender;
 
     @Autowired
-    public HzoneApplicationTests(RedisTemplate redisTemplate, BlogMapper blogMapper, UserService userService, TalkMapper talkMapper, BlogFavorMapper blogFavorMapper, RedisService redisService, ObjectMapper objectMapper) {
+    public HzoneApplicationTests(RedisTemplate redisTemplate, BlogMapper blogMapper, UserService userService, TalkMapper talkMapper, BlogFavorMapper blogFavorMapper, RedisService redisService, ObjectMapper objectMapper, MqProducerService mqProducerService, JavaMailSender javaMailSender) {
         this.redisTemplate = redisTemplate;
         this.blogMapper = blogMapper;
         this.userService = userService;
@@ -49,6 +57,8 @@ class HzoneApplicationTests {
         this.blogFavorMapper = blogFavorMapper;
         this.redisService = redisService;
         this.objectMapper = objectMapper;
+        this.mqProducerService = mqProducerService;
+        this.javaMailSender = javaMailSender;
     }
 
     @Test
@@ -121,26 +131,61 @@ class HzoneApplicationTests {
         Integer blogFavorNumById = redisService.getBlogFavorNumById(1);
         System.out.println(blogFavorNumById);
     }
+
     @Test
-    void writeBlogFavorNum(){
+    void writeBlogFavorNum() {
         System.out.println(redisService.writeBlogFavorNum());
     }
+
     @Test
-    void blogRandomTest(){
+    void blogRandomTest() {
         List<Blog> blogList = blogMapper.selectRandom(10);
         System.out.println(blogList.size());
     }
+
     @Test
     void dateTest() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateStr = simpleDateFormat.format(new Date());
 
-        System.out.println("dateStr:"+dateStr);
+        System.out.println("dateStr:" + dateStr);
         Date parse = simpleDateFormat.parse(dateStr);
         System.out.println(simpleDateFormat.parse(dateStr));
     }
+
     @Test
     void getBlogById() throws JsonProcessingException {
         System.out.println(objectMapper.writeValueAsString(new Date()));
+    }
+
+    @Test
+    void sendMsgToExchange() {
+        mqProducerService.sendMsgToDirectExchange("directExchange", "sendEmail", "hchier2@qq.com");
+    }
+
+    @Test
+    void sendEmail() throws MessagingException {
+        MimeMessage mailMessage = javaMailSender.createMimeMessage();
+        //Helper类
+        MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true);
+        String context = "<b>你好，<a href=\"https://www.baidu.com/\">click</a></b>";
+        try {
+            //发件人
+            helper.setFrom("hchier@qq.com");
+            //收件人
+            helper.setTo(new String[]{"hchier@qq.com", "hchier2@qq.com"});
+            //helper.setBcc("密送人");
+            //主题
+            helper.setSubject("欢迎注册");
+            //发送时间
+            helper.setSentDate(new Date());
+            //内容                            👇👇👇内容为html格式
+            helper.setText(context, true);
+            //附件
+            helper.addAttachment("资料.txt", () -> new FileInputStream("E:\\Hchier\\A\\springboot\\a.txt"));
+            javaMailSender.send(mailMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }

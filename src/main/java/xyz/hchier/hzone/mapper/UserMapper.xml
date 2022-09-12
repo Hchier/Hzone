@@ -33,4 +33,8 @@
     <select id="selectPasswordByUsername" parameterType="java.lang.String" resultType="java.lang.String">
         select password from user where username = #{username}
     </select>
+
+    <select id="selectEmailByBlogId" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select email from `user` where username = (select publisher from blog where id = #{id})
+    </select>
 </mapper>
