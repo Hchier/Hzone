@@ -4,7 +4,9 @@ import cc.hchier.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.Utils;
 import cc.hchier.configuration.ConfigProperties;
+import cc.hchier.dto.UserEmailUpdateDTO;
 import cc.hchier.dto.UserLoginDTO;
+import cc.hchier.dto.UserPwdUpdateDTO;
 import cc.hchier.dto.UserRegisterDTO;
 import cc.hchier.entity.User;
 import cc.hchier.mapper.UserMapper;
@@ -36,7 +38,7 @@ public class UserServiceImpl implements UserService {
         }
         userRegisterDTO.setPassword(Utils.md5Encode(userRegisterDTO.getPassword()));
         if (userMapper.insert(userRegisterDTO) == 0) {
-            return RestResponse.build(ResponseCode.REGISTER_FAIL);
+            return RestResponse.fail();
         }
         redisTemplate.delete(userRegisterDTO.getEmail());
         return RestResponse.ok();
@@ -74,7 +76,69 @@ public class UserServiceImpl implements UserService {
     @Override
     public RestResponse close(String username) {
         if (userMapper.update(new User().setUsername(username).setClosed(true)) == 0) {
-            return RestResponse.build(ResponseCode.LOGOFF_FAIL);
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
+    public RestResponse incrFavorNum(String username) {
+        if (userMapper.incrNum(new User().setUsername(username).setFavorNum(6)) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
+    public RestResponse incrFavoredNum(String username) {
+        if (userMapper.incrNum(new User().setUsername(username).setFavoredNum(6)) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
+    public RestResponse incrFollowNum(String username) {
+        if (userMapper.incrNum(new User().setUsername(username).setFollowNum(6)) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
+    public RestResponse incrFollowedNum(String username) {
+        if (userMapper.incrNum(new User().setUsername(username).setFollowedNum(6)) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
+    public RestResponse updatePwd(UserPwdUpdateDTO dto) {
+        if (!dto.getAuthCode().equals(redisTemplate.opsForValue().get(dto.getEmail()))) {
+            return RestResponse.build(ResponseCode.AUTH_FAIL);
+        }
+        if (userMapper.update(
+            new User()
+                .setUsername(dto.getUsername())
+                .setPassword(Utils.md5Encode(dto.getPassword()))) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
+    public RestResponse getEmailOfCurrentUser(String username) {
+        return RestResponse.ok(userMapper.selectEmailByUsername(username));
+    }
+
+    @Override
+    public RestResponse updateEmail(UserEmailUpdateDTO dto) {
+        if (!dto.getAuthCode().equals(redisTemplate.opsForValue().get(dto.getNewEmail()))) {
+            return RestResponse.build(ResponseCode.AUTH_FAIL);
+        }
+        if (userMapper.update(new User().setUsername(dto.getUsername()).setEmail(dto.getNewEmail())) == 0) {
+            return RestResponse.fail();
         }
         return RestResponse.ok();
     }

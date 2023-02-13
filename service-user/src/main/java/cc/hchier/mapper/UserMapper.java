@@ -4,8 +4,6 @@ import cc.hchier.dto.UserRegisterDTO;
 import cc.hchier.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
-
 /**
  * @author hchier
  */
@@ -36,6 +34,23 @@ public interface UserMapper {
      * @return int
      */
     int update(User user);
+
+    /**
+     * 各种num + 1，如favorNum，followNum
+     * 不为null时生效
+     *
+     * @param user 用户
+     * @return int
+     */
+    int incrNum(User user);
+
+    /**
+     * 查找用户的email
+     *
+     * @param username 用户名
+     * @return {@link String}
+     */
+    String selectEmailByUsername(String username);
 
     //    User selectByPrimaryKey(String username);
 //

@@ -12,6 +12,7 @@
         <module>service-user</module>
         <module>service-notice</module>
         <module>commons</module>
+        <module>service-topic</module>
     </modules>
 
     <packaging>pom</packaging>

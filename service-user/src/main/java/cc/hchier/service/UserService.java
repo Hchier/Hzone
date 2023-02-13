@@ -1,7 +1,9 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
+import cc.hchier.dto.UserEmailUpdateDTO;
 import cc.hchier.dto.UserLoginDTO;
+import cc.hchier.dto.UserPwdUpdateDTO;
 import cc.hchier.dto.UserRegisterDTO;
 
 /**
@@ -48,4 +50,62 @@ public interface UserService {
      * @return {@link RestResponse}
      */
     RestResponse close(String username);
+
+
+    /**
+     * 点赞量 + 1
+     *
+     * @param username 用户名
+     * @return {@link RestResponse}
+     */
+    RestResponse incrFavorNum(String username);
+
+    /**
+     * 被点赞量 +1
+     *
+     * @param username 用户名
+     * @return {@link RestResponse}
+     */
+    RestResponse incrFavoredNum(String username);
+
+    /**
+     * 偶像数量 + 1
+     *
+     * @param username 用户名
+     * @return {@link RestResponse}
+     */
+    RestResponse incrFollowNum(String username);
+
+
+    /**
+     * 粉丝数 + 1
+     *
+     * @param username 用户名
+     * @return {@link RestResponse}
+     */
+    RestResponse incrFollowedNum(String username);
+
+    /**
+     * 重置pwd
+     *
+     * @param userPwdUpdateDTO 用户pwd重置dto
+     * @return {@link RestResponse}
+     */
+    RestResponse updatePwd(UserPwdUpdateDTO userPwdUpdateDTO);
+
+    /**
+     * 查找用户的email
+     *
+     * @param username 用户名
+     * @return {@link RestResponse}
+     */
+    RestResponse getEmailOfCurrentUser(String username);
+
+    /**
+     * 更新email
+     *
+     * @param dto dto
+     * @return {@link RestResponse}
+     */
+    RestResponse updateEmail(UserEmailUpdateDTO dto);
 }

@@ -24,6 +24,15 @@ spring:
           predicates:
             - Path=/user/**
 
+        - id: notice
+          uri: lb://service-notice
+          predicates:
+            - Path=/notice/**
+
+        - id: topic
+          uri: lb://service-topic
+          predicates:
+            - Path=/topic/**
 
 
 configProperties:

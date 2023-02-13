@@ -18,12 +18,10 @@ public enum ResponseCode {
      * 成功
      */
     OK(200, "成功"),
+    FAIL(414, "失败"),
     INVALID_PARAM(415, "无效参数"),
     AUTH_FAIL(416, "身份无效"),
-    REGISTER_FAIL(417,"注册失败"),
-    LOGOFF_FAIL(418,"注销失败"),
-
-    XXX(999,"999");
+    XXX(999, "999");
 
     private final int code;
     private final String message;

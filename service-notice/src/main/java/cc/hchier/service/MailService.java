@@ -17,7 +17,7 @@ public interface MailService {
     /**
      * 生成验证码，写入redis并发送给对应邮箱
      *
-     * @param receiver 接收机
+     * @param receiver 接收者邮箱
      * @throws MessagingException 通讯异常
      */
     void sendAuthCode(String receiver) throws MessagingException;
