@@ -1,0 +1,47 @@
+server:
+  port: 8001
+
+spring:
+  application:
+    name: service-user
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
+  datasource:
+    username: root
+    password: pyh903903
+    url: jdbc:mysql://localhost:3306/hzone?useSSL=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: pyh903903
+
+  #    cluster:
+  #      #各个节点
+  #      nodes: 120.77.13.126:6371,120.77.13.126:6372,120.77.13.126:6373,120.77.13.126:6374,120.77.13.126:6375,120.77.13.126:6376
+  #      # 最大重定向数
+  #      max-redirects: 6
+
+
+# 项目中用到的的常量，通过@Value封装到Component中再调用。
+configProperties:
+  # redis中存放token的hash
+  hashForToken: tokens
+  # token的生存时长（分钟）
+  tokenLifeCycle: 3
+  # redis中存放token过期时间的zset
+  zsetForTokenExpireTime: tokenExpireTime
+  # 验证码生存时长（秒）
+  authCodeLifeCycle: 300
+
+mybatis:
+  #mapper-locations: classpath:hchier\springboot\mapper\*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #输出sql到控制台
+    map-underscore-to-camel-case: true

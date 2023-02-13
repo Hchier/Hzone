@@ -1,0 +1,29 @@
+server:
+  port: 8101
+
+spring:
+  application:
+    name: service-notice
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
+  mail:
+    host: smtp.qq.com
+    username: hchier@qq.com
+    password: dynlazwgwhpshjbd
+    default-encoding: UTF-8
+    protocol: smtp
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: pyh903903
+
+
+# 项目中用到的的常量，通过@Value封装到Component中再调用。
+configProperties:
+  # 验证码生存时长（秒）
+  authCodeLifeCycle: 300

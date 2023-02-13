@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.hchier.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="cc.hchier.entity.User">
+        <id column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="closed" jdbcType="BIT" property="closed"/>
+        <result column="favor_num" jdbcType="INTEGER" property="favorNum"/>
+        <result column="favored_num" jdbcType="INTEGER" property="favoredNum"/>
+        <result column="follow_num" jdbcType="INTEGER" property="followNum"/>
+        <result column="followed_num" jdbcType="INTEGER" property="followedNum"/>
+    </resultMap>
+
+<!--    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">-->
+<!--        delete-->
+<!--        from user-->
+<!--        where username = #{username,jdbcType=VARCHAR}-->
+<!--    </delete>-->
+
+    <insert id="insert" parameterType="cc.hchier.dto.UserRegisterDTO">
+        insert into user (username, password, email)
+        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="selectPasswordByUsername" parameterType="java.lang.String" resultType="java.lang.String">
+        select password from user where username = #{username,jdbcType=VARCHAR} and closed = 0
+    </select>
+
+    <update id="update" parameterType="cc.hchier.entity.User">
+        update user
+        <set>
+            <if test="password!=null">password = #{password},</if>
+            <if test="email!=null">email = #{email},</if>
+            <if test="closed!=null">closed = #{closed},</if>
+            <if test="favorNum!=null">favor_num = #{favor_num},</if>
+            <if test="favoredNum!=null">favored_num = #{favored_num},</if>
+            <if test="followNum!=null">follow_num = #{follow_num},</if>
+            <if test="followedNum!=null">followed_num = #{followed_num},</if>
+        </set>
+        where username = #{username,jdbcType=VARCHAR}
+    </update>
+<!--    -->
+<!--    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">-->
+<!--        select username,-->
+<!--               `password`,-->
+<!--               email,-->
+<!--               closed,-->
+<!--               favor_num,-->
+<!--               favored_num,-->
+<!--               follow_num,-->
+<!--               followed_num-->
+<!--        from user-->
+<!--        where username = #{username,jdbcType=VARCHAR}-->
+<!--    </select>-->
+<!--    -->
+<!--    <select id="selectAll" resultMap="BaseResultMap">-->
+<!--        select username,-->
+<!--               `password`,-->
+<!--               email,-->
+<!--               closed,-->
+<!--               favor_num,-->
+<!--               favored_num,-->
+<!--               follow_num,-->
+<!--               followed_num-->
+<!--        from user-->
+<!--    </select>-->
+</mapper>

@@ -1,0 +1,81 @@
+package cc.hchier.service;
+
+import cc.hchier.ResponseCode;
+import cc.hchier.RestResponse;
+import cc.hchier.Utils;
+import cc.hchier.configuration.ConfigProperties;
+import cc.hchier.dto.UserLoginDTO;
+import cc.hchier.dto.UserRegisterDTO;
+import cc.hchier.entity.User;
+import cc.hchier.mapper.UserMapper;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
+
+/**
+ * @author by Hchier
+ * @Date 2023/2/12 11:57
+ */
+@Service
+public class UserServiceImpl implements UserService {
+    private final RedisTemplate redisTemplate;
+    private final UserMapper userMapper;
+    private final ConfigProperties configProperties;
+
+    public UserServiceImpl(RedisTemplate redisTemplate, UserMapper userMapper, ConfigProperties configProperties) {
+        this.redisTemplate = redisTemplate;
+        this.userMapper = userMapper;
+        this.configProperties = configProperties;
+    }
+
+    @Override
+    public RestResponse register(UserRegisterDTO userRegisterDTO) {
+        if (!userRegisterDTO.getAuthCode().equals(redisTemplate.opsForValue().get(userRegisterDTO.getEmail()))) {
+            return RestResponse.build(ResponseCode.AUTH_FAIL);
+        }
+        userRegisterDTO.setPassword(Utils.md5Encode(userRegisterDTO.getPassword()));
+        if (userMapper.insert(userRegisterDTO) == 0) {
+            return RestResponse.build(ResponseCode.REGISTER_FAIL);
+        }
+        redisTemplate.delete(userRegisterDTO.getEmail());
+        return RestResponse.ok();
+    }
+
+    @Override
+    public RestResponse login(UserLoginDTO userLoginDTO) {
+        if (!Utils.md5Encode(userLoginDTO.getPassword()).equals(userMapper.selectPasswordByUsername(userLoginDTO.getUsername()))) {
+            return RestResponse.build(ResponseCode.AUTH_FAIL);
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
+    public void setToken(String token, String username) {
+        redisTemplate.opsForHash().put(configProperties.hashForToken, token, username);
+        redisTemplate.opsForZSet().add(
+            configProperties.zsetForTokenExpireTime,
+            token,
+            System.currentTimeMillis() + (long) configProperties.tokenLifeCycle * 60 * 1000);
+    }
+
+    @Override
+    public void removeExpiredTokens() {
+        Set expiredTokens = redisTemplate.opsForZSet().rangeByScore(configProperties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
+        if (expiredTokens.isEmpty()) {
+            return;
+        }
+        redisTemplate.opsForZSet().removeRangeByScore(configProperties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
+        for (Object expiredToken : expiredTokens) {
+            redisTemplate.opsForHash().delete(configProperties.hashForToken, expiredToken);
+        }
+    }
+
+    @Override
+    public RestResponse close(String username) {
+        if (userMapper.update(new User().setUsername(username).setClosed(true)) == 0) {
+            return RestResponse.build(ResponseCode.LOGOFF_FAIL);
+        }
+        return RestResponse.ok();
+    }
+}

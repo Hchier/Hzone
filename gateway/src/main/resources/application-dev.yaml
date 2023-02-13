@@ -1,0 +1,38 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: gateway
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: pyh903903
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user
+          uri: lb://service-user
+          predicates:
+            - Path=/user/**
+
+
+
+configProperties:
+  hashForToken: tokens
+  # 无需登录就可以访问的接口
+  whitePaths: '{"/user/register":"null","/user/login":"null"}'
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
