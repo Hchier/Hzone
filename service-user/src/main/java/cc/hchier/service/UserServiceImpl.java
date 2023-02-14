@@ -3,7 +3,7 @@ package cc.hchier.service;
 import cc.hchier.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.Utils;
-import cc.hchier.configuration.ConfigProperties;
+import cc.hchier.Properties;
 import cc.hchier.dto.UserEmailUpdateDTO;
 import cc.hchier.dto.UserLoginDTO;
 import cc.hchier.dto.UserPwdUpdateDTO;
@@ -23,12 +23,12 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
     private final RedisTemplate redisTemplate;
     private final UserMapper userMapper;
-    private final ConfigProperties configProperties;
+    private final Properties properties;
 
-    public UserServiceImpl(RedisTemplate redisTemplate, UserMapper userMapper, ConfigProperties configProperties) {
+    public UserServiceImpl(RedisTemplate redisTemplate, UserMapper userMapper, Properties properties) {
         this.redisTemplate = redisTemplate;
         this.userMapper = userMapper;
-        this.configProperties = configProperties;
+        this.properties = properties;
     }
 
     @Override
@@ -54,22 +54,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setToken(String token, String username) {
-        redisTemplate.opsForHash().put(configProperties.hashForToken, token, username);
+        redisTemplate.opsForHash().put(properties.hashForToken, token, username);
         redisTemplate.opsForZSet().add(
-            configProperties.zsetForTokenExpireTime,
+            properties.zsetForTokenExpireTime,
             token,
-            System.currentTimeMillis() + (long) configProperties.tokenLifeCycle * 60 * 1000);
+            System.currentTimeMillis() + (long) properties.tokenLifeCycle * 60 * 1000);
     }
 
     @Override
     public void removeExpiredTokens() {
-        Set expiredTokens = redisTemplate.opsForZSet().rangeByScore(configProperties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
+        Set expiredTokens = redisTemplate.opsForZSet().rangeByScore(properties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
         if (expiredTokens.isEmpty()) {
             return;
         }
-        redisTemplate.opsForZSet().removeRangeByScore(configProperties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
+        redisTemplate.opsForZSet().removeRangeByScore(properties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
         for (Object expiredToken : expiredTokens) {
-            redisTemplate.opsForHash().delete(configProperties.hashForToken, expiredToken);
+            redisTemplate.opsForHash().delete(properties.hashForToken, expiredToken);
         }
     }
 

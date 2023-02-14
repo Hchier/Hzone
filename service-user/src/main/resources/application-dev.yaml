@@ -29,16 +29,26 @@ spring:
   #      max-redirects: 6
 
 
-# 项目中用到的的常量，通过@Value封装到Component中再调用。
-configProperties:
+properties:
   # redis中存放token的hash
   hashForToken: tokens
-  # token的生存时长（分钟）
-  tokenLifeCycle: 3
+
   # redis中存放token过期时间的zset
   zsetForTokenExpireTime: tokenExpireTime
+
   # 验证码生存时长（秒）
   authCodeLifeCycle: 300
+
+  # token的生存时长（分钟）
+  tokenLifeCycle: 3
+
+  # 无需登录就可以访问的接口
+  whitePaths: '{
+    "/user/register":"null",
+    "/user/login":"null",
+    "/topic/get":"null"
+  }'
+
 
 mybatis:
   #mapper-locations: classpath:hchier\springboot\mapper\*.xml

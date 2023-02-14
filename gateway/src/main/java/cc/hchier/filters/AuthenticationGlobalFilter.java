@@ -2,7 +2,7 @@ package cc.hchier.filters;
 
 import cc.hchier.ResponseCode;
 import cc.hchier.RestResponse;
-import cc.hchier.configuration.ConfigProperties;
+import cc.hchier.Properties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -19,7 +19,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 /**
  * @author by Hchier
@@ -28,13 +27,13 @@ import java.util.List;
 @Component
 public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
     private final RedisTemplate redisTemplate;
-    private final ConfigProperties configProperties;
+    private final Properties properties;
     private final ObjectMapper objectMapper;
 
 
-    public AuthenticationGlobalFilter(RedisTemplate redisTemplate, ConfigProperties configProperties, ObjectMapper objectMapper) {
+    public AuthenticationGlobalFilter(RedisTemplate redisTemplate, Properties properties, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
-        this.configProperties = configProperties;
+        this.properties = properties;
         this.objectMapper = objectMapper;
     }
 
@@ -51,13 +50,13 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
         //访问需要登录的接口
-        if (!configProperties.whitePaths.containsKey(path)) {
+        if (!properties.whitePaths.containsKey(path)) {
             MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
             HttpCookie httpCookie = cookies.getFirst("token");
 
             //存在token
             if (httpCookie != null) {
-                String username = (String) redisTemplate.opsForHash().get(configProperties.hashForToken, httpCookie.getValue());
+                String username = (String) redisTemplate.opsForHash().get(properties.hashForToken, httpCookie.getValue());
                 //token有效
                 if (username != null){
                     ServerHttpRequest.Builder mutate = exchange.getRequest().mutate();

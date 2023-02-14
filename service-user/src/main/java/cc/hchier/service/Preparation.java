@@ -1,6 +1,6 @@
 package cc.hchier.service;
 
-import cc.hchier.configuration.ConfigProperties;
+import cc.hchier.Properties;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,16 +15,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class Preparation implements ApplicationRunner {
     private final RedisTemplate redisTemplate;
-    private ConfigProperties configProperties;
+    private Properties properties;
 
-    public Preparation(RedisTemplate redisTemplate, ConfigProperties configProperties) {
+    public Preparation(RedisTemplate redisTemplate, Properties properties) {
         this.redisTemplate = redisTemplate;
-        this.configProperties = configProperties;
+        this.properties = properties;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        redisTemplate.delete(configProperties.zsetForTokenExpireTime);
-        redisTemplate.delete(configProperties.hashForToken);
+        redisTemplate.delete(properties.zsetForTokenExpireTime);
+        redisTemplate.delete(properties.hashForToken);
     }
 }

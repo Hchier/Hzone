@@ -2,7 +2,7 @@ package cc.hchier.controller;
 
 import cc.hchier.ResponseCode;
 import cc.hchier.RestResponse;
-import cc.hchier.configuration.ConfigProperties;
+import cc.hchier.Properties;
 import cc.hchier.dto.UserEmailUpdateDTO;
 import cc.hchier.dto.UserLoginDTO;
 import cc.hchier.dto.UserPwdUpdateDTO;
@@ -25,9 +25,9 @@ import java.util.UUID;
 @RestController
 public class UserController {
     private final UserService userService;
-    private final ConfigProperties configProperties;
+    private final Properties configProperties;
 
-    public UserController(UserService userService, ConfigProperties configProperties) {
+    public UserController(UserService userService, Properties configProperties) {
         this.userService = userService;
         this.configProperties = configProperties;
     }

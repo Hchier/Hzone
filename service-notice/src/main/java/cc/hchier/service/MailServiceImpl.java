@@ -1,7 +1,7 @@
 package cc.hchier.service;
 
 import cc.hchier.Utils;
-import cc.hchier.configuration.ConfigProperties;
+import cc.hchier.Properties;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,12 +20,12 @@ import java.util.concurrent.TimeUnit;
 public class MailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
     private final RedisTemplate redisTemplate;
-    private final ConfigProperties configProperties;
+    private final Properties properties;
 
-    public MailServiceImpl(JavaMailSender javaMailSender, RedisTemplate redisTemplate, ConfigProperties configProperties) {
+    public MailServiceImpl(JavaMailSender javaMailSender, RedisTemplate redisTemplate, Properties properties) {
         this.javaMailSender = javaMailSender;
         this.redisTemplate = redisTemplate;
-        this.configProperties = configProperties;
+        this.properties = properties;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendAuthCode(String receiver) throws MessagingException {
         String authCode = Utils.authCode(6);
-        redisTemplate.opsForValue().set(receiver, authCode, configProperties.authCodeLifeCycle, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(receiver, authCode, properties.authCodeLifeCycle, TimeUnit.SECONDS);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false);

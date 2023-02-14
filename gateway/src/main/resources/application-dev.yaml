@@ -35,14 +35,27 @@ spring:
             - Path=/topic/**
 
 
-configProperties:
+properties:
+  # redis中存放token的hash
   hashForToken: tokens
+
+  # redis中存放token过期时间的zset
+  zsetForTokenExpireTime: tokenExpireTime
+
+  # 验证码生存时长（秒）
+  authCodeLifeCycle: 300
+
+  # token的生存时长（分钟）
+  tokenLifeCycle: 3
+
   # 无需登录就可以访问的接口
   whitePaths: '{
     "/user/register":"null",
     "/user/login":"null",
     "/topic/get":"null"
   }'
+
+
 
 #management:
 #  endpoints:
