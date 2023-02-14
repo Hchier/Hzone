@@ -21,6 +21,7 @@ public enum ResponseCode {
     FAIL(414, "失败"),
     INVALID_PARAM(415, "无效参数"),
     AUTH_FAIL(416, "身份无效"),
+    TOPIC_NOT_EXIST(417,"话题不存在"),
     XXX(999, "999");
 
     private final int code;

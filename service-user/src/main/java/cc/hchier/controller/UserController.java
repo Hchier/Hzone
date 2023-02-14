@@ -2,6 +2,7 @@ package cc.hchier.controller;
 
 import cc.hchier.ResponseCode;
 import cc.hchier.RestResponse;
+import cc.hchier.configuration.ConfigProperties;
 import cc.hchier.dto.UserEmailUpdateDTO;
 import cc.hchier.dto.UserLoginDTO;
 import cc.hchier.dto.UserPwdUpdateDTO;
@@ -24,9 +25,11 @@ import java.util.UUID;
 @RestController
 public class UserController {
     private final UserService userService;
+    private final ConfigProperties configProperties;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ConfigProperties configProperties) {
         this.userService = userService;
+        this.configProperties = configProperties;
     }
 
     @PostMapping("/user/register")
@@ -39,7 +42,10 @@ public class UserController {
         if (userService.login(dto).getCode() == RestResponse.ok().getCode()) {
             String token = UUID.randomUUID().toString();
             userService.setToken(token, dto.getUsername());
-            resp.addCookie(new Cookie("token", token));
+            Cookie cookie = new Cookie("token", token);
+            cookie.setPath("/");
+            cookie.setMaxAge(configProperties.tokenLifeCycle * 60);
+            resp.addCookie(cookie);
             return RestResponse.ok();
         }
         return RestResponse.build(ResponseCode.AUTH_FAIL);

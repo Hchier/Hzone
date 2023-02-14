@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.hchier.mapper.TopicMapper">
+    <resultMap id="BaseResultMap" type="cc.hchier.entity.Topic">
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="visible" jdbcType="BIT" property="visible"/>
+        <result column="read_num" jdbcType="INTEGER" property="readNum"/>
+        <result column="discussion_num" jdbcType="INTEGER" property="discussionNum"/>
+        <result column="followed_num" jdbcType="INTEGER" property="followedNum"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="java.lang.String">
+        insert into topic (`name`)
+        values (#{name,jdbcType=VARCHAR})
+    </insert>
+
+    <!--  <update id="updateByPrimaryKey" parameterType="cc.hchier.entity.Topic">-->
+    <!--    update topic-->
+    <!--    set `name` = #{name,jdbcType=VARCHAR},-->
+    <!--      visible = #{visible,jdbcType=BIT},-->
+    <!--      read_num = #{readNum,jdbcType=INTEGER},-->
+    <!--      discussion_num = #{discussionNum,jdbcType=INTEGER},-->
+    <!--      followed_num = #{followedNum,jdbcType=INTEGER}-->
+    <!--    where id = #{id,jdbcType=INTEGER}-->
+    <!--  </update>-->
+
+    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select `name`, visible, read_num, discussion_num, followed_num
+        from topic
+        where name = #{name,jdbcType=VARCHAR}
+    </select>
+
+
+    <!--  <select id="selectAll" resultMap="BaseResultMap">-->
+    <!--    select id, `name`, visible, read_num, discussion_num, followed_num-->
+    <!--    from topic-->
+    <!--  </select>-->
+</mapper>

@@ -38,7 +38,11 @@ spring:
 configProperties:
   hashForToken: tokens
   # 无需登录就可以访问的接口
-  whitePaths: '{"/user/register":"null","/user/login":"null"}'
+  whitePaths: '{
+    "/user/register":"null",
+    "/user/login":"null",
+    "/topic/get":"null"
+  }'
 
 #management:
 #  endpoints:
