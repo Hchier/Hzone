@@ -22,4 +22,28 @@ public interface TopicService {
      * @return {@link RestResponse}
      */
     RestResponse get(String name);
+
+    /**
+     * 阅读量+1
+     *
+     * @param name topic_name
+     * @return {@link RestResponse}
+     */
+    RestResponse incrReadNum(String name);
+
+    /**
+     * 讨论量+1
+     *
+     * @param name 名字
+     * @return {@link RestResponse}
+     */
+    RestResponse incrDiscussionNum(String name);
+
+    /**
+     * 关注量+1
+     *
+     * @param name 名字
+     * @return {@link RestResponse}
+     */
+    RestResponse incrFollowedNum(String name);
 }

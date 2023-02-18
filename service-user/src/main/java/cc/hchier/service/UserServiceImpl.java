@@ -3,7 +3,7 @@ package cc.hchier.service;
 import cc.hchier.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.Utils;
-import cc.hchier.Properties;
+import cc.hchier.configuration.Properties;
 import cc.hchier.dto.UserEmailUpdateDTO;
 import cc.hchier.dto.UserLoginDTO;
 import cc.hchier.dto.UserPwdUpdateDTO;

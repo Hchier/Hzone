@@ -29,4 +29,14 @@ public class TopicController {
     public RestResponse get(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
         return topicService.get(name);
     }
+
+    @PostMapping("/topic/incrReadNum")
+    public RestResponse incrReadNum(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
+        return topicService.incrReadNum(name);
+    }
+
+    @PostMapping("/topic/incrDiscussionNum")
+    public RestResponse incrDiscussionNum(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
+        return topicService.incrDiscussionNum(name);
+    }
 }

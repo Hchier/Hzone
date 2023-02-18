@@ -27,6 +27,17 @@ public interface TopicMapper {
      */
     Topic selectByName(String name);
 
+    /**
+     * 各种num + 1
+     * 不为null时生效
+     *
+     * @param topic 主题
+     * @return int
+     */
+    int incrNum(Topic topic);
+
+
+
 //
 //    List<Topic> selectAll();
 //

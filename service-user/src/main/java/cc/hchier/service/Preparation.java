@@ -1,6 +1,6 @@
 package cc.hchier.service;
 
-import cc.hchier.Properties;
+import cc.hchier.configuration.Properties;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.redis.core.RedisTemplate;

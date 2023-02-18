@@ -52,7 +52,8 @@ properties:
   whitePaths: '{
     "/user/register":"null",
     "/user/login":"null",
-    "/topic/get":"null"
+    "/topic/get":"null",
+    "/topic/incrReadNum":"null"
   }'
 
 

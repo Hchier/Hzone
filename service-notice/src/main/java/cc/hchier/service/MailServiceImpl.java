@@ -1,7 +1,7 @@
 package cc.hchier.service;
 
 import cc.hchier.Utils;
-import cc.hchier.Properties;
+import cc.hchier.configuration.Properties;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;

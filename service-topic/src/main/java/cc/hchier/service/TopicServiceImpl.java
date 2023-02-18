@@ -34,4 +34,28 @@ public class TopicServiceImpl implements TopicService {
         Topic topic = topicMapper.selectByName(name);
         return topic != null ? RestResponse.ok(topic) : RestResponse.build(ResponseCode.TOPIC_NOT_EXIST);
     }
+
+    @Override
+    public RestResponse incrReadNum(String name) {
+        if (topicMapper.incrNum(new Topic().setName(name).setReadNum(6)) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
+    public RestResponse incrDiscussionNum(String name) {
+        if (topicMapper.incrNum(new Topic().setName(name).setDiscussionNum(6)) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
+    public RestResponse incrFollowedNum(String name) {
+        if (topicMapper.incrNum(new Topic().setName(name).setFollowedNum(6)) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
 }

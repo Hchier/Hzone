@@ -2,7 +2,7 @@ package cc.hchier.filters;
 
 import cc.hchier.ResponseCode;
 import cc.hchier.RestResponse;
-import cc.hchier.Properties;
+import cc.hchier.configuration.Properties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

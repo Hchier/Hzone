@@ -30,6 +30,15 @@
         where name = #{name,jdbcType=VARCHAR}
     </select>
 
+    <update id="incrNum" parameterType="cc.hchier.entity.Topic">
+        update topic
+        <set>
+            <if test="readNum!=null">read_num = read_num + 1 ,</if>
+            <if test="discussionNum!=null">discussion_num = discussion_num + 1,</if>
+            <if test="followedNum!=null">followed_num = followed_num + 1,</if>
+        </set>
+        where name = #{name}
+    </update>
 
     <!--  <select id="selectAll" resultMap="BaseResultMap">-->
     <!--    select id, `name`, visible, read_num, discussion_num, followed_num-->

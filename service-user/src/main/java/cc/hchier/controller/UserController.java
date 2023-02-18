@@ -2,7 +2,7 @@ package cc.hchier.controller;
 
 import cc.hchier.ResponseCode;
 import cc.hchier.RestResponse;
-import cc.hchier.Properties;
+import cc.hchier.configuration.Properties;
 import cc.hchier.dto.UserEmailUpdateDTO;
 import cc.hchier.dto.UserLoginDTO;
 import cc.hchier.dto.UserPwdUpdateDTO;
@@ -25,11 +25,11 @@ import java.util.UUID;
 @RestController
 public class UserController {
     private final UserService userService;
-    private final Properties configProperties;
+    private final Properties properties;
 
-    public UserController(UserService userService, Properties configProperties) {
+    public UserController(UserService userService, Properties properties) {
         this.userService = userService;
-        this.configProperties = configProperties;
+        this.properties = properties;
     }
 
     @PostMapping("/user/register")
@@ -44,7 +44,7 @@ public class UserController {
             userService.setToken(token, dto.getUsername());
             Cookie cookie = new Cookie("token", token);
             cookie.setPath("/");
-            cookie.setMaxAge(configProperties.tokenLifeCycle * 60);
+            cookie.setMaxAge(properties.tokenLifeCycle * 60);
             resp.addCookie(cookie);
             return RestResponse.ok();
         }
