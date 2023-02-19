@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionHandlerController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public RestResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public RestResponse<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         return RestResponse.build(ResponseCode.INVALID_PARAM,
             "MethodArgumentNotValidException: " + e.getBindingResult().getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList()));
     }
 
     @ExceptionHandler(Exception.class)
-    public RestResponse handleException(Exception e) {
+    public RestResponse<Object> handleException(Exception e) {
         return RestResponse.build(ResponseCode.XXX, e.getMessage());
     }
 }

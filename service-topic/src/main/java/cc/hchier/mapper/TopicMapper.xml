@@ -4,7 +4,9 @@
     <resultMap id="BaseResultMap" type="cc.hchier.entity.Topic">
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="visible" jdbcType="BIT" property="visible"/>
-        <result column="read_num" jdbcType="INTEGER" property="readNum"/>
+        <result column="total_read_num" jdbcType="INTEGER" property="totalReadNum"/>
+        <result column="week_read_num" jdbcType="INTEGER" property="weekReadNum"/>
+        <result column="day_read_num" jdbcType="INTEGER" property="dayReadNum"/>
         <result column="discussion_num" jdbcType="INTEGER" property="discussionNum"/>
         <result column="followed_num" jdbcType="INTEGER" property="followedNum"/>
     </resultMap>
@@ -25,7 +27,7 @@
     <!--  </update>-->
 
     <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select `name`, visible, read_num, discussion_num, followed_num
+        select `name`, visible, total_read_num, week_read_num, day_read_num, discussion_num, followed_num
         from topic
         where name = #{name,jdbcType=VARCHAR}
     </select>
@@ -33,13 +35,62 @@
     <update id="incrNum" parameterType="cc.hchier.entity.Topic">
         update topic
         <set>
-            <if test="readNum!=null">read_num = read_num + 1 ,</if>
+            <if test="totalReadNum!=null">total_read_num = total_read_num + 1 ,</if>
+            <if test="weekReadNum!=null">week_read_num = week_read_num + 1 ,</if>
+            <if test="dayReadNum!=null">day_read_num = day_read_num + 1 ,</if>
             <if test="discussionNum!=null">discussion_num = discussion_num + 1,</if>
             <if test="followedNum!=null">followed_num = followed_num + 1,</if>
         </set>
         where name = #{name}
     </update>
 
+    <select id="selectTopByTotalReadNum" resultMap="BaseResultMap">
+        select name, total_read_num
+        from topic
+        order by total_read_num desc limit 0, 10
+    </select>
+
+    <select id="selectTopByWeekReadNum" resultMap="BaseResultMap">
+        select name, week_read_num
+        from topic
+        order by week_read_num desc limit 0, 10
+    </select>
+
+    <select id="selectTopByDayReadNum" resultMap="BaseResultMap">
+        select name, day_read_num
+        from topic
+        order by day_read_num desc limit 0, 10
+    </select>
+
+    <update id="updateTotalReadNum" parameterType="java.util.List">
+        insert into topic (name, total_read_num) values
+        <foreach collection="topicList" open="" close="" separator="," item="topic">
+            (#{topic.name}, #{topic.totalReadNum})
+        </foreach>
+        on duplicate key update
+        name=values(name),
+        total_read_num=values(total_read_num);
+    </update>
+
+    <update id="updateWeekReadNum" parameterType="java.util.List">
+        insert into topic (name, week_read_num) values
+        <foreach collection="topicList" open="" close="" separator="," item="topic">
+            (#{topic.name}, #{topic.weekReadNum})
+        </foreach>
+        on duplicate key update
+        name=values(name),
+        week_read_num=values(week_read_num);
+    </update>
+
+    <update id="updateDayReadNum" parameterType="java.util.List">
+        insert into topic (name, day_read_num) values
+        <foreach collection="topicList" open="" close="" separator="," item="topic">
+            (#{topic.name}, #{topic.dayReadNum})
+        </foreach>
+        on duplicate key update
+        name=values(name),
+        day_read_num=values(day_read_num);
+    </update>
     <!--  <select id="selectAll" resultMap="BaseResultMap">-->
     <!--    select id, `name`, visible, read_num, discussion_num, followed_num-->
     <!--    from topic-->

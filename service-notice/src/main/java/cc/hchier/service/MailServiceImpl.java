@@ -19,10 +19,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class MailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final Properties properties;
 
-    public MailServiceImpl(JavaMailSender javaMailSender, RedisTemplate redisTemplate, Properties properties) {
+    public MailServiceImpl(JavaMailSender javaMailSender, RedisTemplate<String, Object> redisTemplate, Properties properties) {
         this.javaMailSender = javaMailSender;
         this.redisTemplate = redisTemplate;
         this.properties = properties;

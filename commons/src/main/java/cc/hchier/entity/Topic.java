@@ -20,7 +20,11 @@ public class Topic implements Serializable {
 
     private Boolean visible;
 
-    private Integer readNum;
+    private Integer totalReadNum;
+
+    private Integer weekReadNum;
+
+    private Integer dayReadNum;
 
     private Integer discussionNum;
 

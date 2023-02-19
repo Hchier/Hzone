@@ -26,12 +26,12 @@ import java.nio.charset.StandardCharsets;
  */
 @Component
 public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final Properties properties;
     private final ObjectMapper objectMapper;
 
 
-    public AuthenticationGlobalFilter(RedisTemplate redisTemplate, Properties properties, ObjectMapper objectMapper) {
+    public AuthenticationGlobalFilter(RedisTemplate<String, Object> redisTemplate, Properties properties, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
         this.properties = properties;
         this.objectMapper = objectMapper;

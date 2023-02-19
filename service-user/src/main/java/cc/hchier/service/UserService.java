@@ -17,7 +17,7 @@ public interface UserService {
      * @param userRegisterDTO 用户注册dto
      * @return {@link RestResponse}
      */
-    RestResponse register(UserRegisterDTO userRegisterDTO);
+    RestResponse<Object> register(UserRegisterDTO userRegisterDTO);
 
     /**
      * 用户登录。密码错误或账号被ban均无法登录。
@@ -25,7 +25,7 @@ public interface UserService {
      * @param userLoginDTO 用户登录dto
      * @return {@link RestResponse}
      */
-    RestResponse login(UserLoginDTO userLoginDTO);
+    RestResponse<Object> login(UserLoginDTO userLoginDTO);
 
     /**
      *  2件事。
@@ -49,7 +49,7 @@ public interface UserService {
      * @param username 用户名
      * @return {@link RestResponse}
      */
-    RestResponse close(String username);
+    RestResponse<Object> close(String username);
 
 
     /**
@@ -58,7 +58,7 @@ public interface UserService {
      * @param username 用户名
      * @return {@link RestResponse}
      */
-    RestResponse incrFavorNum(String username);
+    RestResponse<Object> incrFavorNum(String username);
 
     /**
      * 被点赞量 +1
@@ -66,7 +66,7 @@ public interface UserService {
      * @param username 用户名
      * @return {@link RestResponse}
      */
-    RestResponse incrFavoredNum(String username);
+    RestResponse<Object> incrFavoredNum(String username);
 
     /**
      * 偶像数量 + 1
@@ -74,7 +74,7 @@ public interface UserService {
      * @param username 用户名
      * @return {@link RestResponse}
      */
-    RestResponse incrFollowNum(String username);
+    RestResponse<Object> incrFollowNum(String username);
 
 
     /**
@@ -83,7 +83,7 @@ public interface UserService {
      * @param username 用户名
      * @return {@link RestResponse}
      */
-    RestResponse incrFollowedNum(String username);
+    RestResponse<Object> incrFollowedNum(String username);
 
     /**
      * 重置pwd
@@ -91,7 +91,7 @@ public interface UserService {
      * @param userPwdUpdateDTO 用户pwd重置dto
      * @return {@link RestResponse}
      */
-    RestResponse updatePwd(UserPwdUpdateDTO userPwdUpdateDTO);
+    RestResponse<Object> updatePwd(UserPwdUpdateDTO userPwdUpdateDTO);
 
     /**
      * 查找用户的email
@@ -99,7 +99,7 @@ public interface UserService {
      * @param username 用户名
      * @return {@link RestResponse}
      */
-    RestResponse getEmailOfCurrentUser(String username);
+    RestResponse<Object> getEmailOfCurrentUser(String username);
 
     /**
      * 更新email
@@ -107,5 +107,5 @@ public interface UserService {
      * @param dto dto
      * @return {@link RestResponse}
      */
-    RestResponse updateEmail(UserEmailUpdateDTO dto);
+    RestResponse<Object> updateEmail(UserEmailUpdateDTO dto);
 }

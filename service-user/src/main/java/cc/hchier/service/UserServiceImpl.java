@@ -21,18 +21,18 @@ import java.util.Set;
  */
 @Service
 public class UserServiceImpl implements UserService {
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final UserMapper userMapper;
     private final Properties properties;
 
-    public UserServiceImpl(RedisTemplate redisTemplate, UserMapper userMapper, Properties properties) {
+    public UserServiceImpl(RedisTemplate<String, Object> redisTemplate, UserMapper userMapper, Properties properties) {
         this.redisTemplate = redisTemplate;
         this.userMapper = userMapper;
         this.properties = properties;
     }
 
     @Override
-    public RestResponse register(UserRegisterDTO userRegisterDTO) {
+    public RestResponse<Object> register(UserRegisterDTO userRegisterDTO) {
         if (!userRegisterDTO.getAuthCode().equals(redisTemplate.opsForValue().get(userRegisterDTO.getEmail()))) {
             return RestResponse.build(ResponseCode.AUTH_FAIL);
         }
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestResponse login(UserLoginDTO userLoginDTO) {
+    public RestResponse<Object> login(UserLoginDTO userLoginDTO) {
         if (!Utils.md5Encode(userLoginDTO.getPassword()).equals(userMapper.selectPasswordByUsername(userLoginDTO.getUsername()))) {
             return RestResponse.build(ResponseCode.AUTH_FAIL);
         }
@@ -63,8 +63,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void removeExpiredTokens() {
-        Set expiredTokens = redisTemplate.opsForZSet().rangeByScore(properties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
-        if (expiredTokens.isEmpty()) {
+        Set<Object> expiredTokens = redisTemplate.opsForZSet().rangeByScore(properties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
+        if (expiredTokens == null || expiredTokens.isEmpty()) {
             return;
         }
         redisTemplate.opsForZSet().removeRangeByScore(properties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestResponse close(String username) {
+    public RestResponse<Object> close(String username) {
         if (userMapper.update(new User().setUsername(username).setClosed(true)) == 0) {
             return RestResponse.fail();
         }
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestResponse incrFavorNum(String username) {
+    public RestResponse<Object> incrFavorNum(String username) {
         if (userMapper.incrNum(new User().setUsername(username).setFavorNum(6)) == 0) {
             return RestResponse.fail();
         }
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestResponse incrFavoredNum(String username) {
+    public RestResponse<Object> incrFavoredNum(String username) {
         if (userMapper.incrNum(new User().setUsername(username).setFavoredNum(6)) == 0) {
             return RestResponse.fail();
         }
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestResponse incrFollowNum(String username) {
+    public RestResponse<Object> incrFollowNum(String username) {
         if (userMapper.incrNum(new User().setUsername(username).setFollowNum(6)) == 0) {
             return RestResponse.fail();
         }
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestResponse incrFollowedNum(String username) {
+    public RestResponse<Object> incrFollowedNum(String username) {
         if (userMapper.incrNum(new User().setUsername(username).setFollowedNum(6)) == 0) {
             return RestResponse.fail();
         }
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestResponse updatePwd(UserPwdUpdateDTO dto) {
+    public RestResponse<Object> updatePwd(UserPwdUpdateDTO dto) {
         if (!dto.getAuthCode().equals(redisTemplate.opsForValue().get(dto.getEmail()))) {
             return RestResponse.build(ResponseCode.AUTH_FAIL);
         }
@@ -128,12 +128,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestResponse getEmailOfCurrentUser(String username) {
+    public RestResponse<Object> getEmailOfCurrentUser(String username) {
         return RestResponse.ok(userMapper.selectEmailByUsername(username));
     }
 
     @Override
-    public RestResponse updateEmail(UserEmailUpdateDTO dto) {
+    public RestResponse<Object> updateEmail(UserEmailUpdateDTO dto) {
         if (!dto.getAuthCode().equals(redisTemplate.opsForValue().get(dto.getNewEmail()))) {
             return RestResponse.build(ResponseCode.AUTH_FAIL);
         }

@@ -21,22 +21,27 @@ public class TopicController {
     }
 
     @PostMapping("/topic/add")
-    public RestResponse add(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
+    public RestResponse<Object> add(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
         return topicService.add(name);
     }
 
     @PostMapping("/topic/get")
-    public RestResponse get(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
+    public RestResponse<Object> get(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
         return topicService.get(name);
     }
 
     @PostMapping("/topic/incrReadNum")
-    public RestResponse incrReadNum(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
+    public RestResponse<Object> incrReadNum(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
         return topicService.incrReadNum(name);
     }
 
     @PostMapping("/topic/incrDiscussionNum")
-    public RestResponse incrDiscussionNum(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
+    public RestResponse<Object> incrDiscussionNum(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name) {
         return topicService.incrDiscussionNum(name);
+    }
+
+    @PostMapping("/topic/incrFollowedNum")
+    public RestResponse<Object> incrFollowedNum(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name){
+        return topicService.incrFollowedNum(name);
     }
 }

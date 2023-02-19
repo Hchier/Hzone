@@ -1,5 +1,6 @@
-package cc.hchier.service;
+package cc.hchier.task;
 
+import cc.hchier.service.UserService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

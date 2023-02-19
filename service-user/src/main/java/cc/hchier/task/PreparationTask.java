@@ -1,4 +1,4 @@
-package cc.hchier.service;
+package cc.hchier.task;
 
 import cc.hchier.configuration.Properties;
 import org.springframework.boot.ApplicationArguments;
@@ -13,17 +13,17 @@ import org.springframework.stereotype.Component;
  * @Date 2023/2/12 21:37
  */
 @Component
-public class Preparation implements ApplicationRunner {
-    private final RedisTemplate redisTemplate;
-    private Properties properties;
+public class PreparationTask implements ApplicationRunner {
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final Properties properties;
 
-    public Preparation(RedisTemplate redisTemplate, Properties properties) {
+    public PreparationTask(RedisTemplate<String, Object> redisTemplate, Properties properties) {
         this.redisTemplate = redisTemplate;
         this.properties = properties;
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         redisTemplate.delete(properties.zsetForTokenExpireTime);
         redisTemplate.delete(properties.hashForToken);
     }

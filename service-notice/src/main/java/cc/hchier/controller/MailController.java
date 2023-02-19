@@ -14,14 +14,14 @@ import javax.mail.MessagingException;
  */
 @RestController
 public class MailController {
-    private MailService mailService;
+    private final MailService mailService;
 
     public MailController(MailService mailService) {
         this.mailService = mailService;
     }
 
     @PostMapping("/notice/sendAuthCode/{receiver}")
-    public RestResponse sendAuthCode(@PathVariable String receiver) throws MessagingException {
+    public RestResponse<Object> sendAuthCode(@PathVariable String receiver) throws MessagingException {
         mailService.sendAuthCode(receiver);
         return RestResponse.ok();
     }
