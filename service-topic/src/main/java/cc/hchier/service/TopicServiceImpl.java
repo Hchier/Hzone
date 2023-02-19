@@ -154,4 +154,55 @@ public class TopicServiceImpl implements TopicService {
             topicMapper.updateDayReadNum(list);
         }
     }
+
+    @Override
+    public RestResponse<List<Topic>> getTotalReadNumChart() {
+        List<Topic> list = new ArrayList<>();
+        Set<ZSetOperations.TypedTuple<Object>> totalChart = redisTemplate.opsForZSet().reverseRangeWithScores(properties.topicTotalReadNumChart, 0, -1);
+        if (totalChart == null || totalChart.isEmpty()) {
+            return RestResponse.ok();
+        }
+        for (ZSetOperations.TypedTuple<Object> item : totalChart) {
+            String topicName = (String) item.getValue();
+            Double readNumD = item.getScore();
+            assert readNumD != null;
+            int readNum = (int) Math.round(readNumD);
+            list.add(new Topic().setName(topicName).setTotalReadNum(readNum));
+        }
+        return RestResponse.ok(list);
+    }
+
+    @Override
+    public RestResponse<List<Topic>> getWeekReadNumChart() {
+        List<Topic> list = new ArrayList<>();
+        Set<ZSetOperations.TypedTuple<Object>> weekChart = redisTemplate.opsForZSet().reverseRangeWithScores(properties.topicWeekReadNumChart, 0, -1);
+        if (weekChart == null || weekChart.isEmpty()) {
+            return RestResponse.ok();
+        }
+        for (ZSetOperations.TypedTuple<Object> item : weekChart) {
+            String topicName = (String) item.getValue();
+            Double readNumD = item.getScore();
+            assert readNumD != null;
+            int readNum = (int) Math.round(readNumD);
+            list.add(new Topic().setName(topicName).setWeekReadNum(readNum));
+        }
+        return RestResponse.ok(list);
+    }
+
+    @Override
+    public RestResponse<List<Topic>> getDayReadNumChart() {
+        List<Topic> list = new ArrayList<>();
+        Set<ZSetOperations.TypedTuple<Object>> dayChart = redisTemplate.opsForZSet().reverseRangeWithScores(properties.topicDayReadNumChart, 0, -1);
+        if (dayChart == null || dayChart.isEmpty()) {
+            return RestResponse.ok();
+        }
+        for (ZSetOperations.TypedTuple<Object> item : dayChart) {
+            String topicName = (String) item.getValue();
+            Double readNumD = item.getScore();
+            assert readNumD != null;
+            int readNum = (int) Math.round(readNumD);
+            list.add(new Topic().setName(topicName).setDayReadNum(readNum));
+        }
+        return RestResponse.ok(list);
+    }
 }

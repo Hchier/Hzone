@@ -1,11 +1,13 @@
 package cc.hchier.controller;
 
 import cc.hchier.RestResponse;
+import cc.hchier.entity.Topic;
 import cc.hchier.service.TopicService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * @author by Hchier
@@ -43,5 +45,20 @@ public class TopicController {
     @PostMapping("/topic/incrFollowedNum")
     public RestResponse<Object> incrFollowedNum(@NotBlank(message = "topicName为blank") @RequestParam(name = "name") String name){
         return topicService.incrFollowedNum(name);
+    }
+
+    @PostMapping("/topic/totalReadNumChart")
+    public RestResponse<List<Topic>> getTotalReadNumChart(){
+        return topicService.getTotalReadNumChart();
+    }
+
+    @PostMapping("/topic/weekReadNumChart")
+    public RestResponse<List<Topic>> geWeekReadNumChart(){
+        return topicService.getWeekReadNumChart();
+    }
+
+    @PostMapping("/topic/dayReadNumChart")
+    public RestResponse<List<Topic>> getDayReadNumChart(){
+        return topicService.getDayReadNumChart();
     }
 }

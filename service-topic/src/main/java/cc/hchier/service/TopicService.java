@@ -1,6 +1,9 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
+import cc.hchier.entity.Topic;
+
+import java.util.List;
 
 /**
  * @author hchier
@@ -62,5 +65,26 @@ public interface TopicService {
      * 将redis中的数据写入MySQL
      */
     void updateReadNum();
+
+    /**
+     * 得到话题总阅读榜
+     *
+     * @return {@link RestResponse}<{@link List}>
+     */
+    RestResponse<List<Topic>> getTotalReadNumChart();
+
+    /**
+     * 得到话题周阅读榜
+     *
+     * @return {@link RestResponse}<{@link List}<{@link Topic}>>
+     */
+    RestResponse<List<Topic>> getWeekReadNumChart();
+
+    /**
+     * 得到话题日阅读榜
+     *
+     * @return {@link RestResponse}<{@link List}<{@link Topic}>>
+     */
+    RestResponse<List<Topic>> getDayReadNumChart();
 
 }
