@@ -1,0 +1,28 @@
+server:
+  port: 8031
+
+spring:
+  application:
+    name: service-wall
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
+  datasource:
+    username: root
+    password: pyh903903
+    url: jdbc:mysql://localhost:3306/hzone?useSSL=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: pyh903903
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #输出sql到控制台
+    map-underscore-to-camel-case: true

@@ -19,6 +19,10 @@ public class User implements Serializable {
 
     private String password;
 
+    private String avatar;
+
+    private String signature;
+
     private String email;
 
     private Boolean closed;

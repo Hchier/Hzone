@@ -47,32 +47,61 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
      */
     @SneakyThrows
     @Override
+//    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+//        String path = exchange.getRequest().getPath().value();
+//        //访问需要登录的接口
+//        if (!properties.whitePaths.containsKey(path)) {
+//            MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
+//            HttpCookie httpCookie = cookies.getFirst("token");
+//
+//            //存在token
+//            if (httpCookie != null) {
+//                String username = (String) redisTemplate.opsForHash().get(properties.hashForToken, httpCookie.getValue());
+//                //token有效
+//                if (username != null){
+//                    ServerHttpRequest.Builder mutate = exchange.getRequest().mutate();
+//                    //将username放入请求头中，后续服务直接从请求头中得到当前用户身份
+//                    mutate.header("username", username);
+//                    ServerHttpRequest build = mutate.build();
+//                    exchange.mutate().request(build).build();
+//                    return chain.filter(exchange);
+//                }
+//            }
+//            //token无效，则直接拦截请求
+//            exchange.getResponse().setStatusCode(HttpStatus.OK);
+//            byte[] bytes = objectMapper.writeValueAsString(RestResponse.build(ResponseCode.AUTH_FAIL)).getBytes(StandardCharsets.UTF_8);
+//            DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
+//            return exchange.getResponse().writeWith(Mono.just(buffer));
+//        }
+//        return chain.filter(exchange);
+//    }
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
-        //访问需要登录的接口
-        if (!properties.whitePaths.containsKey(path)) {
-            MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
-            HttpCookie httpCookie = cookies.getFirst("token");
 
-            //存在token
-            if (httpCookie != null) {
-                String username = (String) redisTemplate.opsForHash().get(properties.hashForToken, httpCookie.getValue());
-                //token有效
-                if (username != null){
-                    ServerHttpRequest.Builder mutate = exchange.getRequest().mutate();
-                    //将username放入请求头中，后续服务直接从请求头中得到当前用户身份
-                    mutate.header("username", username);
-                    ServerHttpRequest build = mutate.build();
-                    exchange.mutate().request(build).build();
-                    return chain.filter(exchange);
-                }
+        MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
+        HttpCookie httpCookie = cookies.getFirst("token");
+
+        //存在token
+        if (httpCookie != null) {
+            String username = (String) redisTemplate.opsForHash().get(properties.hashForToken, httpCookie.getValue());
+            //token有效
+            if (username != null){
+                ServerHttpRequest.Builder mutate = exchange.getRequest().mutate();
+                //将username放入请求头中，后续服务直接从请求头中得到当前用户身份
+                mutate.header("username", username);
+                ServerHttpRequest build = mutate.build();
+                exchange.mutate().request(build).build();
+                return chain.filter(exchange);
             }
-            //token无效，则直接拦截请求
+        }
+        //不存在token或token无效 且 访问需要登录才能访问的接口，则直接拦截请求
+        else if (!properties.whitePaths.containsKey(path)) {
             exchange.getResponse().setStatusCode(HttpStatus.OK);
             byte[] bytes = objectMapper.writeValueAsString(RestResponse.build(ResponseCode.AUTH_FAIL)).getBytes(StandardCharsets.UTF_8);
             DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
             return exchange.getResponse().writeWith(Mono.just(buffer));
         }
+
         return chain.filter(exchange);
     }
 

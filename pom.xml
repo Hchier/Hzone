@@ -13,6 +13,7 @@
         <module>service-notice</module>
         <module>commons</module>
         <module>service-topic</module>
+        <module>service-wall</module>
     </modules>
 
     <packaging>pom</packaging>
