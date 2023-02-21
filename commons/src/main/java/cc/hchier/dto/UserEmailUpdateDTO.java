@@ -18,8 +18,9 @@ public class UserEmailUpdateDTO {
     private String username;
 
     @Email(message = "邮箱格式错误")
+    @NotBlank(message = "邮箱blank")
     private String newEmail;
 
-    @NotBlank(message = "验证码不能为blank")
+    @NotBlank(message = "验证码blank")
     private String authCode;
 }

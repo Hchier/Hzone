@@ -14,6 +14,7 @@
         <module>commons</module>
         <module>service-topic</module>
         <module>service-wall</module>
+        <module>service-blog</module>
     </modules>
 
     <packaging>pom</packaging>

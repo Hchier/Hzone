@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.hchier.mapper.BlogMapper">
+    <resultMap id="BaseResultMap" type="cc.hchier.entity.Blog">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="publisher" jdbcType="VARCHAR" property="publisher"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="favor_num" jdbcType="INTEGER" property="favorNum"/>
+        <result column="comment_num" jdbcType="INTEGER" property="commentNum"/>
+        <result column="reward_num" jdbcType="INTEGER" property="rewardNum"/>
+        <result column="self_visible" jdbcType="BIT" property="selfVisible"/>
+        <result column="hidden" jdbcType="BIT" property="hidden"/>
+        <result column="comment_forbidden" jdbcType="BIT" property="commentForbidden"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="topic" jdbcType="VARCHAR" property="topic"/>
+        <result column="deleted" jdbcType="BIT" property="deleted"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey">
+        update blog
+        set deleted = 1
+        where id = #{id}
+          and publisher = #{publisher}
+    </delete>
+
+    <insert id="insert" parameterType="cc.hchier.dto.BlogPublishDTO">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into blog (publisher, title, content, update_time, topic)
+        values (
+        #{publisher,jdbcType=VARCHAR},
+        #{title,jdbcType=VARCHAR},
+        #{content,jdbcType=VARCHAR},
+        #{updateTime,jdbcType=TIMESTAMP},
+        #{topic,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="cc.hchier.dto.BlogUpdateDTO">
+        update blog
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="selfVisible != null">self_visible = #{selfVisible},</if>
+            <if test="commentForbidden != null">comment_forbidden = #{commentForbidden},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+            where id = #{id} and publisher = #{publisher}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               publisher,
+               title,
+               content,
+               favor_num,
+               comment_num,
+               reward_num,
+               self_visible,
+               hidden,
+               comment_forbidden,
+               update_time,
+               topic,
+               deleted
+        from blog
+        where id = #{id,jdbcType=INTEGER} and deleted = 0
+    </select>
+</mapper>

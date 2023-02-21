@@ -1,10 +1,5 @@
 package cc.hchier;
 
-/**
- * @author by Hchier
- * @Date 2023/2/12 13:50
- */
-
 import lombok.AllArgsConstructor;
 
 /**
@@ -21,7 +16,8 @@ public enum ResponseCode {
     FAIL(414, "失败"),
     INVALID_PARAM(415, "无效参数"),
     AUTH_FAIL(416, "身份无效"),
-    TOPIC_NOT_EXIST(417,"话题不存在"),
+    TOPIC_NOT_EXIST(417, "话题不存在"),
+    PERMISSION_DENIED(418, "无权访问"),
     XXX(999, "999");
 
     private final int code;

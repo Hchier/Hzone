@@ -14,9 +14,9 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserLoginDTO {
-    @NotBlank(message = "username不能为blank")
+    @NotBlank(message = "username blank")
     private String username;
 
-    @NotBlank(message = "password不能为blank")
+    @NotBlank(message = "password blank")
     private String password;
 }

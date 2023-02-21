@@ -39,6 +39,10 @@ spring:
           predicates:
             - Path=/wall/**
 
+        - id: blog
+          uri: lb://service-blog
+          predicates:
+            - Path=/blog/**
 
 properties:
   # redis中存放token的hash
@@ -48,12 +52,10 @@ properties:
   whitePaths: '{
     "/user/register":"null",
     "/user/login":"null",
-    "/topic/get":"null",
     "/topic/incrReadNum":"null",
     "/topic/totalReadNumChart":"null",
     "/topic/weekReadNumChart":"null",
-    "/topic/dayReadNumChart":"null",
-    "/wall/get":"null"
+    "/topic/dayReadNumChart":"null"
   }'
 
 

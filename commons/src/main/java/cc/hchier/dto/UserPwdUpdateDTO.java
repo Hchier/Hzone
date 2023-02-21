@@ -18,12 +18,13 @@ public class UserPwdUpdateDTO {
 
     private String username;
 
-    @NotBlank(message = "password不能为blank")
+    @NotBlank(message = "password blank")
     private String password;
 
     @Email(message = "邮箱格式错误")
+    @NotBlank(message = "email blank")
     private String email;
 
-    @NotBlank(message = "验证码不能为blank")
+    @NotBlank(message = "验证码blank")
     private String authCode;
 }
