@@ -37,20 +37,18 @@ public class BlogController {
         if (dto.getTopic() != null && dto.getTopic().isEmpty()) {
             dto.setTopic(null);
         }
-        return blogService.publish(
-            dto
-                .setPublisher(req.getHeader("username"))
-                .setUpdateTime(new Date())
-        );
+        return blogService.publish(dto.setPublisher(req.getHeader("username")).setUpdateTime(new Date()));
     }
 
     @PostMapping("/blog/update")
     public RestResponse<Object> update(@RequestBody @Valid BlogUpdateDTO dto, HttpServletRequest req) {
-        return blogService.update(dto.setPublisher(req.getHeader("username")));
+        return blogService.update(dto.setPublisher(req.getHeader("username")).setUpdateTime(new Date()));
     }
 
     @PostMapping("/blog/get/{id}")
     public RestResponse<Object> get(@PathVariable Integer id, HttpServletRequest req) {
         return blogService.get(id, req.getHeader("username"));
     }
+
+
 }

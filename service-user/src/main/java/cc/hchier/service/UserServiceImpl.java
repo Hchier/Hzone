@@ -82,32 +82,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RestResponse<Object> incrFavorNum(String username) {
-        if (userMapper.incrNum(new User().setUsername(username).setFavorNum(6)) == 0) {
+    public RestResponse<Object> incrFavorNum(String username, int incr) {
+        if (userMapper.incrNum(new User().setUsername(username).setFavorNum(incr)) == 0) {
             return RestResponse.fail();
         }
         return RestResponse.ok();
     }
 
     @Override
-    public RestResponse<Object> incrFavoredNum(String username) {
-        if (userMapper.incrNum(new User().setUsername(username).setFavoredNum(6)) == 0) {
+    public RestResponse<Object> incrFavoredNum(String username, int incr) {
+        if (userMapper.incrNum(new User().setUsername(username).setFavoredNum(incr)) == 0) {
             return RestResponse.fail();
         }
         return RestResponse.ok();
     }
 
     @Override
-    public RestResponse<Object> incrFollowNum(String username) {
-        if (userMapper.incrNum(new User().setUsername(username).setFollowNum(6)) == 0) {
+    public RestResponse<Object> incrFollowNum(String username, int incr) {
+        if (userMapper.incrNum(new User().setUsername(username).setFollowNum(incr)) == 0) {
             return RestResponse.fail();
         }
         return RestResponse.ok();
     }
 
     @Override
-    public RestResponse<Object> incrFollowedNum(String username) {
-        if (userMapper.incrNum(new User().setUsername(username).setFollowedNum(6)) == 0) {
+    public RestResponse<Object> incrFollowedNum(String username, int incr) {
+        if (userMapper.incrNum(new User().setUsername(username).setFollowedNum(incr)) == 0) {
             return RestResponse.fail();
         }
         return RestResponse.ok();

@@ -18,6 +18,10 @@ public enum ResponseCode {
     AUTH_FAIL(416, "身份无效"),
     TOPIC_NOT_EXIST(417, "话题不存在"),
     PERMISSION_DENIED(418, "无权访问"),
+
+    BLOG_FAVOR_REPEAT(419, "博客重复点赞"),
+
+    BLOG_FAVOR_NOT_EXIST(420, "博客未点赞"),
     XXX(999, "999");
 
     private final int code;

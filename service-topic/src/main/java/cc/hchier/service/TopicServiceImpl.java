@@ -46,29 +46,29 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public RestResponse<Object> incrReadNum(String name) {
+    public RestResponse<Object> incrReadNum(String name,int incr) {
         boolean existInRedis = false;
 
         if (Boolean.TRUE.equals(redisTemplate.hasKey(properties.topicTotalReadNumChart))) {
             existInRedis = true;
-            redisTemplate.opsForZSet().incrementScore(properties.topicTotalReadNumChart, name, 1);
+            redisTemplate.opsForZSet().incrementScore(properties.topicTotalReadNumChart, name, incr);
         }
 
         if (Boolean.TRUE.equals(redisTemplate.hasKey(properties.topicWeekReadNumChart))) {
             existInRedis = true;
-            redisTemplate.opsForZSet().incrementScore(properties.topicWeekReadNumChart, name, 1);
+            redisTemplate.opsForZSet().incrementScore(properties.topicWeekReadNumChart, name, incr);
         }
 
         if (Boolean.TRUE.equals(redisTemplate.hasKey(properties.topicDayReadNumChart))) {
             existInRedis = true;
-            redisTemplate.opsForZSet().incrementScore(properties.topicDayReadNumChart, name, 1);
+            redisTemplate.opsForZSet().incrementScore(properties.topicDayReadNumChart, name, incr);
         }
 
         if (existInRedis) {
             return RestResponse.ok();
         }
 
-        if (topicMapper.incrNum(new Topic().setName(name).setTotalReadNum(6).setWeekReadNum(6).setDayReadNum(6)) == 0) {
+        if (topicMapper.incrNum(new Topic().setName(name).setTotalReadNum(incr).setWeekReadNum(incr).setDayReadNum(incr)) == 0) {
             return RestResponse.fail();
         }
 
@@ -76,16 +76,16 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public RestResponse<Object> incrDiscussionNum(String name) {
-        if (topicMapper.incrNum(new Topic().setName(name).setDiscussionNum(6)) == 0) {
+    public RestResponse<Object> incrDiscussionNum(String name,int incr) {
+        if (topicMapper.incrNum(new Topic().setName(name).setDiscussionNum(incr)) == 0) {
             return RestResponse.fail();
         }
         return RestResponse.ok();
     }
 
     @Override
-    public RestResponse<Object> incrFollowedNum(String name) {
-        if (topicMapper.incrNum(new Topic().setName(name).setFollowedNum(6)) == 0) {
+    public RestResponse<Object> incrFollowedNum(String name,int incr) {
+        if (topicMapper.incrNum(new Topic().setName(name).setFollowedNum(incr)) == 0) {
             return RestResponse.fail();
         }
         return RestResponse.ok();

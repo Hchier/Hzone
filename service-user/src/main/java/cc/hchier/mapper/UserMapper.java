@@ -37,6 +37,7 @@ public interface UserMapper {
 
     /**
      * 各种num + 1，如favorNum，followNum
+     * 暂时用各种num作为增量
      * 不为null时生效
      *
      * @param user 用户

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.hchier.mapper.BlogFavorMapper">
+    <resultMap id="BaseResultMap" type="cc.hchier.entity.BlogFavor">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="liker" jdbcType="VARCHAR" property="liker"/>
+        <result column="blog_id" jdbcType="INTEGER" property="blogId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="deleted" jdbcType="BIT" property="deleted"/>
+    </resultMap>
+
+    <delete id="delete">
+        update blog_favor
+        set deleted = 1
+        where blog_id = #{blogId}
+          and liker = #{liker}
+    </delete>
+
+    <insert id="insert" parameterType="cc.hchier.entity.BlogFavor">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into blog_favor (liker, blog_id, create_time)
+        values (#{liker,jdbcType=VARCHAR}, #{blogId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="favorCount" resultType="java.lang.Integer">
+        select count(*)
+        from blog_favor
+        where blog_id = #{blogId}
+          and liker = #{liker}
+          and deleted = 0
+    </select>
+
+    <select id="favorList" resultType="java.lang.Integer">
+        select blog_id
+        from blog_favor
+        where liker = #{liker}
+          and deleted = 0
+        limit #{startIndex}, #{rowNum}
+    </select>
+</mapper>

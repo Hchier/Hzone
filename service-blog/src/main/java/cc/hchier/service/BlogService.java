@@ -42,4 +42,5 @@ public interface BlogService {
      * @return {@link RestResponse}<{@link Object}>
      */
     RestResponse<Object> update(BlogUpdateDTO dto);
+
 }

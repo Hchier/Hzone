@@ -1,18 +1,15 @@
 package cc.hchier;
 
-/**
- * @author by Hchier
- * @Date 2023/2/12 13:49
- */
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author by Hchier
  * @Date 2022/6/22 16:51
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class RestResponse<T> {
     private int code;

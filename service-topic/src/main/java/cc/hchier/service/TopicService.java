@@ -29,29 +29,32 @@ public interface TopicService {
     RestResponse<Object> get(String name);
 
     /**
-     * 阅读量+1
+     * 阅读量+incr
      * 如果话题上总榜、周榜或日榜了，则只更新redis中的数据，否则只更新MySQL中的数据。
      *
      * @param name topic_name
-     * @return {@link RestResponse}
+     * @param incr 增量
+     * @return {@link RestResponse}<{@link Object}>
      */
-    RestResponse<Object> incrReadNum(String name);
+    RestResponse<Object> incrReadNum(String name,int incr);
 
     /**
-     * 讨论量+1
+     * 讨论量+incr
      *
      * @param name 名字
+     * @param incr 增量
      * @return {@link RestResponse}
      */
-    RestResponse<Object> incrDiscussionNum(String name);
+    RestResponse<Object> incrDiscussionNum(String name,int incr);
 
     /**
-     * 关注量+1
+     * 关注量+incr
      *
      * @param name 名字
+     * @param incr 增量
      * @return {@link RestResponse}
      */
-    RestResponse<Object> incrFollowedNum(String name);
+    RestResponse<Object> incrFollowedNum(String name,int incr);
 
 
     /**

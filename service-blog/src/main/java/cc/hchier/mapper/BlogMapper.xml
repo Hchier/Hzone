@@ -47,7 +47,7 @@
             <if test="commentForbidden != null">comment_forbidden = #{commentForbidden},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </set>
-            where id = #{id} and publisher = #{publisher}
+        where id = #{id} and publisher = #{publisher}
     </update>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -65,6 +65,13 @@
                topic,
                deleted
         from blog
-        where id = #{id,jdbcType=INTEGER} and deleted = 0
+        where id = #{id,jdbcType=INTEGER}
+          and deleted = 0
     </select>
+
+    <update id="incrFavorNum">
+        update blog
+        set favor_num = favor_num + #{incr}
+        where id = #{id}
+    </update>
 </mapper>

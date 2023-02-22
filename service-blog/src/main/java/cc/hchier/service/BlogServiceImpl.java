@@ -8,7 +8,6 @@ import cc.hchier.entity.Blog;
 import cc.hchier.mapper.BlogMapper;
 import cc.hchier.vo.BlogVO;
 import org.springframework.stereotype.Service;
-
 /**
  * @author by Hchier
  * @Date 2023/2/20 18:52
@@ -16,9 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class BlogServiceImpl implements BlogService {
     private final BlogMapper blogMapper;
+    private final UserService userService;
 
-    public BlogServiceImpl(BlogMapper blogMapper) {
+    public BlogServiceImpl(BlogMapper blogMapper, UserService userService) {
         this.blogMapper = blogMapper;
+        this.userService = userService;
     }
 
     @Override
@@ -67,4 +68,5 @@ public class BlogServiceImpl implements BlogService {
         }
         return RestResponse.fail();
     }
+
 }

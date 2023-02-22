@@ -45,4 +45,12 @@ public interface BlogMapper {
      */
     Blog selectByPrimaryKey(Integer id);
 
+    /**
+     * 增加博客点赞量
+     *
+     * @param id   id
+     * @param incr 增量
+     * @return int
+     */
+    int incrFavorNum(@Param("id") Integer id,@Param("incr") Integer incr);
 }

@@ -8,6 +8,7 @@ import cc.hchier.dto.UserLoginDTO;
 import cc.hchier.dto.UserPwdUpdateDTO;
 import cc.hchier.dto.UserRegisterDTO;
 import cc.hchier.service.UserService;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,28 +58,24 @@ public class UserController {
         return userService.close(username);
     }
 
-    @PostMapping("/user/incrFavorNum")
-    public RestResponse<Object> incrFavorNum(HttpServletRequest req) {
-        String username = req.getHeader("username");
-        return userService.incrFavorNum(username);
+    @PostMapping("/user/incrFavorNum/{username}/{incr}")
+    public RestResponse<Object> incrFavorNum(@PathVariable String username, @PathVariable Integer incr) {
+        return userService.incrFavorNum(username, incr);
     }
 
-    @PostMapping("/user/incrFavoredNum")
-    public RestResponse<Object> incrFavoredNum(HttpServletRequest req) {
-        String username = req.getHeader("username");
-        return userService.incrFavoredNum(username);
+    @PostMapping("/user/incrFavoredNum/{username}/{incr}")
+    public RestResponse<Object> incrFavoredNum(@PathVariable String username, @PathVariable Integer incr) {
+        return userService.incrFavoredNum(username, incr);
     }
 
-    @PostMapping("/user/incrFollowNum")
-    public RestResponse<Object> incrFollowNum(HttpServletRequest req) {
-        String username = req.getHeader("username");
-        return userService.incrFollowNum(username);
+    @PostMapping("/user/incrFollowNum/{username}/{incr}")
+    public RestResponse<Object> incrFollowNum(@PathVariable String username, @PathVariable Integer incr) {
+        return userService.incrFollowNum(username, incr);
     }
 
-    @PostMapping("/user/incrFollowedNum")
-    public RestResponse<Object> incrFollowedNum(HttpServletRequest req) {
-        String username = req.getHeader("username");
-        return userService.incrFollowedNum(username);
+    @PostMapping("/user/incrFollowedNum/{username}/{incr}")
+    public RestResponse<Object> incrFollowedNum(@PathVariable String username, @PathVariable Integer incr) {
+        return userService.incrFollowedNum(username, incr);
     }
 
     @PostMapping("/user/updatePwd")

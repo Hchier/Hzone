@@ -28,9 +28,9 @@ public interface UserService {
     RestResponse<Object> login(UserLoginDTO userLoginDTO);
 
     /**
-     *  2件事。
-     *  1，将<token, id>放入tokens(Hash)中。
-     *  2，将<token, expireTime>放入expireTime(Zset)中
+     * 2件事。
+     * 1，将<token, id>放入tokens(Hash)中。
+     * 2，将<token, expireTime>放入expireTime(Zset)中
      *
      * @param token    令牌
      * @param username 用户名
@@ -53,37 +53,41 @@ public interface UserService {
 
 
     /**
-     * 点赞量 + 1
+     * 点赞量 + incr
      *
      * @param username 用户名
-     * @return {@link RestResponse}
+     * @param incr     增量
+     * @return {@link RestResponse}<{@link Object}>
      */
-    RestResponse<Object> incrFavorNum(String username);
+    RestResponse<Object> incrFavorNum(String username, int incr);
 
     /**
-     * 被点赞量 +1
+     * 被点赞量 +incr
      *
      * @param username 用户名
-     * @return {@link RestResponse}
+     * @param incr     增量
+     * @return {@link RestResponse}<{@link Object}>
      */
-    RestResponse<Object> incrFavoredNum(String username);
+    RestResponse<Object> incrFavoredNum(String username, int incr);
 
     /**
-     * 偶像数量 + 1
+     * 偶像数量 + incr
      *
      * @param username 用户名
-     * @return {@link RestResponse}
+     * @param incr     增量
+     * @return {@link RestResponse}<{@link Object}>
      */
-    RestResponse<Object> incrFollowNum(String username);
+    RestResponse<Object> incrFollowNum(String username, int incr);
 
 
     /**
-     * 粉丝数 + 1
+     * 粉丝数 + incr
      *
      * @param username 用户名
-     * @return {@link RestResponse}
+     * @param incr     增量
+     * @return {@link RestResponse}<{@link Object}>
      */
-    RestResponse<Object> incrFollowedNum(String username);
+    RestResponse<Object> incrFollowedNum(String username, int incr);
 
     /**
      * 重置pwd

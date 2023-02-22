@@ -49,6 +49,36 @@ properties:
     "/topic/get":"null"
   }'
 
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  # 👇👇👇事务群组（可以每个应用独立取名，也可以使用相同的名字），要与服务端nacos-config.txt中service.vgroup_mapping的后缀对应
+  tx-service-group: default_tx_group
+  registry:
+    # seata注册到nacos上了，去nacos上找
+    type: nacos
+    nacos:
+      # 同理，server-addr ->  namespace -> group ->application，才能唯一确认一个seata
+      server-addr: localhost:8848
+      namespace: d6a62f5c-e01c-47ff-aa76-ca306c861af8
+      group: SEATA_GROUP
+      # 需要和server端保持一致，即server在nacos中的名称，默认为seata-server
+      application: seata-server
+      username: nacos
+      password: nacos
+  config:
+    # seata的配置放在nasoc上了
+    type: nacos
+    # 需要和server在同一个注册中心下
+    nacos:
+      # serverAddr -> namespace -> group：才能确定那些所有属于seata的配置。
+      # 就像要要得到一个县下面的所有镇，必然是：省->市->县
+      serverAddr: localhost:8848
+      namespace: d6a62f5c-e01c-47ff-aa76-ca306c861af8
+      group: SEATA_GROUP
+      username: nacos
+      password: nacos
+
 
 mybatis:
   #mapper-locations: classpath:hchier\springboot\mapper\*.xml

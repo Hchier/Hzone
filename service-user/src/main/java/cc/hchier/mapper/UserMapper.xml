@@ -47,10 +47,10 @@
     <update id="incrNum" parameterType="cc.hchier.entity.User">
         update user
         <set>
-            <if test="favorNum!=null">favor_num = favor_num + 1,</if>
-            <if test="favoredNum!=null">favored_num = favored_num + 1,</if>
-            <if test="followNum!=null">follow_num = follow_num + 1,</if>
-            <if test="followedNum!=null">followed_num = followed_num + 1,</if>
+            <if test="favorNum!=null">favor_num = favor_num + #{favorNum},</if>
+            <if test="favoredNum!=null">favored_num = favored_num + #{favoredNum},</if>
+            <if test="followNum!=null">follow_num = follow_num + #{followNum},</if>
+            <if test="followedNum!=null">followed_num = followed_num + #{followedNum},</if>
         </set>
         where username = #{username,jdbcType=VARCHAR}
     </update>
