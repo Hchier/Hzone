@@ -22,6 +22,11 @@ public enum ResponseCode {
     BLOG_FAVOR_REPEAT(419, "博客重复点赞"),
 
     BLOG_FAVOR_NOT_EXIST(420, "博客未点赞"),
+
+    FOLLOW_REPEAT(421, "重复关注"),
+
+    FOLLOW_NOT_EXIST(422, "未关注"),
+
     XXX(999, "999");
 
     private final int code;

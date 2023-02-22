@@ -1,15 +1,9 @@
 server:
-  port: 8021
-
+  port: 8051
 
 spring:
   application:
-    name: service-topic
-
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    password: pyh903903
+    name: service-follow
 
   cloud:
     nacos:
@@ -22,18 +16,6 @@ spring:
     url: jdbc:mysql://localhost:3306/hzone?useSSL=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-
-
-properties:
-  # 话题阅读总榜
-  zsetForTopicTotalReadNumChart: "topicTotalReadNumChart"
-
-  # 话题阅读周榜
-  zsetForTopicWeekReadNumChart: "topicWeekReadNumChart"
-
-  # 话题阅读日榜
-  zsetForTopicDayReadNumChart: "topicDayReadNumChart"
-
 
 seata:
   enabled: true
@@ -65,10 +47,7 @@ seata:
       username: nacos
       password: nacos
 
-
-
 mybatis:
-  #mapper-locations: classpath:hchier\springboot\mapper\*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #输出sql到控制台
     map-underscore-to-camel-case: true

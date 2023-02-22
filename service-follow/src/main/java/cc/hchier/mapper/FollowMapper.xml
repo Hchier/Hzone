@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.hchier.mapper.FollowMapper">
+    <resultMap id="BaseResultMap" type="cc.hchier.entity.Follow">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="follower" jdbcType="VARCHAR" property="follower"/>
+        <result column="followee" jdbcType="VARCHAR" property="followee"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="deleted" jdbcType="BIT" property="deleted"/>
+    </resultMap>
+    <delete id="delete" parameterType="cc.hchier.dto.FollowCancelDTO">
+        update follow
+        set deleted = 1
+        where follower = #{follower}
+          and followee = #{followee}
+          and type = #{type}
+    </delete>
+
+    <insert id="insert" parameterType="cc.hchier.dto.FollowDTO">
+        insert into follow (`type`, follower, followee, create_time)
+        values (
+        #{type,jdbcType=INTEGER},
+        #{follower,jdbcType=VARCHAR},
+        #{followee,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        select count(*)
+        from follow
+        where follower = #{follower}
+          and followee = #{followee}
+          and type = #{type}
+          and deleted = 0
+    </select>
+
+    <select id="selectByFollower" resultMap="BaseResultMap">
+        select *
+        from follow
+        where follower = #{follower}
+          and deleted = 0
+        limit #{startIndex}, #{rowNum}
+    </select>
+
+    <select id="selectByFollowee" resultMap="BaseResultMap">
+        select *
+        from follow
+        where followee = #{followee}
+          and type = 1
+          and deleted = 0
+        limit #{startIndex}, #{rowNum}
+    </select>
+</mapper>

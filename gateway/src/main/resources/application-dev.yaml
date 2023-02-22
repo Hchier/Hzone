@@ -44,10 +44,10 @@ spring:
           predicates:
             - Path=/blog/**
 
-        - id: comment
-          uri: lb://service-comment
+        - id: follow
+          uri: lb://service-follow
           predicates:
-            - Path=/comment/**
+            - Path=/follow/**
 
 
 properties:
