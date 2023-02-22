@@ -4,7 +4,6 @@ import cc.hchier.RestResponse;
 import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
 import cc.hchier.service.BlogService;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +17,6 @@ import java.util.Date;
  * @author by Hchier
  * @Date 2023/2/20 16:00
  */
-@Validated
 @RestController
 public class BlogController {
     private final BlogService blogService;
@@ -49,6 +47,4 @@ public class BlogController {
     public RestResponse<Object> get(@PathVariable Integer id, HttpServletRequest req) {
         return blogService.get(id, req.getHeader("username"));
     }
-
-
 }

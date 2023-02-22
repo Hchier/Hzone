@@ -32,7 +32,6 @@ public class BlogFavorServiceImpl implements BlogFavorService {
     }
 
 
-
     @GlobalTransactional
     @Override
     public RestResponse<Object> favor(int blogId, String liker, String author) throws TransactionException {
@@ -47,13 +46,17 @@ public class BlogFavorServiceImpl implements BlogFavorService {
             userService.incrFavorNum(liker, 1).getCode() != ResponseCode.OK.getCode() ||
             blogMapper.incrFavorNum(blogId, 1) == 0 ||
             blogFavorMapper.insert(new BlogFavor().setLiker(liker).setBlogId(blogId).setCreateTime(new Date())) == 0) {
-            manager.rollback(xid);
-            return RestResponse.fail();
-        }
-        if (manager.commit(xid).getCode() == GlobalStatus.CommitFailed.getCode()) {
             if (manager.rollback(xid).getCode() == GlobalStatus.RollbackFailed.getCode()) {
                 //todo
             }
+            return RestResponse.fail();
+        }
+        if (manager.commit(xid).getCode() == GlobalStatus.CommitFailed.getCode()) {
+            //todo
+            if (manager.rollback(xid).getCode() == GlobalStatus.RollbackFailed.getCode()) {
+                //todo
+            }
+            return RestResponse.fail();
         }
         return RestResponse.ok();
 

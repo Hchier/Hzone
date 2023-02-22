@@ -35,7 +35,7 @@ public interface BlogMapper {
      * @param dto dto
      * @return int
      */
-    int updateByPrimaryKey(BlogUpdateDTO dto);
+    int update(BlogUpdateDTO dto);
 
     /**
      * 根据主键查找博客
@@ -53,4 +53,13 @@ public interface BlogMapper {
      * @return int
      */
     int incrFavorNum(@Param("id") Integer id,@Param("incr") Integer incr);
+
+    /**
+     * 增加评论数量
+     *
+     * @param id   id
+     * @param incr 增加
+     * @return int
+     */
+    int incrCommentNum(@Param("id")Integer id, @Param("incr")Integer incr);
 }

@@ -38,7 +38,7 @@
         )
     </insert>
 
-    <update id="updateByPrimaryKey" parameterType="cc.hchier.dto.BlogUpdateDTO">
+    <update id="update" parameterType="cc.hchier.dto.BlogUpdateDTO">
         update blog
         <set>
             <if test="title != null">title = #{title},</if>
@@ -72,6 +72,12 @@
     <update id="incrFavorNum">
         update blog
         set favor_num = favor_num + #{incr}
+        where id = #{id}
+    </update>
+
+    <update id="incrCommentNum">
+        update blog
+        set comment_num = comment_num + #{incr}
         where id = #{id}
     </update>
 </mapper>

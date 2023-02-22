@@ -15,11 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class BlogServiceImpl implements BlogService {
     private final BlogMapper blogMapper;
-    private final UserService userService;
 
-    public BlogServiceImpl(BlogMapper blogMapper, UserService userService) {
+    public BlogServiceImpl(BlogMapper blogMapper) {
         this.blogMapper = blogMapper;
-        this.userService = userService;
     }
 
     @Override
@@ -63,7 +61,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public RestResponse<Object> update(BlogUpdateDTO dto) {
-        if (blogMapper.updateByPrimaryKey(dto) == 1) {
+        if (blogMapper.update(dto) == 1) {
             return RestResponse.ok();
         }
         return RestResponse.fail();

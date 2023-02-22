@@ -44,6 +44,12 @@ spring:
           predicates:
             - Path=/blog/**
 
+        - id: comment
+          uri: lb://service-comment
+          predicates:
+            - Path=/comment/**
+
+
 properties:
   # redis中存放token的hash
   hashForToken: tokens
