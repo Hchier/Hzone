@@ -1,7 +1,9 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
+import cc.hchier.consts.NoticeType;
 import cc.hchier.dto.BlogCommentPublishDTO;
+import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.BlogComment;
 import cc.hchier.mapper.BlogCommentMapper;
 import cc.hchier.mapper.BlogMapper;
@@ -11,9 +13,11 @@ import io.seata.core.exception.TransactionException;
 import io.seata.core.model.TransactionManager;
 import io.seata.spring.annotation.GlobalTransactional;
 import io.seata.tm.TransactionManagerHolder;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,10 +28,13 @@ import java.util.List;
 public class BlogCommentServiceImpl implements BlogCommentService {
     private final BlogCommentMapper blogCommentMapper;
     private final BlogMapper blogMapper;
+    private final RabbitTemplate rabbitTemplate;
 
-    public BlogCommentServiceImpl(BlogCommentMapper blogCommentMapper, BlogMapper blogMapper) {
+
+    public BlogCommentServiceImpl(BlogCommentMapper blogCommentMapper, BlogMapper blogMapper, RabbitTemplate rabbitTemplate) {
         this.blogCommentMapper = blogCommentMapper;
         this.blogMapper = blogMapper;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @GlobalTransactional
@@ -41,6 +48,18 @@ public class BlogCommentServiceImpl implements BlogCommentService {
             return RestResponse.fail();
         }
         manager.commit(xid);
+
+        rabbitTemplate.convertAndSend(
+            "directExchange",
+            "sendNotice",
+            new NoticeAddDTO()
+                .setSender(dto.getPublisher())
+                .setType(NoticeType.BLOG_REPLIED_NOTICE.getCode())
+                .setContent(dto.getContent())
+                .setLink(String.valueOf(dto.getId()))
+                .setCreateTime(new Date())
+        );
+
         return RestResponse.ok(dto.getId());
     }
 
@@ -60,7 +79,7 @@ public class BlogCommentServiceImpl implements BlogCommentService {
 
     @Override
     public RestResponse<List<BlogCommentVO>> get(int blogId, int commentOf, int pageNum, int rowNum, String currentUser) {
-        List<BlogComment> blogCommentList = blogCommentMapper.selectByBlogId(blogId,commentOf, pageNum * rowNum, rowNum);
+        List<BlogComment> blogCommentList = blogCommentMapper.selectByBlogId(blogId, commentOf, pageNum * rowNum, rowNum);
         List<BlogCommentVO> blogCommentVOList = new ArrayList<>();
         for (BlogComment blogComment : blogCommentList) {
             blogCommentVOList.add(

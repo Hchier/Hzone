@@ -62,4 +62,12 @@ public interface BlogMapper {
      * @return int
      */
     int incrCommentNum(@Param("id")Integer id, @Param("incr")Integer incr);
+
+    /**
+     * 通过id获取作者
+     *
+     * @param id id
+     * @return {@link String}
+     */
+    String getAuthorById(@Param("id")Integer id);
 }

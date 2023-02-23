@@ -66,4 +66,17 @@ public interface FollowMapper {
         @Param("followee") String followee,
         @Param("startIndex") Integer startIndex,
         @Param("rowNum") Integer rowNum);
+
+    /**
+     * 查找关注某人的用户的用户名
+     *
+     * @param followee   followee
+     * @param startIndex 开始指数
+     * @param rowNum     行num
+     * @return {@link List}<{@link String}>
+     */
+    List<String> selectFollowerUsernameByFollowee(
+        @Param("followee") String followee,
+        @Param("startIndex") Integer startIndex,
+        @Param("rowNum") Integer rowNum);
 }

@@ -52,4 +52,13 @@
           and deleted = 0
         limit #{startIndex}, #{rowNum}
     </select>
+
+    <select id="selectFollowerUsernameByFollowee" resultType="java.lang.String">
+        select follower
+        from follow
+        where followee = #{followee}
+          and type = 1
+          and deleted = 0
+        limit #{startIndex}, #{rowNum}
+    </select>
 </mapper>

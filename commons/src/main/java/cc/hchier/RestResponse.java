@@ -1,5 +1,6 @@
 package cc.hchier;
 
+import cc.hchier.consts.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

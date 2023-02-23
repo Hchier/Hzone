@@ -80,4 +80,11 @@
         set comment_num = comment_num + #{incr}
         where id = #{id}
     </update>
+
+    <select id="getAuthorById" resultType="java.lang.String">
+        select publisher
+        from blog
+        where id = #{id}
+          and deleted = 0
+    </select>
 </mapper>

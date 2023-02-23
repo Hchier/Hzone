@@ -43,4 +43,12 @@ public interface BlogService {
      */
     RestResponse<Object> update(BlogUpdateDTO dto);
 
+    /**
+     * 通过id获取作者
+     *
+     * @param id id
+     * @return {@link RestResponse}<{@link String}>
+     */
+    RestResponse<String> getAuthorById(int id);
+
 }

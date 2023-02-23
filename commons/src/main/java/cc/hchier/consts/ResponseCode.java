@@ -1,4 +1,4 @@
-package cc.hchier;
+package cc.hchier.consts;
 
 import lombok.AllArgsConstructor;
 

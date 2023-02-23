@@ -1,6 +1,6 @@
 package cc.hchier.controller;
 
-import cc.hchier.ResponseCode;
+import cc.hchier.consts.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.configuration.Properties;
 import cc.hchier.dto.UserEmailUpdateDTO;

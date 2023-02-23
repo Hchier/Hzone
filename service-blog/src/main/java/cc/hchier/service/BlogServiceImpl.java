@@ -1,13 +1,19 @@
 package cc.hchier.service;
 
-import cc.hchier.ResponseCode;
+import cc.hchier.consts.NoticeType;
+import cc.hchier.consts.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
+import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.Blog;
 import cc.hchier.mapper.BlogMapper;
 import cc.hchier.vo.BlogVO;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+
 /**
  * @author by Hchier
  * @Date 2023/2/20 18:52
@@ -15,9 +21,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class BlogServiceImpl implements BlogService {
     private final BlogMapper blogMapper;
+    private final RabbitTemplate rabbitTemplate;
 
-    public BlogServiceImpl(BlogMapper blogMapper) {
+    public BlogServiceImpl(BlogMapper blogMapper, RabbitTemplate rabbitTemplate) {
         this.blogMapper = blogMapper;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -31,6 +39,16 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public RestResponse<Integer> publish(BlogPublishDTO dto) {
         if (blogMapper.insert(dto) == 1) {
+            rabbitTemplate.convertAndSend(
+                "directExchange",
+                "sendNotice",
+                new NoticeAddDTO()
+                    .setSender(dto.getPublisher())
+                    .setType(NoticeType.BLOG_PUBLISH_NOTICE.getCode())
+                    .setContent(dto.getTitle())
+                    .setLink(String.valueOf(dto.getId()))
+                    .setCreateTime(new Date())
+            );
             return RestResponse.ok(dto.getId());
         }
         return RestResponse.fail();
@@ -65,6 +83,11 @@ public class BlogServiceImpl implements BlogService {
             return RestResponse.ok();
         }
         return RestResponse.fail();
+    }
+
+    @Override
+    public RestResponse<String> getAuthorById(int id) {
+        return RestResponse.ok(blogMapper.getAuthorById(id));
     }
 
 }

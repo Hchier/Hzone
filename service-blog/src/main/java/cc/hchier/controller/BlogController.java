@@ -47,4 +47,9 @@ public class BlogController {
     public RestResponse<Object> get(@PathVariable Integer id, HttpServletRequest req) {
         return blogService.get(id, req.getHeader("username"));
     }
+
+    @PostMapping("/blog/getAuthorById/{id}")
+    public RestResponse<String> getAuthorById(@PathVariable Integer id) {
+        return blogService.getAuthorById(id);
+    }
 }

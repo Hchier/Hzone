@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.hchier.mapper.NoticeMapper">
+    <resultMap id="BaseResultMap" type="cc.hchier.vo.NoticeVO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="sender" jdbcType="VARCHAR" property="sender"/>
+        <result column="receiver" jdbcType="VARCHAR" property="receiver"/>
+        <result column="type" jdbcType="BIT" property="type"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="link" jdbcType="VARCHAR" property="link"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <delete id="delete">
+        update notice
+        set deleted = 1
+        where id = #{id,jdbcType=INTEGER}
+          and receiver = #{receiver}
+    </delete>
+
+    <insert id="insertList" parameterType="java.util.List">
+        insert into notice (sender, receiver, `type`, content, link, create_time)
+        values
+        <foreach collection="noticeList" separator="," open="" close="" item="item">
+            (#{item.sender}, #{item.receiver}, #{item.type}, #{item.content}, #{item.link}, #{item.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insert" parameterType="cc.hchier.entity.Notice">
+        insert into notice (sender, receiver, `type`, content, link, create_time)
+        values (#{sender}, #{receiver}, #{type}, #{content}, #{link}, #{createTime})
+    </insert>
+
+    <select id="selectByReceiver" resultMap="BaseResultMap">
+        select id, sender, receiver, type, content, link, create_time
+        from notice
+        where receiver = #{receiver}
+          and deleted = 0
+        limit #{startIndex}, #{rowNum}
+    </select>
+</mapper>

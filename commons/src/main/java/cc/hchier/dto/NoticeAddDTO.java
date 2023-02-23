@@ -1,4 +1,4 @@
-package cc.hchier.vo;
+package cc.hchier.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,34 +10,23 @@ import java.util.Date;
 
 /**
  * @author by Hchier
- * @Date 2023/2/22 13:20
+ * @Date 2023/2/23 13:28
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class BlogCommentVO implements Serializable {
-    private Integer id;
+public class NoticeAddDTO implements Serializable {
+    private String sender;
 
-    private String publisher;
-
-    private Integer blogId;
+    private Integer type;
 
     private String content;
 
-    private Integer commentNum;
-
-    private Integer favorNum;
-
-
-    /**
-     * 当前用户：传去前端判断一些权限
-     */
-    private String currentUser;
+    private String link;
 
     private Date createTime;
 
-    private Boolean deletePermission;
-
     private static final long serialVersionUID = 1L;
+
 }

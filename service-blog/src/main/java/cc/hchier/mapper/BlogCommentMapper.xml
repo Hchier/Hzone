@@ -25,6 +25,7 @@
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>
+
         insert into blog_comment (publisher, blog_id, content, comment_of, create_time)
         values (
         #{publisher,jdbcType=VARCHAR},
@@ -38,7 +39,10 @@
     <select id="selectByBlogId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select *
         from blog_comment
-        where blog_id = #{blogId} and comment_of = #{commentOf} and deleted = 0 and hidden = 0
+        where blog_id = #{blogId}
+          and comment_of = #{commentOf}
+          and deleted = 0
+          and hidden = 0
         limit #{startIndex}, #{rowNum}
     </select>
 

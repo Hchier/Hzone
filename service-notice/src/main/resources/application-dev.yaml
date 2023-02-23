@@ -10,6 +10,13 @@ spring:
       discovery:
         server-addr: localhost:8848
 
+  datasource:
+    username: root
+    password: pyh903903
+    url: jdbc:mysql://localhost:3306/hzone?useSSL=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+
   mail:
     host: smtp.qq.com
     username: hchier@qq.com
@@ -22,23 +29,20 @@ spring:
     port: 6379
     password: pyh903903
 
+  rabbitmq:
+    username: admin
+    password: admin
+    virtual-host: /
+    addresses: 127.0.0.1:5672
+    listener:
+      simple:
+        acknowledge-mode: manual # 开启手动ack，
+        retry:
+          enabled: true #开启重试
+          max-attempts: 3 #最大重试次数
+          initial-interval: 2000ms  #重试间隔时间
+
 
 properties:
-  # redis中存放token的hash
-  hashForToken: tokens
-
-  # redis中存放token过期时间的zset
-  zsetForTokenExpireTime: tokenExpireTime
-
   # 验证码生存时长（秒）
   authCodeLifeCycle: 300
-
-  # token的生存时长（分钟）
-  tokenLifeCycle: 3
-
-  # 无需登录就可以访问的接口
-  whitePaths: '{
-    "/user/register":"null",
-    "/user/login":"null",
-    "/topic/get":"null"
-  }'
