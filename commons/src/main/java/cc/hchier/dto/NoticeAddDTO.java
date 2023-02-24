@@ -19,6 +19,12 @@ import java.util.Date;
 public class NoticeAddDTO implements Serializable {
     private String sender;
 
+    /**
+     * 若只存在一个接收者，则在发送 NoticeAddDTO时就填进去。
+     *  若存在多个接收者，则在发送 NoticeAddDTO时不管该变量，在收到 NoticeAddDTO后再查接收者
+     */
+    private String receiver;
+
     private Integer type;
 
     private String content;

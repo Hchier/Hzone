@@ -1,13 +1,17 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
+import cc.hchier.consts.NoticeType;
+import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.dto.WallAddDTO;
 import cc.hchier.entity.Wall;
 import cc.hchier.mapper.WallMapper;
 import cc.hchier.vo.WallVO;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,14 +21,27 @@ import java.util.List;
 @Service
 public class WallServiceImpl implements WallService {
     private final WallMapper wallMapper;
+    private final RabbitTemplate rabbitTemplate;
 
-    public WallServiceImpl(WallMapper wallMapper) {
+    public WallServiceImpl(WallMapper wallMapper, RabbitTemplate rabbitTemplate) {
         this.wallMapper = wallMapper;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
-    public RestResponse<Object> add(WallAddDTO dto) {
+    public RestResponse<Integer> add(WallAddDTO dto) {
         if (wallMapper.insert(dto) == 1) {
+            rabbitTemplate.convertAndSend(
+                "directExchange",
+                "sendNotice",
+                new NoticeAddDTO()
+                    .setSender(dto.getCommenter())
+                    .setReceiver(dto.getCommentee())
+                    .setType(NoticeType.WALL_MESSAGE.getCode())
+                    .setContent(dto.getContent())
+                    .setLink(dto.getCommentee())
+                    .setCreateTime(new Date())
+            );
             return RestResponse.ok(dto.getId());
         }
         return RestResponse.fail();

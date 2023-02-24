@@ -17,7 +17,7 @@ public interface WallService {
      * @param dto dto
      * @return {@link RestResponse}<{@link Object}>
      */
-    RestResponse<Object> add(WallAddDTO dto);
+    RestResponse<Integer> add(WallAddDTO dto);
 
     /**
      * 隐藏留言

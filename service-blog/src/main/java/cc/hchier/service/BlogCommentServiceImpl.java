@@ -48,17 +48,34 @@ public class BlogCommentServiceImpl implements BlogCommentService {
             return RestResponse.fail();
         }
         manager.commit(xid);
-
-        rabbitTemplate.convertAndSend(
-            "directExchange",
-            "sendNotice",
-            new NoticeAddDTO()
-                .setSender(dto.getPublisher())
-                .setType(NoticeType.BLOG_REPLIED_NOTICE.getCode())
-                .setContent(dto.getContent())
-                .setLink(String.valueOf(dto.getId()))
-                .setCreateTime(new Date())
-        );
+        //博客的评论
+        if (dto.getCommentOf() == -1) {
+            rabbitTemplate.convertAndSend(
+                "directExchange",
+                "sendNotice",
+                new NoticeAddDTO()
+                    .setSender(dto.getPublisher())
+                    .setReceiver(blogMapper.getAuthorById(dto.getBlogId()))
+                    .setType(NoticeType.BLOG_REPLIED_NOTICE.getCode())
+                    .setContent(dto.getContent())
+                    .setLink(String.valueOf(dto.getId()))
+                    .setCreateTime(new Date())
+            );
+        }
+        //博客评论的评论
+        else {
+            rabbitTemplate.convertAndSend(
+                "directExchange",
+                "sendNotice",
+                new NoticeAddDTO()
+                    .setSender(dto.getPublisher())
+                    .setReceiver(blogCommentMapper.selectPublisherById(dto.getCommentOf()))
+                    .setType(NoticeType.BLOG_COMMENT_REPLIED_NOTICE.getCode())
+                    .setContent(dto.getContent())
+                    .setLink(String.valueOf(dto.getId()))
+                    .setCreateTime(new Date())
+            );
+        }
 
         return RestResponse.ok(dto.getId());
     }

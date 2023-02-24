@@ -34,7 +34,7 @@ public interface BlogCommentMapper {
      * 查找博客评论
      *
      * @param blogId     博客id
-     * @param commentOf     commentOf
+     * @param commentOf  commentOf
      * @param startIndex 开始index
      * @param rowNum     行num
      * @return {@link List}<{@link BlogComment}>
@@ -52,4 +52,11 @@ public interface BlogCommentMapper {
      */
     int hidden(@Param("id") Integer id, @Param("blogId") Integer blogId, @Param("currentUser") String currentUser);
 
+    /**
+     * 根据博客id查找评论者username
+     *
+     * @param id id
+     * @return {@link String}
+     */
+    String selectPublisherById(@Param("id") Integer id);
 }

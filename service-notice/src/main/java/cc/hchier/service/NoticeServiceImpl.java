@@ -28,12 +28,10 @@ import java.util.List;
 public class NoticeServiceImpl implements NoticeService {
     private final NoticeMapper noticeMapper;
     private final FollowService followService;
-    private final BlogService blogService;
 
-    public NoticeServiceImpl(NoticeMapper noticeMapper, FollowService followService, BlogService blogService) {
+    public NoticeServiceImpl(NoticeMapper noticeMapper, FollowService followService) {
         this.noticeMapper = noticeMapper;
         this.followService = followService;
-        this.blogService = blogService;
     }
 
     @RabbitHandler
@@ -53,10 +51,14 @@ public class NoticeServiceImpl implements NoticeService {
                 }
                 break;
             case 4:
-                //todo
+                if (!sendBlogCommentRepliedNotice(dto)) {
+                    channel.basicNack(tag, false, false);
+                }
                 break;
             case 5:
-                //todo
+                if (!sendWallMessageNotice(dto)) {
+                    channel.basicNack(tag, false, false);
+                }
                 break;
             default:
                 //todo
@@ -101,12 +103,45 @@ public class NoticeServiceImpl implements NoticeService {
      * @return boolean
      */
     private boolean sendBlogRepliedNotice(NoticeAddDTO dto) {
-        String author = blogService.getAuthorById(Integer.valueOf(dto.getLink())).getBody();
         return noticeMapper.insert(
             new Notice()
                 .setSender(dto.getSender())
-                .setReceiver(author)
+                .setReceiver(dto.getReceiver())
                 .setType(NoticeType.BLOG_REPLIED_NOTICE.getCode())
+                .setContent(dto.getContent())
+                .setLink(dto.getLink())
+                .setCreateTime(dto.getCreateTime())) == 1;
+    }
+
+    /**
+     * 博客评论被回复后，通知评论者
+     *
+     * @param dto dto
+     * @return boolean
+     */
+    private boolean sendBlogCommentRepliedNotice(NoticeAddDTO dto) {
+        return noticeMapper.insert(
+            new Notice()
+                .setSender(dto.getSender())
+                .setReceiver(dto.getReceiver())
+                .setType(NoticeType.BLOG_COMMENT_REPLIED_NOTICE.getCode())
+                .setContent(dto.getContent())
+                .setLink(dto.getLink())
+                .setCreateTime(dto.getCreateTime())) == 1;
+    }
+
+    /**
+     * 留言墙有新的消息时，通知被留言者
+     *
+     * @param dto dto
+     * @return boolean
+     */
+    private boolean sendWallMessageNotice(NoticeAddDTO dto) {
+        return noticeMapper.insert(
+            new Notice()
+                .setSender(dto.getSender())
+                .setReceiver(dto.getReceiver())
+                .setType(NoticeType.WALL_MESSAGE.getCode())
                 .setContent(dto.getContent())
                 .setLink(dto.getLink())
                 .setCreateTime(dto.getCreateTime())) == 1;
