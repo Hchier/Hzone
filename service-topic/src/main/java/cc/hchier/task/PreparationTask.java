@@ -1,10 +1,8 @@
 package cc.hchier.task;
 
-import cc.hchier.configuration.Properties;
 import cc.hchier.service.TopicService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**

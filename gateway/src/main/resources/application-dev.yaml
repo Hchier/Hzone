@@ -49,6 +49,10 @@ spring:
           predicates:
             - Path=/follow/**
 
+        - id: talk
+          uri: lb://service-talk
+          predicates:
+            - Path=/talk/**
 
 properties:
   # redis中存放token的hash

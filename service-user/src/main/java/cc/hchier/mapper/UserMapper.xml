@@ -60,29 +60,10 @@
         from user
         where username = #{username}
     </select>
-    <!--    -->
-    <!--    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">-->
-    <!--        select username,-->
-    <!--               `password`,-->
-    <!--               email,-->
-    <!--               closed,-->
-    <!--               favor_num,-->
-    <!--               favored_num,-->
-    <!--               follow_num,-->
-    <!--               followed_num-->
-    <!--        from user-->
-    <!--        where username = #{username,jdbcType=VARCHAR}-->
-    <!--    </select>-->
-    <!--    -->
-    <!--    <select id="selectAll" resultMap="BaseResultMap">-->
-    <!--        select username,-->
-    <!--               `password`,-->
-    <!--               email,-->
-    <!--               closed,-->
-    <!--               favor_num,-->
-    <!--               favored_num,-->
-    <!--               follow_num,-->
-    <!--               followed_num-->
-    <!--        from user-->
-    <!--    </select>-->
+
+    <select id="existUser" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*)
+        from user
+        where username = #{username}
+    </select>
 </mapper>

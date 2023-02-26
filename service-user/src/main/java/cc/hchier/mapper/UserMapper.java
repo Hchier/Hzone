@@ -3,6 +3,7 @@ package cc.hchier.mapper;
 import cc.hchier.dto.UserRegisterDTO;
 import cc.hchier.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @author hchier
@@ -57,4 +58,12 @@ public interface UserMapper {
 //
 //    List<User> selectAll();
 //
+
+    /**
+     * 查找某用户名是否已被使用
+     *
+     * @param username 用户名
+     * @return int
+     */
+    int existUser(@Param("username") String username);
 }

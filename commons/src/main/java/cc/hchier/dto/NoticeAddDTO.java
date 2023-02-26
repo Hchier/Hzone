@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -16,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class NoticeAddDTO implements Serializable {
+public class NoticeAddDTO {
     private String sender;
 
     /**
@@ -33,6 +32,5 @@ public class NoticeAddDTO implements Serializable {
 
     private Date createTime;
 
-    private static final long serialVersionUID = 1L;
 
 }

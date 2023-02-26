@@ -112,4 +112,12 @@ public interface UserService {
      * @return {@link RestResponse}
      */
     RestResponse<Object> updateEmail(UserEmailUpdateDTO dto);
+
+    /**
+     * 判断是否存在用户
+     *
+     * @param username 用户名
+     * @return {@link RestResponse}<{@link Object}>
+     */
+    RestResponse<Object> existUser(String username);
 }

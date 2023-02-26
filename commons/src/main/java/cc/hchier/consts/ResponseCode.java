@@ -27,6 +27,8 @@ public enum ResponseCode {
 
     FOLLOW_NOT_EXIST(422, "未关注"),
 
+    TARGET_USER_NOT_EXIST(423, "目标用户不存在"),
+
     XXX(999, "999");
 
     private final int code;

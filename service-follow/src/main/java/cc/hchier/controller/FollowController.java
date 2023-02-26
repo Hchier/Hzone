@@ -42,8 +42,11 @@ public class FollowController {
         return followService.followInfo(username, pageNum * 20, 20);
     }
 
-    @PostMapping("/follow/followedInfo/{username}/{pageNum}")
-    public RestResponse<List<FollowVO>> followedInfo(@PathVariable String username, @PathVariable Integer pageNum) {
-        return followService.followedInfo(username, pageNum * 20, 20);
+    @PostMapping("/follow/followedInfo/{followee}/{type}/{pageNum}")
+    public RestResponse<List<String>> followedInfo(
+        @PathVariable String followee,
+        @PathVariable Integer type,
+        @PathVariable Integer pageNum) {
+        return followService.followedInfo(followee, type, pageNum * 20, 20);
     }
 }

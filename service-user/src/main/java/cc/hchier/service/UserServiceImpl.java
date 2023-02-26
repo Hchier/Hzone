@@ -142,4 +142,9 @@ public class UserServiceImpl implements UserService {
         }
         return RestResponse.ok();
     }
+
+    @Override
+    public RestResponse<Object> existUser(String username) {
+        return userMapper.existUser(username) == 1 ? RestResponse.ok() : RestResponse.fail();
+    }
 }

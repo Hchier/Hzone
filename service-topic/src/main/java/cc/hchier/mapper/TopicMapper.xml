@@ -45,19 +45,19 @@
     </update>
 
     <select id="selectTopByTotalReadNum" resultMap="BaseResultMap">
-        select name, total_read_num
+        select name, total_read_num, week_read_num, day_read_num
         from topic
         order by total_read_num desc limit 0, 10
     </select>
 
     <select id="selectTopByWeekReadNum" resultMap="BaseResultMap">
-        select name, week_read_num
+        select name, total_read_num, week_read_num, day_read_num
         from topic
         order by week_read_num desc limit 0, 10
     </select>
 
     <select id="selectTopByDayReadNum" resultMap="BaseResultMap">
-        select name, day_read_num
+        select name, total_read_num, week_read_num, day_read_num
         from topic
         order by day_read_num desc limit 0, 10
     </select>

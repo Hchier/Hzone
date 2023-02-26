@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.hchier.mapper.PrivateMessageMapper">
+    <resultMap id="BaseResultMap" type="cc.hchier.entity.PrivateMessage">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="from" jdbcType="VARCHAR" property="from"/>
+        <result column="to" jdbcType="VARCHAR" property="to"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="recalled" jdbcType="BIT" property="recalled"/>
+        <result column="read" jdbcType="BIT" property="read"/>
+    </resultMap>
+    <delete id="delete">
+        update
+            private_message
+        set recalled = 1
+        where id = #{id,jdbcType=INTEGER}
+          and `from` = #{from}
+    </delete>
+
+    <insert id="insert" parameterType="cc.hchier.dto.PrivateChatAddDTO">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into private_message (`from`, `to`, content, create_time)
+        values (
+        #{from,jdbcType=VARCHAR},
+        #{to,jdbcType=VARCHAR},
+        #{content,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="select" resultMap="BaseResultMap">
+        select id, `from`, `to`, content, create_time
+        from private_message
+        where ((`from` = #{from} and `to` = #{to}) or (`from` = #{to} and `to` = #{from}))
+          and `recalled` = 0
+        order by `create_time` desc
+        limit #{startIndex}, #{rowNum}
+    </select>
+
+    <update id="setMsgsRead">
+        update private_message
+        set `read` = 1
+        where `from` = #{from}
+          and `to` = #{to}
+    </update>
+</mapper>

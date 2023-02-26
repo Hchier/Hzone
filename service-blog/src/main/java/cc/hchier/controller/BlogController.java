@@ -4,6 +4,7 @@ import cc.hchier.RestResponse;
 import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
 import cc.hchier.service.BlogService;
+import io.seata.core.exception.TransactionException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +32,7 @@ public class BlogController {
     }
 
     @PostMapping("/blog/publish")
-    public RestResponse<Integer> publish(@Valid @RequestBody BlogPublishDTO dto, HttpServletRequest req) {
+    public RestResponse<Integer> publish(@Valid @RequestBody BlogPublishDTO dto, HttpServletRequest req) throws TransactionException {
         if (dto.getTopic() != null && dto.getTopic().isEmpty()) {
             dto.setTopic(null);
         }

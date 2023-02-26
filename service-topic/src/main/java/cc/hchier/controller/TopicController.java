@@ -21,11 +21,6 @@ public class TopicController {
         this.topicService = topicService;
     }
 
-    @PostMapping("/topic/add/{name}")
-    public RestResponse<Object> add(@PathVariable(name = "name") String name) {
-        return topicService.add(name);
-    }
-
     @PostMapping("/topic/get/{name}")
     public RestResponse<Object> get(@PathVariable(name = "name") String name) {
         return topicService.get(name);

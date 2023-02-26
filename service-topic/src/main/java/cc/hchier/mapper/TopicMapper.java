@@ -38,21 +38,21 @@ public interface TopicMapper {
     int incrNum(Topic topic);
 
     /**
-     * 根据总阅读量降序排序，查找最高的20个
+     * 根据总阅读量降序排序，查找最高的10个
      *
      * @return {@link List}<{@link Topic}>
      */
     List<Topic> selectTopByTotalReadNum();
 
     /**
-     * 根据周阅读量降序排序，查找最高的20个
+     * 根据周阅读量降序排序，查找最高的10个
      *
      * @return {@link List}<{@link Topic}>
      */
     List<Topic> selectTopByWeekReadNum();
 
     /**
-     * 根据日阅读量降序排序，查找最高的20个
+     * 根据日阅读量降序排序，查找最高的10个
      *
      * @return {@link List}<{@link Topic}>
      */

@@ -60,12 +60,13 @@ public interface FollowService {
     RestResponse<List<FollowVO>> followInfo(String follower, Integer startIndex, Integer rowNum);
 
     /**
-     * 被关注信息
+     * 查找关注某人或某话题的用户的用户名
      *
      * @param followee   followee
      * @param startIndex 开始index
      * @param rowNum     行num
-     * @return {@link RestResponse}<{@link List}<{@link FollowVO}>>
+     * @param type       类型
+     * @return {@link RestResponse}<{@link List}<{@link String}>>
      */
-    RestResponse<List<FollowVO>> followedInfo(String followee, Integer startIndex, Integer rowNum);
+    RestResponse<List<String>> followedInfo(String followee, Integer type, Integer startIndex, Integer rowNum);
 }

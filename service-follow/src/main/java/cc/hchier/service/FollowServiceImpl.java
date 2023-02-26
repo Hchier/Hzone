@@ -91,12 +91,8 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public RestResponse<List<FollowVO>> followedInfo(String followee, Integer startIndex, Integer rowNum) {
-        List<Follow> followList = followMapper.selectByFollowee(followee, startIndex, rowNum);
-        List<FollowVO> followVOList = new ArrayList<>();
-        for (Follow follow : followList) {
-            followVOList.add(new FollowVO(follow.getId(), follow.getType(), follow.getFollower(), follow.getFollowee()));
-        }
-        return RestResponse.ok(followVOList);
+    public RestResponse<List<String>> followedInfo(String followee, Integer type, Integer startIndex, Integer rowNum) {
+        List<String> followList = followMapper.selectFollowerUsernameByFollowee(followee, type, startIndex, rowNum);
+        return RestResponse.ok(followList);
     }
 }

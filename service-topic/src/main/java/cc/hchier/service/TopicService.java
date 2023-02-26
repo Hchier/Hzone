@@ -10,7 +10,6 @@ import java.util.List;
  */
 public interface TopicService {
     /**
-     * 添加
      * 新增话题
      * 先判断是否存在，若存在，则直接返回ok
      *
@@ -40,6 +39,7 @@ public interface TopicService {
 
     /**
      * 讨论量+incr
+     * 若话题不存在，则先新增
      *
      * @param name 名字
      * @param incr 增量
@@ -59,7 +59,8 @@ public interface TopicService {
 
     /**
      * 重新加载话题热搜
-     * 重新从MySQL中拿数据，放入redis中
+     * 重新从MySQL中拿数据，放入redis中。
+     * 只要上了总榜、周榜或日榜，就将其放入topicTotalReadNumChart、topicWeekReadNumChart和topicDayReadNumChart中
      */
     void reloadTopTopic();
 

@@ -1,11 +1,11 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
+import cc.hchier.consts.FollowType;
 import cc.hchier.consts.NoticeType;
 import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.Notice;
 import cc.hchier.mapper.NoticeMapper;
-import cc.hchier.vo.FollowVO;
 import cc.hchier.vo.NoticeVO;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -43,7 +43,9 @@ public class NoticeServiceImpl implements NoticeService {
                 }
                 break;
             case 2:
-                //todo
+                if (!sendTopicUpdateNotice(dto)) {
+                    channel.basicNack(tag, false, false);
+                }
                 break;
             case 3:
                 if (!sendBlogRepliedNotice(dto)) {
@@ -61,7 +63,6 @@ public class NoticeServiceImpl implements NoticeService {
                 }
                 break;
             default:
-                //todo
                 break;
         }
         channel.basicAck(tag, false);
@@ -76,16 +77,45 @@ public class NoticeServiceImpl implements NoticeService {
     private boolean sendBlogPublishNotice(NoticeAddDTO dto) {
         int pageNum = 0;
         while (true) {
-            RestResponse<List<FollowVO>> followerList = followService.followedInfo(dto.getSender(), pageNum++);
+            RestResponse<List<String>> followerList = followService.followedInfo(dto.getSender(), FollowType.USER.getCode(), pageNum++);
             if (followerList.getBody().isEmpty()) {
                 return true;
             }
             List<Notice> noticeList = new ArrayList<>();
-            for (FollowVO follower : followerList.getBody()) {
+            for (String follower : followerList.getBody()) {
                 noticeList.add(new Notice()
                     .setSender(dto.getSender())
-                    .setReceiver(follower.getFollower())
+                    .setReceiver(follower)
                     .setType(NoticeType.BLOG_PUBLISH_NOTICE.getCode())
+                    .setContent(dto.getContent())
+                    .setLink(dto.getLink())
+                    .setCreateTime(dto.getCreateTime()));
+            }
+            if (addList(noticeList) == 0) {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * 当话题有新的内容时，通知所有关注了该话题的用户
+     *
+     * @param dto dto
+     * @return boolean
+     */
+    public boolean sendTopicUpdateNotice(NoticeAddDTO dto) {
+        int pageNum = 0;
+        while (true) {
+            RestResponse<List<String>> followerList = followService.followedInfo(dto.getReceiver(), FollowType.TOPIC.getCode(), pageNum++);
+            if (followerList.getBody().isEmpty()) {
+                return true;
+            }
+            List<Notice> noticeList = new ArrayList<>();
+            for (String follower : followerList.getBody()) {
+                noticeList.add(new Notice()
+                    .setSender(dto.getSender())
+                    .setReceiver(follower)
+                    .setType(NoticeType.TOPIC_UPDATE_NOTICE.getCode())
                     .setContent(dto.getContent())
                     .setLink(dto.getLink())
                     .setCreateTime(dto.getCreateTime()));

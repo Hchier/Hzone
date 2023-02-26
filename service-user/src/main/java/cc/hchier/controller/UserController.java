@@ -96,4 +96,9 @@ public class UserController {
         dto.setUsername(username);
         return userService.updateEmail(dto);
     }
+
+    @PostMapping("/user/existUser/{username}")
+    public RestResponse<Object> existUser(@PathVariable String username) {
+        return userService.existUser(username);
+    }
 }

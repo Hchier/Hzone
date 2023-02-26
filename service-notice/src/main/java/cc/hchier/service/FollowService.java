@@ -13,13 +13,18 @@ import java.util.List;
  */
 @FeignClient(value = "service-follow")
 public interface FollowService {
+
     /**
-     * 查找某人的被关注信息
+     * 查找关注某人或某话题的用户的用户名
      *
-     * @param username 用户名
+     * @param followee followee
+     * @param type     类型
      * @param pageNum  页面num
      * @return {@link RestResponse}<{@link List}<{@link FollowVO}>>
      */
-    @PostMapping("/follow/followedInfo/{username}/{pageNum}")
-    RestResponse<List<FollowVO>> followedInfo(@PathVariable("username") String username, @PathVariable("pageNum") Integer pageNum);
+    @PostMapping("/follow/followedInfo/{followee}/{type}/{pageNum}")
+    RestResponse<List<String>> followedInfo(
+        @PathVariable("followee") String followee,
+        @PathVariable("type") Integer type,
+        @PathVariable("pageNum") Integer pageNum);
 }

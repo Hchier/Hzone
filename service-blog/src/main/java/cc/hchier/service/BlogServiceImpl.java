@@ -9,6 +9,11 @@ import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.Blog;
 import cc.hchier.mapper.BlogMapper;
 import cc.hchier.vo.BlogVO;
+import io.seata.core.context.RootContext;
+import io.seata.core.exception.TransactionException;
+import io.seata.core.model.TransactionManager;
+import io.seata.spring.annotation.GlobalTransactional;
+import io.seata.tm.TransactionManagerHolder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +27,12 @@ import java.util.Date;
 public class BlogServiceImpl implements BlogService {
     private final BlogMapper blogMapper;
     private final RabbitTemplate rabbitTemplate;
+    private final TopicService topicService;
 
-    public BlogServiceImpl(BlogMapper blogMapper, RabbitTemplate rabbitTemplate) {
+    public BlogServiceImpl(BlogMapper blogMapper, RabbitTemplate rabbitTemplate, TopicService topicService) {
         this.blogMapper = blogMapper;
         this.rabbitTemplate = rabbitTemplate;
+        this.topicService = topicService;
     }
 
     @Override
@@ -36,22 +43,51 @@ public class BlogServiceImpl implements BlogService {
         return RestResponse.fail();
     }
 
+    @GlobalTransactional
     @Override
-    public RestResponse<Integer> publish(BlogPublishDTO dto) {
-        if (blogMapper.insert(dto) == 1) {
+    public RestResponse<Integer> publish(BlogPublishDTO dto) throws TransactionException {
+
+        int addTopicCode = RestResponse.ok().getCode();
+        if (dto.getTopic() != null) {
+            addTopicCode = topicService.incrDiscussionNum(dto.getTopic(), 1).getCode();
+        }
+
+        String xid = RootContext.getXID();
+        TransactionManager manager = TransactionManagerHolder.get();
+
+        if (addTopicCode != RestResponse.ok().getCode() ||
+            blogMapper.insert(dto) == 0
+        ) {
+            manager.rollback(xid);
+            return RestResponse.fail();
+        }
+        manager.commit(xid);
+
+        rabbitTemplate.convertAndSend(
+            "directExchange",
+            "sendNotice",
+            new NoticeAddDTO()
+                .setSender(dto.getPublisher())
+                .setType(NoticeType.BLOG_PUBLISH_NOTICE.getCode())
+                .setContent(dto.getTitle())
+                .setLink(String.valueOf(dto.getId()))
+                .setCreateTime(new Date()));
+
+        if (dto.getTopic() != null) {
             rabbitTemplate.convertAndSend(
                 "directExchange",
                 "sendNotice",
                 new NoticeAddDTO()
                     .setSender(dto.getPublisher())
-                    .setType(NoticeType.BLOG_PUBLISH_NOTICE.getCode())
+                    //更新话题时，将话题名暂时放在这儿传过去
+                    .setReceiver(dto.getTopic())
+                    .setType(NoticeType.TOPIC_UPDATE_NOTICE.getCode())
                     .setContent(dto.getTitle())
                     .setLink(String.valueOf(dto.getId()))
-                    .setCreateTime(new Date())
-            );
-            return RestResponse.ok(dto.getId());
+                    .setCreateTime(new Date()));
         }
-        return RestResponse.fail();
+
+        return RestResponse.ok(dto.getId());
     }
 
     @Override

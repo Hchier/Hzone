@@ -11,6 +11,8 @@ public enum NoticeType {
     //用户发表博客后给关注了该用户的用户发通知
     BLOG_PUBLISH_NOTICE(1),
 
+    //用户关注的话题有了新内容
+    TOPIC_UPDATE_NOTICE(2),
     //博客被回复
     BLOG_REPLIED_NOTICE(3),
 

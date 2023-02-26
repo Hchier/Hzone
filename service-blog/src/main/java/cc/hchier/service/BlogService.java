@@ -4,6 +4,7 @@ import cc.hchier.RestResponse;
 import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
 import cc.hchier.vo.BlogVO;
+import io.seata.core.exception.TransactionException;
 
 /**
  * @author hchier
@@ -23,8 +24,9 @@ public interface BlogService {
      *
      * @param dto dto
      * @return {@link RestResponse}<{@link Integer}>
+     * @throws TransactionException 事务异常
      */
-    RestResponse<Integer> publish(BlogPublishDTO dto);
+    RestResponse<Integer> publish(BlogPublishDTO dto) throws TransactionException;
 
     /**
      * 查找博客

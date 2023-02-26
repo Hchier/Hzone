@@ -57,7 +57,7 @@
         select follower
         from follow
         where followee = #{followee}
-          and type = 1
+          and type = #{type}
           and deleted = 0
         limit #{startIndex}, #{rowNum}
     </select>

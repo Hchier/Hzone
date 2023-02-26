@@ -16,6 +16,7 @@
         <module>service-wall</module>
         <module>service-blog</module>
         <module>service-follow</module>
+        <module>service-talk</module>
     </modules>
 
     <packaging>pom</packaging>
