@@ -2,6 +2,7 @@ package cc.hchier.service;
 
 import cc.hchier.RestResponse;
 import cc.hchier.dto.BlogCommentDeleteDTO;
+import cc.hchier.dto.BlogCommentGetDTO;
 import cc.hchier.dto.BlogCommentPublishDTO;
 import cc.hchier.vo.BlogCommentVO;
 import io.seata.core.exception.TransactionException;
@@ -37,25 +38,21 @@ public interface BlogCommentService {
      */
     RestResponse<Object> delete(BlogCommentDeleteDTO dto) throws TransactionException;
 
+
     /**
      * 查找某博客下的评论
      *
-     * @param blogId      博客id
-     * @param baseCommentOf   baseCommentOf
-     * @param pageNum     页数
-     * @param rowNum      行num
-     * @param currentUser 当前用户
+     * @param dto dto
      * @return {@link RestResponse}<{@link List}<{@link BlogCommentVO}>>
      */
-    RestResponse<List<BlogCommentVO>> get(int blogId, int baseCommentOf, int pageNum, int rowNum, String currentUser);
+    RestResponse<List<BlogCommentVO>> get(BlogCommentGetDTO dto);
 
     /**
      * 隐藏评论
      *
      * @param commentId          评论id
-     * @param blogId      博客id
      * @param currentUser 当前用户
      * @return {@link RestResponse}<{@link Object}>
      */
-    RestResponse<Object> hidden(int commentId, int blogId, String currentUser);
+    RestResponse<Object> hidden(int commentId, String currentUser);
 }

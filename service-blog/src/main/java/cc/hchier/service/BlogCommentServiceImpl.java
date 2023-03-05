@@ -3,6 +3,7 @@ package cc.hchier.service;
 import cc.hchier.RestResponse;
 import cc.hchier.consts.NoticeType;
 import cc.hchier.dto.BlogCommentDeleteDTO;
+import cc.hchier.dto.BlogCommentGetDTO;
 import cc.hchier.dto.BlogCommentPublishDTO;
 import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.BlogComment;
@@ -122,8 +123,8 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     }
 
     @Override
-    public RestResponse<List<BlogCommentVO>> get(int blogId, int baseCommentOf, int pageNum, int rowNum, String currentUser) {
-        List<BlogComment> blogCommentList = blogCommentMapper.selectByBlogId(blogId, baseCommentOf, pageNum * rowNum, rowNum);
+    public RestResponse<List<BlogCommentVO>> get(BlogCommentGetDTO dto) {
+        List<BlogComment> blogCommentList = blogCommentMapper.selectByBlogId(dto.getBlogId(), dto.getBaseComment(), dto.getPageNum() * 20, 20, dto.getHidden());
         List<BlogCommentVO> blogCommentVOList = new ArrayList<>();
         for (BlogComment blogComment : blogCommentList) {
             blogCommentVOList.add(
@@ -135,9 +136,11 @@ public class BlogCommentServiceImpl implements BlogCommentService {
                     blogComment.getContent(),
                     blogComment.getCommentNum(),
                     blogComment.getFavorNum(),
-                    currentUser,
+                    blogComment.getBaseComment(),
+                    blogComment.getCommentOf(),
+                    dto.getCurrentUser(),
                     blogComment.getCreateTime(),
-                    blogComment.getPublisher().equals(currentUser)
+                    blogComment.getPublisher().equals(dto.getCurrentUser())
                 )
             );
         }
@@ -145,8 +148,8 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     }
 
     @Override
-    public RestResponse<Object> hidden(int commentId, int blogId, String currentUser) {
-        if (blogCommentMapper.hidden(commentId, blogId, currentUser) == 0) {
+    public RestResponse<Object> hidden(int commentId, String currentUser) {
+        if (blogCommentMapper.hidden(commentId, currentUser) == 0) {
             return RestResponse.fail();
         }
         return RestResponse.ok();

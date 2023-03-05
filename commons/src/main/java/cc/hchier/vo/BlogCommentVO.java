@@ -31,7 +31,9 @@ public class BlogCommentVO implements Serializable {
 
     private Integer favorNum;
 
+    private Integer baseComment;
 
+    private Integer commentOf;
     /**
      * 当前用户：传去前端判断一些权限
      */
