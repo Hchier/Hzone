@@ -1,6 +1,7 @@
 package cc.hchier.controller;
 
 import cc.hchier.RestResponse;
+import cc.hchier.dto.BlogCommentDeleteDTO;
 import cc.hchier.dto.BlogCommentPublishDTO;
 import cc.hchier.service.BlogCommentService;
 import cc.hchier.vo.BlogCommentVO;
@@ -32,19 +33,19 @@ public class BlogCommentController {
         return blogCommentService.publish(dto.setPublisher(req.getHeader("username")).setCreateTime(new Date()));
     }
 
-    @PostMapping("/blog/comment/delete/{commentId}/{blogId}")
-    public RestResponse<Object> delete(@PathVariable Integer commentId, @PathVariable Integer blogId, HttpServletRequest req) throws TransactionException {
-        return blogCommentService.delete(commentId, blogId, req.getHeader("username"));
+    @PostMapping("/blog/comment/delete")
+    public RestResponse<Object> delete(@Valid @RequestBody BlogCommentDeleteDTO dto, HttpServletRequest req) throws TransactionException {
+        return blogCommentService.delete(dto.setPublisher( req.getHeader("username")));
     }
 
-    @PostMapping("/blog/comment/get/{blogId}/{commentOf}/{pageNum}")
+    @PostMapping("/blog/comment/get/{blogId}/{baseComment}/{pageNum}")
     public RestResponse<List<BlogCommentVO>> get(
         @PathVariable Integer blogId,
-        @PathVariable Integer commentOf,
+        @PathVariable Integer baseComment,
         @PathVariable Integer pageNum,
         HttpServletRequest req) {
 
-        return blogCommentService.get(blogId, commentOf, pageNum, 20, req.getHeader("username"));
+        return blogCommentService.get(blogId, baseComment, pageNum, 20, req.getHeader("username"));
     }
 
     @PostMapping("/blog/comment/hidden/{commentId}/{blogId}")

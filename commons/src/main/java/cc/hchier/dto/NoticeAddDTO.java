@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -15,12 +16,12 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class NoticeAddDTO {
+public class NoticeAddDTO implements Serializable {
     private String sender;
 
     /**
      * 若只存在一个接收者，则在发送 NoticeAddDTO时就填进去。
-     *  若存在多个接收者，则在发送 NoticeAddDTO时不管该变量，在收到 NoticeAddDTO后再查接收者
+     * 若存在多个接收者，则在发送 NoticeAddDTO时不管该变量，在收到 NoticeAddDTO后再查接收者
      */
     private String receiver;
 

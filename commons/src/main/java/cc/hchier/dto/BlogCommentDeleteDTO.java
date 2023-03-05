@@ -5,40 +5,32 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 /**
  * @author by Hchier
- * @Date 2023/2/22 13:08
+ * @Date 2023/3/5 14:02
  */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Accessors(chain = true)
-public class BlogCommentPublishDTO {
-    private Integer id;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
+public class BlogCommentDeleteDTO {
     private String publisher;
 
-    /**
-     * 接收者。当评论为博客的评论时，receiver为blank
-     */
     @NotNull(message = "receiver null")
     private String receiver;
 
+    @NotNull(message = "id null")
+    private Integer id;
+
     @NotNull(message = "blogId null")
     private Integer blogId;
-
-    @NotBlank(message = "content blank")
-    private String content;
 
     @NotNull(message = "baseComment null")
     private Integer baseComment;
 
     @NotNull(message = "commentOf null")
     private Integer commentOf;
-
-    private Date createTime;
 }

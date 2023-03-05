@@ -21,6 +21,8 @@ public class BlogCommentVO implements Serializable {
 
     private String publisher;
 
+    private String receiver;
+
     private Integer blogId;
 
     private String content;

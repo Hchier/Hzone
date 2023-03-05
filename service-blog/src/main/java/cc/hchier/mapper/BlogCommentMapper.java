@@ -28,18 +28,18 @@ public interface BlogCommentMapper {
      * @param publisher 发布者
      * @return int
      */
-    int delete(@Param("id") Integer id, @Param("publisher") String publisher);
+    boolean delete(@Param("id") Integer id, @Param("publisher") String publisher);
 
     /**
      * 查找博客评论
      *
-     * @param blogId     博客id
-     * @param commentOf  commentOf
-     * @param startIndex 开始index
-     * @param rowNum     行num
+     * @param blogId      博客id
+     * @param baseComment baseComment
+     * @param startIndex  开始index
+     * @param rowNum      行num
      * @return {@link List}<{@link BlogComment}>
      */
-    List<BlogComment> selectByBlogId(@Param("blogId") Integer blogId, @Param("commentOf") Integer commentOf, @Param("startIndex") Integer startIndex, @Param("rowNum") Integer rowNum);
+    List<BlogComment> selectByBlogId(@Param("blogId") Integer blogId, @Param("baseComment") Integer baseComment, @Param("startIndex") Integer startIndex, @Param("rowNum") Integer rowNum);
 
     /**
      * 隐藏博客评论
@@ -59,4 +59,13 @@ public interface BlogCommentMapper {
      * @return {@link String}
      */
     String selectPublisherById(@Param("id") Integer id);
+
+    /**
+     * 评论数+1
+     *
+     * @param id id
+     * @param incr incr
+     * @return int
+     */
+    int incrCommentNum(@Param("id") Integer id, @Param("incr") Integer incr);
 }

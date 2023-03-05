@@ -4,11 +4,13 @@
     <resultMap id="BaseResultMap" type="cc.hchier.entity.BlogComment">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="publisher" jdbcType="VARCHAR" property="publisher"/>
+        <result column="receiver" jdbcType="VARCHAR" property="receiver"/>
         <result column="blog_id" jdbcType="INTEGER" property="blogId"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="comment_num" jdbcType="INTEGER" property="commentNum"/>
         <result column="favor_num" jdbcType="INTEGER" property="favorNum"/>
         <result column="hidden" jdbcType="BIT" property="hidden"/>
+        <result column="base_comment" jdbcType="INTEGER" property="baseComment"/>
         <result column="comment_of" jdbcType="INTEGER" property="commentOf"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="deleted" jdbcType="BIT" property="deleted"/>
@@ -26,11 +28,13 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
 
-        insert into blog_comment (publisher, blog_id, content, comment_of, create_time)
+        insert into blog_comment (publisher, receiver, blog_id, content, base_comment, comment_of, create_time)
         values (
         #{publisher,jdbcType=VARCHAR},
+        #{receiver,jdbcType=VARCHAR},
         #{blogId,jdbcType=INTEGER},
         #{content,jdbcType=VARCHAR},
+        #{baseComment,jdbcType=INTEGER},
         #{commentOf,jdbcType=INTEGER},
         #{createTime,jdbcType=TIMESTAMP}
         )
@@ -40,7 +44,7 @@
         select *
         from blog_comment
         where blog_id = #{blogId}
-          and comment_of = #{commentOf}
+          and base_comment = #{baseComment}
           and deleted = 0
           and hidden = 0
         limit #{startIndex}, #{rowNum}
@@ -60,4 +64,10 @@
           and deleted = 0
           and hidden = 0
     </select>
+
+    <update id="incrCommentNum">
+        update blog_comment
+        set comment_num = comment_num + #{incr}
+        where id = #{id}
+    </update>
 </mapper>

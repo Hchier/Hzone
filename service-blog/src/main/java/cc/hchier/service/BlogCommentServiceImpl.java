@@ -2,6 +2,7 @@ package cc.hchier.service;
 
 import cc.hchier.RestResponse;
 import cc.hchier.consts.NoticeType;
+import cc.hchier.dto.BlogCommentDeleteDTO;
 import cc.hchier.dto.BlogCommentPublishDTO;
 import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.BlogComment;
@@ -46,6 +47,19 @@ public class BlogCommentServiceImpl implements BlogCommentService {
         if (blogCommentMapper.insert(dto) == 0 || blogMapper.incrCommentNum(dto.getBlogId(), 1) == 0) {
             manager.rollback(xid);
             return RestResponse.fail();
+        } else {
+            if (dto.getBaseComment() != -1) {
+                if (blogCommentMapper.incrCommentNum(dto.getBaseComment(), 1) == 0) {
+                    manager.rollback(xid);
+                    return RestResponse.fail();
+                }
+                if (!dto.getBaseComment().equals(dto.getCommentOf())) {
+                    if (blogCommentMapper.incrCommentNum(dto.getCommentOf(), 1) == 0) {
+                        manager.rollback(xid);
+                        return RestResponse.fail();
+                    }
+                }
+            }
         }
         manager.commit(xid);
         //博客的评论
@@ -69,7 +83,7 @@ public class BlogCommentServiceImpl implements BlogCommentService {
                 "sendNotice",
                 new NoticeAddDTO()
                     .setSender(dto.getPublisher())
-                    .setReceiver(blogCommentMapper.selectPublisherById(dto.getCommentOf()))
+                    .setReceiver(dto.getReceiver())
                     .setType(NoticeType.BLOG_COMMENT_REPLIED_NOTICE.getCode())
                     .setContent(dto.getContent())
                     .setLink(String.valueOf(dto.getId()))
@@ -82,27 +96,41 @@ public class BlogCommentServiceImpl implements BlogCommentService {
 
     @GlobalTransactional
     @Override
-    public RestResponse<Object> delete(int commentId, int blogId, String publisher) throws TransactionException {
+    public RestResponse<Object> delete(BlogCommentDeleteDTO dto) throws TransactionException {
         String xid = RootContext.getXID();
         TransactionManager manager = TransactionManagerHolder.get();
 
-        if (blogCommentMapper.delete(commentId, publisher) == 0 || blogMapper.incrCommentNum(blogId, -1) == 0) {
+        if (!blogCommentMapper.delete(dto.getId(), dto.getPublisher()) || blogMapper.incrCommentNum(dto.getBlogId(), -1) == 0) {
             manager.rollback(xid);
             return RestResponse.fail();
+        } else {
+            if (dto.getBaseComment() != -1) {
+                if (blogCommentMapper.incrCommentNum(dto.getBaseComment(), -1) == 0) {
+                    manager.rollback(xid);
+                    return RestResponse.fail();
+                }
+                if (!dto.getBaseComment().equals(dto.getCommentOf())) {
+                    if (blogCommentMapper.incrCommentNum(dto.getCommentOf(), -1) == 0) {
+                        manager.rollback(xid);
+                        return RestResponse.fail();
+                    }
+                }
+            }
         }
         manager.commit(xid);
         return RestResponse.ok();
     }
 
     @Override
-    public RestResponse<List<BlogCommentVO>> get(int blogId, int commentOf, int pageNum, int rowNum, String currentUser) {
-        List<BlogComment> blogCommentList = blogCommentMapper.selectByBlogId(blogId, commentOf, pageNum * rowNum, rowNum);
+    public RestResponse<List<BlogCommentVO>> get(int blogId, int baseCommentOf, int pageNum, int rowNum, String currentUser) {
+        List<BlogComment> blogCommentList = blogCommentMapper.selectByBlogId(blogId, baseCommentOf, pageNum * rowNum, rowNum);
         List<BlogCommentVO> blogCommentVOList = new ArrayList<>();
         for (BlogComment blogComment : blogCommentList) {
             blogCommentVOList.add(
                 new BlogCommentVO(
                     blogComment.getId(),
                     blogComment.getPublisher(),
+                    blogComment.getReceiver(),
                     blogComment.getBlogId(),
                     blogComment.getContent(),
                     blogComment.getCommentNum(),

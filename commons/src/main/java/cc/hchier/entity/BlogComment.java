@@ -19,6 +19,8 @@ public class BlogComment implements Serializable {
 
     private String publisher;
 
+    private String receiver;
+
     private Integer blogId;
 
     private String content;
@@ -28,6 +30,8 @@ public class BlogComment implements Serializable {
     private Integer favorNum;
 
     private Boolean hidden;
+
+    private Integer baseComment;
 
     private Integer commentOf;
 
