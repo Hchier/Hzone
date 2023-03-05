@@ -21,8 +21,6 @@ public class BlogVO implements Serializable {
 
     private String publisher;
 
-    private String publisherAvatar;
-
     private String title;
 
     private String content;
@@ -32,6 +30,8 @@ public class BlogVO implements Serializable {
     private Integer commentNum;
 
     private Integer rewardNum;
+
+    private Boolean favored;
 
     private Boolean selfVisible;
 

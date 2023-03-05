@@ -7,6 +7,7 @@ import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
 import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.Blog;
+import cc.hchier.mapper.BlogFavorMapper;
 import cc.hchier.mapper.BlogMapper;
 import cc.hchier.vo.BlogVO;
 import io.seata.core.context.RootContext;
@@ -28,11 +29,13 @@ public class BlogServiceImpl implements BlogService {
     private final BlogMapper blogMapper;
     private final RabbitTemplate rabbitTemplate;
     private final TopicService topicService;
+    private final BlogFavorMapper blogFavorMapper;
 
-    public BlogServiceImpl(BlogMapper blogMapper, RabbitTemplate rabbitTemplate, TopicService topicService) {
+    public BlogServiceImpl(BlogMapper blogMapper, RabbitTemplate rabbitTemplate, TopicService topicService, BlogFavorMapper blogFavorMapper) {
         this.blogMapper = blogMapper;
         this.rabbitTemplate = rabbitTemplate;
         this.topicService = topicService;
+        this.blogFavorMapper = blogFavorMapper;
     }
 
     @Override
@@ -102,6 +105,7 @@ public class BlogServiceImpl implements BlogService {
             .setTitle(blog.getTitle())
             .setContent(blog.getContent())
             .setFavorNum(blog.getFavorNum())
+            .setFavored(blogFavorMapper.favorCount(id, currentUser) > 0)
             .setCommentNum(blog.getCommentNum())
             .setRewardNum(blog.getRewardNum())
             .setSelfVisible(blog.getSelfVisible())
