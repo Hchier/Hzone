@@ -30,7 +30,7 @@ public class BlogCommentController {
     }
 
     @PostMapping("/blog/comment/publish")
-    public RestResponse<Integer> publish(@Valid @RequestBody BlogCommentPublishDTO dto, HttpServletRequest req) throws TransactionException {
+    public RestResponse<BlogCommentVO> publish(@Valid @RequestBody BlogCommentPublishDTO dto, HttpServletRequest req) throws TransactionException {
         return blogCommentService.publish(dto.setPublisher(req.getHeader("username")).setCreateTime(new Date()));
     }
 
@@ -45,8 +45,8 @@ public class BlogCommentController {
         return blogCommentService.get(dto.setCurrentUser(req.getHeader("username")));
     }
 
-    @PostMapping("/blog/comment/hidden/{commentId}")
-    public RestResponse<Object> hidden(@PathVariable Integer commentId, HttpServletRequest req) {
-        return blogCommentService.hidden(commentId, req.getHeader("username"));
+    @PostMapping("/blog/comment/hidden/{blogId}/{commentId}")
+    public RestResponse<Object> hidden(@PathVariable Integer blogId,@PathVariable Integer commentId, HttpServletRequest req) {
+        return blogCommentService.hidden(blogId,commentId, req.getHeader("username"));
     }
 }

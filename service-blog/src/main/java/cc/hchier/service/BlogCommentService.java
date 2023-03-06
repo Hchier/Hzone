@@ -23,10 +23,10 @@ public interface BlogCommentService {
      * 2，blog_comment comment_of comment_num + 1
      *
      * @param dto dto
-     * @return {@link RestResponse}<{@link Integer}>
+     * @return {@link RestResponse}<{@link BlogCommentVO}>
      * @throws TransactionException 交易异常
      */
-    RestResponse<Integer> publish(BlogCommentPublishDTO dto) throws TransactionException;
+    RestResponse<BlogCommentVO> publish(BlogCommentPublishDTO dto) throws TransactionException;
 
 
     /**
@@ -49,10 +49,10 @@ public interface BlogCommentService {
 
     /**
      * 隐藏评论
-     *
-     * @param commentId          评论id
+     * @param blogId   博客id
+     * @param commentId   评论id
      * @param currentUser 当前用户
      * @return {@link RestResponse}<{@link Object}>
      */
-    RestResponse<Object> hidden(int commentId, String currentUser);
+    RestResponse<Object> hidden(int blogId, int commentId, String currentUser);
 }

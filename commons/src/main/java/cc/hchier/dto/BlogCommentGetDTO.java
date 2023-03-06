@@ -24,9 +24,6 @@ public class BlogCommentGetDTO {
     @NotNull(message = "baseComment null")
     private Integer baseComment;
 
-    @NotNull(message = "hidden null")
-    private Integer hidden;
-
     @NotNull(message = "pageNum null")
     private Integer pageNum;
 }

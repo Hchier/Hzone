@@ -33,6 +33,10 @@ public class RestResponse<T> {
         return build(responseCode, null);
     }
 
+    public static <K> RestResponse<K> build(int code, String message, K body) {
+        return new RestResponse<>(code, message, body);
+    }
+
     public static <K> RestResponse<K> build(ResponseCode responseCode, K body) {
         return new RestResponse<>(responseCode.getCode(), responseCode.getMessage(), body);
     }

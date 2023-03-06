@@ -31,6 +31,8 @@ public class BlogCommentVO implements Serializable {
 
     private Integer favorNum;
 
+    private Boolean hidden;
+
     private Integer baseComment;
 
     private Integer commentOf;

@@ -46,15 +46,14 @@
         where blog_id = #{blogId}
           and base_comment = #{baseComment}
           and deleted = 0
-          and hidden = #{hidden}
         limit #{startIndex}, #{rowNum}
     </select>
 
     <update id="hidden">
         update blog_comment
         set hidden = 1
-        where id = #{id}
-          and receiver = #{currentUser}
+        where id = #{commentId}
+          and #{currentUser} = (select publisher from blog where id = #{blogId})
     </update>
 
     <select id="selectPublisherById" parameterType="java.lang.Integer" resultType="java.lang.String">

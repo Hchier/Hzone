@@ -37,24 +37,23 @@ public interface BlogCommentMapper {
      * @param baseComment baseComment
      * @param startIndex  开始index
      * @param rowNum      行num
-     * @param hidden      hidden
      * @return {@link List}<{@link BlogComment}>
      */
     List<BlogComment> selectByBlogId(@Param("blogId") Integer blogId,
                                      @Param("baseComment") Integer baseComment,
                                      @Param("startIndex") Integer startIndex,
-                                     @Param("rowNum") Integer rowNum,
-                                     @Param("hidden")Integer hidden);
+                                     @Param("rowNum") Integer rowNum);
 
     /**
      * 隐藏博客评论
      * 只能隐藏发表在自己博客下的评论
      *
-     * @param id          评论id
+     * @param blogId          博客id
+     * @param commentId          评论id
      * @param currentUser 当前用户
      * @return int
      */
-    int hidden(@Param("id") Integer id, @Param("currentUser") String currentUser);
+    int hidden(@Param("blogId") Integer blogId,@Param("commentId") Integer commentId, @Param("currentUser") String currentUser);
 
     /**
      * 根据博客id查找评论者username

@@ -41,7 +41,7 @@ public class BlogCommentServiceImpl implements BlogCommentService {
 
     @GlobalTransactional
     @Override
-    public RestResponse<Integer> publish(BlogCommentPublishDTO dto) throws TransactionException {
+    public RestResponse<BlogCommentVO> publish(BlogCommentPublishDTO dto) throws TransactionException {
         String xid = RootContext.getXID();
         TransactionManager manager = TransactionManagerHolder.get();
 
@@ -92,7 +92,10 @@ public class BlogCommentServiceImpl implements BlogCommentService {
             );
         }
 
-        return RestResponse.ok(dto.getId());
+        return RestResponse.ok(new BlogCommentVO().
+            setId(dto.getId()).
+            setPublisher(dto.getPublisher())
+            .setCreateTime(dto.getCreateTime()));
     }
 
     @GlobalTransactional
@@ -124,7 +127,7 @@ public class BlogCommentServiceImpl implements BlogCommentService {
 
     @Override
     public RestResponse<List<BlogCommentVO>> get(BlogCommentGetDTO dto) {
-        List<BlogComment> blogCommentList = blogCommentMapper.selectByBlogId(dto.getBlogId(), dto.getBaseComment(), dto.getPageNum() * 20, 20, dto.getHidden());
+        List<BlogComment> blogCommentList = blogCommentMapper.selectByBlogId(dto.getBlogId(), dto.getBaseComment(), dto.getPageNum() * 20, 20);
         List<BlogCommentVO> blogCommentVOList = new ArrayList<>();
         for (BlogComment blogComment : blogCommentList) {
             blogCommentVOList.add(
@@ -136,6 +139,7 @@ public class BlogCommentServiceImpl implements BlogCommentService {
                     blogComment.getContent(),
                     blogComment.getCommentNum(),
                     blogComment.getFavorNum(),
+                    blogComment.getHidden(),
                     blogComment.getBaseComment(),
                     blogComment.getCommentOf(),
                     dto.getCurrentUser(),
@@ -148,8 +152,8 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     }
 
     @Override
-    public RestResponse<Object> hidden(int commentId, String currentUser) {
-        if (blogCommentMapper.hidden(commentId, currentUser) == 0) {
+    public RestResponse<Object> hidden(int blogId, int commentId, String currentUser) {
+        if (blogCommentMapper.hidden(blogId, commentId, currentUser) == 0) {
             return RestResponse.fail();
         }
         return RestResponse.ok();
