@@ -22,10 +22,7 @@ public class BlogCommentPublishDTO {
 
     private String publisher;
 
-    /**
-     * 接收者。当评论为博客的评论时，receiver为blank
-     */
-    @NotNull(message = "receiver null")
+    @NotBlank(message = "receiver blank")
     private String receiver;
 
     @NotNull(message = "blogId null")

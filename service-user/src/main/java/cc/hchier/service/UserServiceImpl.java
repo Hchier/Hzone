@@ -1,5 +1,6 @@
 package cc.hchier.service;
 
+import cc.hchier.consts.FollowType;
 import cc.hchier.consts.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.Utils;
@@ -10,6 +11,7 @@ import cc.hchier.dto.UserPwdUpdateDTO;
 import cc.hchier.dto.UserRegisterDTO;
 import cc.hchier.entity.User;
 import cc.hchier.mapper.UserMapper;
+import cc.hchier.vo.UserVO;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +26,13 @@ public class UserServiceImpl implements UserService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserMapper userMapper;
     private final Properties properties;
+    private final FollowService followService;
 
-    public UserServiceImpl(RedisTemplate<String, Object> redisTemplate, UserMapper userMapper, Properties properties) {
+    public UserServiceImpl(RedisTemplate<String, Object> redisTemplate, UserMapper userMapper, Properties properties, FollowService followService) {
         this.redisTemplate = redisTemplate;
         this.userMapper = userMapper;
         this.properties = properties;
+        this.followService = followService;
     }
 
     @Override
@@ -146,5 +150,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public RestResponse<Object> existUser(String username) {
         return userMapper.existUser(username) == 1 ? RestResponse.ok() : RestResponse.fail();
+    }
+
+    @Override
+    public RestResponse<UserVO> getUserVO(String targetUser, String currentUser) {
+        User user = userMapper.selectUser(targetUser);
+        UserVO userVO = new UserVO()
+            .setUsername(user.getUsername())
+            .setSignature(user.getSignature())
+            .setFavorNum(user.getFavorNum())
+            .setFollowNum(user.getFollowNum())
+            .setFollowedNum(user.getFollowedNum())
+            .setFollowed(followService.existFollow(currentUser, targetUser, FollowType.USER.getCode()).getBody());
+        return RestResponse.ok(userVO);
     }
 }

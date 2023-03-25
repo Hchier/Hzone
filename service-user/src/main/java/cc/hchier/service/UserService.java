@@ -5,6 +5,7 @@ import cc.hchier.dto.UserEmailUpdateDTO;
 import cc.hchier.dto.UserLoginDTO;
 import cc.hchier.dto.UserPwdUpdateDTO;
 import cc.hchier.dto.UserRegisterDTO;
+import cc.hchier.vo.UserVO;
 
 /**
  * @author by Hchier
@@ -120,4 +121,13 @@ public interface UserService {
      * @return {@link RestResponse}<{@link Object}>
      */
     RestResponse<Object> existUser(String username);
+
+    /**
+     * 获取用户vo
+     *
+     * @param targetUser  目标用户
+     * @param currentUser 当前用户
+     * @return {@link RestResponse}<{@link UserVO}>
+     */
+    RestResponse<UserVO> getUserVO(String targetUser, String currentUser);
 }

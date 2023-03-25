@@ -49,4 +49,9 @@ public class FollowController {
         @PathVariable Integer pageNum) {
         return followService.followedInfo(followee, type, pageNum * 20, 20);
     }
+
+    @PostMapping("/follow/exist/{follower}/{followee}/{type}")
+    public RestResponse<Boolean> exist(@PathVariable String follower, @PathVariable String followee, @PathVariable Integer type) {
+        return RestResponse.ok(followService.existFollow(follower, followee, type));
+    }
 }

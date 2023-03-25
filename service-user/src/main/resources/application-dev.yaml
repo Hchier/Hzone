@@ -37,7 +37,7 @@ properties:
   zsetForTokenExpireTime: tokenExpireTime
 
   # token的生存时长（分钟）
-  tokenLifeCycle: 10
+  tokenLifeCycle: 60
 
 
 seata:

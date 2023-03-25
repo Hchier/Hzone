@@ -54,11 +54,6 @@ public interface UserMapper {
      */
     String selectEmailByUsername(String username);
 
-    //    User selectByPrimaryKey(String username);
-//
-//    List<User> selectAll();
-//
-
     /**
      * 查找某用户名是否已被使用
      *
@@ -66,4 +61,12 @@ public interface UserMapper {
      * @return int
      */
     int existUser(@Param("username") String username);
+
+    /**
+     * 查询用户
+     *
+     * @param username 用户名
+     * @return {@link User}
+     */
+    User selectUser(@Param("username")String username);
 }

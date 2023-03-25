@@ -66,4 +66,11 @@
         from user
         where username = #{username}
     </select>
+
+    <select id="selectUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select username, signature, favor_num, follow_num, followed_num
+        from user
+        where username = #{username}
+          and closed = 0
+    </select>
 </mapper>

@@ -8,6 +8,7 @@ import cc.hchier.dto.UserLoginDTO;
 import cc.hchier.dto.UserPwdUpdateDTO;
 import cc.hchier.dto.UserRegisterDTO;
 import cc.hchier.service.UserService;
+import cc.hchier.vo.UserVO;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -100,5 +101,10 @@ public class UserController {
     @PostMapping("/user/existUser/{username}")
     public RestResponse<Object> existUser(@PathVariable String username) {
         return userService.existUser(username);
+    }
+
+    @PostMapping("/user/vo/{username}")
+    public RestResponse<UserVO> getVO(@PathVariable String username, HttpServletRequest req) {
+        return userService.getUserVO(username, req.getHeader("username"));
     }
 }

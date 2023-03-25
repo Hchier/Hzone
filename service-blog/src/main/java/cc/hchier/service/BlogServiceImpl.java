@@ -9,6 +9,7 @@ import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.Blog;
 import cc.hchier.mapper.BlogFavorMapper;
 import cc.hchier.mapper.BlogMapper;
+import cc.hchier.vo.BlogTinyVO;
 import cc.hchier.vo.BlogVO;
 import io.seata.core.context.RootContext;
 import io.seata.core.exception.TransactionException;
@@ -19,6 +20,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author by Hchier
@@ -96,6 +98,10 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public RestResponse<Object> get(int id, String currentUser) {
         Blog blog = blogMapper.selectByPrimaryKey(id);
+        if (blog == null) {
+            return RestResponse.build(ResponseCode.BLOG_NOT_EXIST);
+        }
+        //如果blog被隐藏或仅自我可见，且当前用户不为blog作者，则拒绝访问
         if ((blog.getSelfVisible() || blog.getHidden()) && !blog.getPublisher().equals(currentUser)) {
             return RestResponse.build(ResponseCode.PERMISSION_DENIED);
         }
@@ -130,4 +136,13 @@ public class BlogServiceImpl implements BlogService {
         return RestResponse.ok(blogMapper.getAuthorById(id));
     }
 
+    @Override
+    public RestResponse<List<BlogTinyVO>> getPublishedList(String publisher, int startIndex, int rowNum) {
+        return RestResponse.ok(blogMapper.getTinyList(publisher, null, startIndex, rowNum));
+    }
+
+    @Override
+    public RestResponse<List<BlogTinyVO>> getFavoredList(String liker, int startIndex, int rowNum) {
+        return RestResponse.ok(blogMapper.getTinyList(null, liker, startIndex, rowNum));
+    }
 }

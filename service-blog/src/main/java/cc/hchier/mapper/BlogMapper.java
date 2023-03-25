@@ -3,8 +3,11 @@ package cc.hchier.mapper;
 import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
 import cc.hchier.entity.Blog;
+import cc.hchier.vo.BlogTinyVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 
 /**
@@ -52,7 +55,7 @@ public interface BlogMapper {
      * @param incr 增量
      * @return int
      */
-    int incrFavorNum(@Param("id") Integer id,@Param("incr") Integer incr);
+    int incrFavorNum(@Param("id") Integer id, @Param("incr") Integer incr);
 
     /**
      * 增加评论数量
@@ -61,7 +64,7 @@ public interface BlogMapper {
      * @param incr 增加
      * @return int
      */
-    int incrCommentNum(@Param("id")Integer id, @Param("incr")Integer incr);
+    int incrCommentNum(@Param("id") Integer id, @Param("incr") Integer incr);
 
     /**
      * 通过id获取作者
@@ -69,5 +72,21 @@ public interface BlogMapper {
      * @param id id
      * @return {@link String}
      */
-    String getAuthorById(@Param("id")Integer id);
+    String getAuthorById(@Param("id") Integer id);
+
+    /**
+     * 得到BlogTinyVOList
+     * 可以得到某人发表的博客或某人点赞的博客
+     *
+     * @param publisher  作者
+     * @param liker      点赞者
+     * @param startIndex startIndex
+     * @param rowNum     rowNum
+     * @return {@link List}<{@link BlogTinyVO}>
+     */
+    List<BlogTinyVO> getTinyList(
+        @Param("publisher") String publisher,
+        @Param("liker") String liker,
+        @Param("startIndex") Integer startIndex,
+        @Param("rowNum") Integer rowNum);
 }

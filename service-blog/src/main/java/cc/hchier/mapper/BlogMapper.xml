@@ -87,4 +87,15 @@
         where id = #{id}
           and deleted = 0
     </select>
+
+    <select id="getTinyList" resultType="cc.hchier.vo.BlogTinyVO">
+        select id, publisher, title, content, favor_num, comment_num, topic
+        from blog
+        <where>
+            <if test="publisher != null">publisher = #{publisher}</if>
+            <if test="liker != null">id in (select blog_id from blog_favor where liker = #{liker} and deleted = 0)
+            </if>
+        </where>
+        limit #{startIndex}, #{rowNum}
+    </select>
 </mapper>
