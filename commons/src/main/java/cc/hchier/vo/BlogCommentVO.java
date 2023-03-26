@@ -41,7 +41,7 @@ public class BlogCommentVO implements Serializable {
      */
     private String currentUser;
 
-    private Date createTime;
+    private String createTime;
 
     private Boolean deletePermission;
 

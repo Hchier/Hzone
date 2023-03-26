@@ -39,7 +39,7 @@ public class BlogVO implements Serializable {
 
     private Boolean commentForbidden;
 
-    private Date updateTime;
+    private String updateTime;
 
     private String topic;
 

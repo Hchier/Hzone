@@ -18,6 +18,7 @@ import io.seata.tm.TransactionManagerHolder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -95,7 +96,7 @@ public class BlogCommentServiceImpl implements BlogCommentService {
         return RestResponse.ok(new BlogCommentVO().
             setId(dto.getId()).
             setPublisher(dto.getPublisher())
-            .setCreateTime(dto.getCreateTime()));
+            .setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dto.getCreateTime())));
     }
 
     @GlobalTransactional
@@ -143,7 +144,7 @@ public class BlogCommentServiceImpl implements BlogCommentService {
                     blogComment.getBaseComment(),
                     blogComment.getCommentOf(),
                     dto.getCurrentUser(),
-                    blogComment.getCreateTime(),
+                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(blogComment.getCreateTime()),
                     blogComment.getPublisher().equals(dto.getCurrentUser())
                 )
             );

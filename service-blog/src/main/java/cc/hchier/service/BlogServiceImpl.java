@@ -19,6 +19,8 @@ import io.seata.tm.TransactionManagerHolder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -117,9 +119,10 @@ public class BlogServiceImpl implements BlogService {
             .setSelfVisible(blog.getSelfVisible())
             .setHidden(blog.getHidden())
             .setCommentForbidden(blog.getCommentForbidden())
-            .setUpdateTime(blog.getUpdateTime())
+            .setUpdateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(blog.getUpdateTime()))
             .setTopic(blog.getTopic())
             .setUpdatePermission(blog.getPublisher().equals(currentUser));
+
         return RestResponse.ok(blogVO);
     }
 
