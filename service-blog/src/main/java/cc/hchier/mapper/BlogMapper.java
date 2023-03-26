@@ -4,6 +4,7 @@ import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
 import cc.hchier.entity.Blog;
 import cc.hchier.vo.BlogTinyVO;
+import cc.hchier.vo.BlogVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -89,4 +90,24 @@ public interface BlogMapper {
         @Param("liker") String liker,
         @Param("startIndex") Integer startIndex,
         @Param("rowNum") Integer rowNum);
+
+    /**
+     * 根据主题查询
+     *
+     * @param topic      主题
+     * @param startIndex startIndex
+     * @param rowNum     rowNum
+     * @return {@link List}<{@link Blog}>
+     */
+    List<Blog> getListByTopic(
+        @Param("topic") String topic,
+        @Param("startIndex") Integer startIndex,
+        @Param("rowNum") Integer rowNum);
+
+    /**
+     * 首页列表
+     *
+     * @return {@link List}<{@link Blog}>
+     */
+    List<Blog> getHomeList();
 }

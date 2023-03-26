@@ -5,6 +5,7 @@ import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
 import cc.hchier.service.BlogService;
 import cc.hchier.vo.BlogTinyVO;
+import cc.hchier.vo.BlogVO;
 import io.seata.core.exception.TransactionException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,5 +65,15 @@ public class BlogController {
     @PostMapping("/blog/favored/{username}/{pageNum}")
     public RestResponse<List<BlogTinyVO>> getFavoredList(@PathVariable String username, @PathVariable Integer pageNum) {
         return blogService.getFavoredList(username, pageNum * 20, 20);
+    }
+
+    @PostMapping("/blog/listByTopic/{topic}/{pageNum}")
+    public RestResponse<List<BlogVO>> getListByTopic(@PathVariable String topic, @PathVariable Integer pageNum, HttpServletRequest req) {
+        return blogService.getListByTopic(topic, pageNum * 20, 20, req.getHeader("username"));
+    }
+
+    @PostMapping("/blog/homeList")
+    public RestResponse<List<BlogVO>> getHomeList(HttpServletRequest req) {
+        return blogService.getHomeList(req.getHeader("username"));
     }
 }

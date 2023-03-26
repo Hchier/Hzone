@@ -98,4 +98,41 @@
         </where>
         limit #{startIndex}, #{rowNum}
     </select>
+
+    <select id="getListByTopic" resultMap="BaseResultMap">
+        select id,
+               publisher,
+               title,
+               content,
+               favor_num,
+               comment_num,
+               reward_num,
+               self_visible,
+               hidden,
+               comment_forbidden,
+               update_time,
+               topic
+        from blog
+        where topic = #{topic}
+          and deleted = 0
+            limit #{startIndex}
+            , #{rowNum}
+    </select>
+
+    <select id="getHomeList" resultMap="BaseResultMap">
+        select id,
+               publisher,
+               title,
+               content,
+               favor_num,
+               comment_num,
+               reward_num,
+               self_visible,
+               hidden,
+               comment_forbidden,
+               update_time,
+               topic
+        from blog
+        where deleted = 0 limit 0, 5
+    </select>
 </mapper>
