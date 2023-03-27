@@ -18,7 +18,11 @@ public class UserVO {
 
     private String signature;
 
+    private Integer blogNum;
+
     private Integer favorNum;
+
+    private Integer faveredNum;
 
     private Integer followNum;
 

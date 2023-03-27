@@ -6,6 +6,7 @@
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
         <result column="closed" jdbcType="BIT" property="closed"/>
+        <result column="blog_num" jdbcType="INTEGER" property="blogNum"/>
         <result column="favor_num" jdbcType="INTEGER" property="favorNum"/>
         <result column="favored_num" jdbcType="INTEGER" property="favoredNum"/>
         <result column="follow_num" jdbcType="INTEGER" property="followNum"/>
@@ -47,6 +48,7 @@
     <update id="incrNum" parameterType="cc.hchier.entity.User">
         update user
         <set>
+            <if test="blogNum!=null">blog_num = blog_num + #{blogNum},</if>
             <if test="favorNum!=null">favor_num = favor_num + #{favorNum},</if>
             <if test="favoredNum!=null">favored_num = favored_num + #{favoredNum},</if>
             <if test="followNum!=null">follow_num = follow_num + #{followNum},</if>
@@ -68,7 +70,7 @@
     </select>
 
     <select id="selectUser" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select username, signature, favor_num, follow_num, followed_num
+        select username, signature, blog_num, favor_num, follow_num, followed_num
         from user
         where username = #{username}
           and closed = 0

@@ -12,6 +12,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface UserService {
 
     /**
+     * 博客量+1
+     *
+     * @param username 用户名
+     * @param incr     增加
+     * @return {@link RestResponse}<{@link Object}>
+     */
+    @PostMapping("/user/incrBlogNum/{username}/{incr}")
+    RestResponse<Object> incrBlogNum(@PathVariable("username") String username, @PathVariable("incr") Integer incr);
+
+    /**
      * 被点赞量 + incr
      *
      * @param username 用户名

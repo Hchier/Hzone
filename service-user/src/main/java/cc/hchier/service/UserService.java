@@ -52,6 +52,15 @@ public interface UserService {
      */
     RestResponse<Object> close(String username);
 
+    /**
+     * 博客量+1
+     *
+     * @param username 用户名
+     * @param incr     增量
+     * @return {@link RestResponse}<{@link Object}>
+     */
+    RestResponse<Object> incrBlogNum(String username, int incr);
+
 
     /**
      * 点赞量 + incr

@@ -86,6 +86,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public RestResponse<Object> incrBlogNum(String username, int incr) {
+        if (userMapper.incrNum(new User().setUsername(username).setBlogNum(incr)) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
+    }
+
+    @Override
     public RestResponse<Object> incrFavorNum(String username, int incr) {
         if (userMapper.incrNum(new User().setUsername(username).setFavorNum(incr)) == 0) {
             return RestResponse.fail();
@@ -158,7 +166,9 @@ public class UserServiceImpl implements UserService {
         UserVO userVO = new UserVO()
             .setUsername(user.getUsername())
             .setSignature(user.getSignature())
+            .setBlogNum(user.getBlogNum())
             .setFavorNum(user.getFavorNum())
+            .setFaveredNum(user.getFavoredNum())
             .setFollowNum(user.getFollowNum())
             .setFollowedNum(user.getFollowedNum())
             .setFollowed(followService.existFollow(currentUser, targetUser, FollowType.USER.getCode()).getBody());

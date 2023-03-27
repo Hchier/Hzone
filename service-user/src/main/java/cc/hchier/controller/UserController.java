@@ -59,6 +59,11 @@ public class UserController {
         return userService.close(username);
     }
 
+    @PostMapping("/user/incrBlogNum/{username}/{incr}")
+    public RestResponse<Object> incrBlogNum(@PathVariable String username, @PathVariable Integer incr) {
+        return userService.incrBlogNum(username, incr);
+    }
+
     @PostMapping("/user/incrFavorNum/{username}/{incr}")
     public RestResponse<Object> incrFavorNum(@PathVariable String username, @PathVariable Integer incr) {
         return userService.incrFavorNum(username, incr);
@@ -103,8 +108,13 @@ public class UserController {
         return userService.existUser(username);
     }
 
-    @PostMapping("/user/vo/{username}")
-    public RestResponse<UserVO> getVO(@PathVariable String username, HttpServletRequest req) {
-        return userService.getUserVO(username, req.getHeader("username"));
+    @PostMapping("/user/vo")
+    public RestResponse<UserVO> getVO(HttpServletRequest req) {
+        String username = req.getParameter("username");
+        String currentUser = req.getHeader("username");
+        if (username == null || username.isEmpty()) {
+            username = currentUser;
+        }
+        return userService.getUserVO(username, currentUser);
     }
 }

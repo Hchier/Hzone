@@ -50,6 +50,7 @@ public interface BlogService {
 
     /**
      * 发布博客
+     * 话题讨论量+1、插入blog、用户博客发表量+1
      *
      * @param dto dto
      * @return {@link RestResponse}<{@link Integer}>

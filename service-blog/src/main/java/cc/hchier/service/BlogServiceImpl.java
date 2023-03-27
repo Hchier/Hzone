@@ -19,8 +19,6 @@ import io.seata.tm.TransactionManagerHolder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,12 +33,14 @@ public class BlogServiceImpl implements BlogService {
     private final RabbitTemplate rabbitTemplate;
     private final TopicService topicService;
     private final BlogFavorMapper blogFavorMapper;
+    private final UserService userService;
 
-    public BlogServiceImpl(BlogMapper blogMapper, RabbitTemplate rabbitTemplate, TopicService topicService, BlogFavorMapper blogFavorMapper) {
+    public BlogServiceImpl(BlogMapper blogMapper, RabbitTemplate rabbitTemplate, TopicService topicService, BlogFavorMapper blogFavorMapper, UserService userService) {
         this.blogMapper = blogMapper;
         this.rabbitTemplate = rabbitTemplate;
         this.topicService = topicService;
         this.blogFavorMapper = blogFavorMapper;
+        this.userService = userService;
     }
 
     @Override
@@ -54,18 +54,15 @@ public class BlogServiceImpl implements BlogService {
     @GlobalTransactional
     @Override
     public RestResponse<Integer> publish(BlogPublishDTO dto) throws TransactionException {
-
-        int addTopicCode = RestResponse.ok().getCode();
-        if (dto.getTopic() != null) {
-            addTopicCode = topicService.incrDiscussionNum(dto.getTopic(), 1).getCode();
-        }
-
         String xid = RootContext.getXID();
+        int incrDiscussionNumCode = ResponseCode.OK.getCode();
+        if (dto.getTopic() != null && !dto.getTopic().isEmpty()) {
+            incrDiscussionNumCode = topicService.incrDiscussionNum(dto.getTopic(), 1).getCode();
+        }
         TransactionManager manager = TransactionManagerHolder.get();
-
-        if (addTopicCode != RestResponse.ok().getCode() ||
-            blogMapper.insert(dto) == 0
-        ) {
+        if (blogMapper.insert(dto) == 0 ||
+            incrDiscussionNumCode != ResponseCode.OK.getCode() ||
+            !userService.incrBlogNum(dto.getPublisher(), 1).equals(RestResponse.ok())) {
             manager.rollback(xid);
             return RestResponse.fail();
         }

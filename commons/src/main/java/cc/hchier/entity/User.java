@@ -1,5 +1,6 @@
 package cc.hchier.entity;
 
+import cc.hchier.vo.BlogTinyVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,8 @@ public class User implements Serializable {
     private String email;
 
     private Boolean closed;
+
+    private Integer blogNum;
 
     private Integer favorNum;
 
