@@ -22,7 +22,7 @@ public class UserVO {
 
     private Integer favorNum;
 
-    private Integer faveredNum;
+    private Integer favoredNum;
 
     private Integer followNum;
 

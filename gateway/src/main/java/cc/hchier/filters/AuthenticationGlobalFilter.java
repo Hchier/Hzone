@@ -67,7 +67,7 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
             }
         }
         //不存在token或token无效 且 访问需要登录才能访问的接口，则直接拦截请求
-        else if (!properties.whitePaths.containsKey(path)) {
+        if (!properties.whitePaths.containsKey(path)) {
             exchange.getResponse().setStatusCode(HttpStatus.OK);
             byte[] bytes = objectMapper.writeValueAsString(RestResponse.build(ResponseCode.AUTH_FAIL)).getBytes(StandardCharsets.UTF_8);
             DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);

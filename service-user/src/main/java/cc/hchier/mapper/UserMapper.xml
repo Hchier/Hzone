@@ -70,7 +70,7 @@
     </select>
 
     <select id="selectUser" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select username, signature, blog_num, favor_num, follow_num, followed_num
+        select username, signature, blog_num, favor_num, favored_num, follow_num, followed_num
         from user
         where username = #{username}
           and closed = 0

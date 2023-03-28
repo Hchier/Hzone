@@ -168,7 +168,7 @@ public class UserServiceImpl implements UserService {
             .setSignature(user.getSignature())
             .setBlogNum(user.getBlogNum())
             .setFavorNum(user.getFavorNum())
-            .setFaveredNum(user.getFavoredNum())
+            .setFavoredNum(user.getFavoredNum())
             .setFollowNum(user.getFollowNum())
             .setFollowedNum(user.getFollowedNum())
             .setFollowed(followService.existFollow(currentUser, targetUser, FollowType.USER.getCode()).getBody());
