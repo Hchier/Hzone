@@ -22,5 +22,7 @@ public class FollowVO  implements Serializable {
 
     private String followee;
 
+    private Boolean followed;
+
     private static final long serialVersionUID = 1L;
 }

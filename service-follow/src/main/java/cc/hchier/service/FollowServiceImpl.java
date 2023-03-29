@@ -1,5 +1,6 @@
 package cc.hchier.service;
 
+import cc.hchier.consts.FollowType;
 import cc.hchier.consts.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.dto.FollowCancelDTO;
@@ -81,17 +82,22 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public RestResponse<List<FollowVO>> followInfo(String follower, Integer startIndex, Integer rowNum) {
-        List<Follow> followList = followMapper.selectByFollower(follower, startIndex, rowNum);
+    public RestResponse<List<FollowVO>> followList(String follower, Integer type, String currentUser, Integer startIndex, Integer rowNum) {
+        List<Follow> followList = followMapper.selectByFollower(follower, type, startIndex, rowNum);
         List<FollowVO> followVOList = new ArrayList<>();
         for (Follow follow : followList) {
-            followVOList.add(new FollowVO(follow.getId(), follow.getType(), follow.getFollower(), follow.getFollowee()));
+            followVOList.add(new FollowVO(
+                follow.getId(),
+                follow.getType(),
+                follow.getFollower(),
+                follow.getFollowee(),
+                existFollow(currentUser, follow.getFollowee(), FollowType.TOPIC.getCode())));
         }
         return RestResponse.ok(followVOList);
     }
 
     @Override
-    public RestResponse<List<String>> followedInfo(String followee, Integer type, Integer startIndex, Integer rowNum) {
+    public RestResponse<List<String>> followedList(String followee, Integer type, Integer startIndex, Integer rowNum) {
         List<String> followList = followMapper.selectFollowerUsernameByFollowee(followee, type, startIndex, rowNum);
         return RestResponse.ok(followList);
     }

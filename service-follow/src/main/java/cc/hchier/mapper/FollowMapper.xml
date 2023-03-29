@@ -19,12 +19,10 @@
 
     <insert id="insert" parameterType="cc.hchier.dto.FollowDTO">
         insert into follow (`type`, follower, followee, create_time)
-        values (
-        #{type,jdbcType=INTEGER},
-        #{follower,jdbcType=VARCHAR},
-        #{followee,jdbcType=VARCHAR},
-        #{createTime,jdbcType=TIMESTAMP}
-        )
+        values (#{type,jdbcType=INTEGER},
+                #{follower,jdbcType=VARCHAR},
+                #{followee,jdbcType=VARCHAR},
+                #{createTime,jdbcType=TIMESTAMP})
     </insert>
 
     <select id="getCount" resultType="java.lang.Integer">
@@ -40,6 +38,7 @@
         select *
         from follow
         where follower = #{follower}
+          and type = #{type}
           and deleted = 0
         limit #{startIndex}, #{rowNum}
     </select>

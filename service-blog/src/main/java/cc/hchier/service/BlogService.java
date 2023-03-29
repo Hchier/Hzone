@@ -3,12 +3,9 @@ package cc.hchier.service;
 import cc.hchier.RestResponse;
 import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
-import cc.hchier.entity.Blog;
-import cc.hchier.vo.BlogTinyVO;
 import cc.hchier.vo.BlogVO;
 import io.seata.core.exception.TransactionException;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -16,28 +13,8 @@ import java.util.List;
  */
 public interface BlogService {
 
-    /**
-     * 将{@link Blog}转为{@link BlogVO}。
-     * 但是{@link BlogVO}中的favored和updatePermission在这儿搞不定
-     *
-     * @param blog 博客
-     * @return {@link BlogVO}
-     */
-    static BlogVO map(Blog blog) {
-        return new BlogVO()
-            .setId(blog.getId())
-            .setPublisher(blog.getPublisher())
-            .setTitle(blog.getTitle())
-            .setContent(blog.getContent())
-            .setFavorNum(blog.getFavorNum())
-            .setCommentNum(blog.getCommentNum())
-            .setRewardNum(blog.getRewardNum())
-            .setSelfVisible(blog.getSelfVisible())
-            .setHidden(blog.getHidden())
-            .setCommentForbidden(blog.getCommentForbidden())
-            .setUpdateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(blog.getUpdateTime()))
-            .setTopic(blog.getTopic());
-    }
+
+
 
     /**
      * 删除博客
@@ -89,9 +66,9 @@ public interface BlogService {
      * @param publisher  出版商
      * @param startIndex 开始指数
      * @param rowNum     行num
-     * @return {@link RestResponse}<{@link List}<{@link BlogTinyVO}>>
+     * @return {@link RestResponse}<{@link List}<{@link BlogVO}>>
      */
-    RestResponse<List<BlogTinyVO>> getPublishedList(String publisher, int startIndex, int rowNum);
+    RestResponse<List<BlogVO>> getPublishedList(String publisher, String currentUser, int startIndex, int rowNum);
 
     /**
      * 点赞列表
@@ -99,9 +76,9 @@ public interface BlogService {
      * @param liker      喜欢人
      * @param startIndex 开始指数
      * @param rowNum     行num
-     * @return {@link RestResponse}<{@link List}<{@link BlogTinyVO}>>
+     * @return {@link RestResponse}<{@link List}<{@link BlogVO}>>
      */
-    RestResponse<List<BlogTinyVO>> getFavoredList(String liker, int startIndex, int rowNum);
+    RestResponse<List<BlogVO>> getFavoredList(String liker, int startIndex, int rowNum);
 
 
     /**

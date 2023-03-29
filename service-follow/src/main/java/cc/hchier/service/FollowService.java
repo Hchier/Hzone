@@ -53,11 +53,13 @@ public interface FollowService {
      * 关注信息
      *
      * @param follower   追随者
+     * @param type   关注类型
+     * @param currentUser   当前用户
      * @param startIndex 开始index
      * @param rowNum     行num
      * @return {@link RestResponse}<{@link List}<{@link FollowVO}>>
      */
-    RestResponse<List<FollowVO>> followInfo(String follower, Integer startIndex, Integer rowNum);
+    RestResponse<List<FollowVO>> followList(String follower, Integer type,String currentUser, Integer startIndex, Integer rowNum);
 
     /**
      * 查找关注某人或某话题的用户的用户名
@@ -68,5 +70,5 @@ public interface FollowService {
      * @param type       类型
      * @return {@link RestResponse}<{@link List}<{@link String}>>
      */
-    RestResponse<List<String>> followedInfo(String followee, Integer type, Integer startIndex, Integer rowNum);
+    RestResponse<List<String>> followedList(String followee, Integer type, Integer startIndex, Integer rowNum);
 }

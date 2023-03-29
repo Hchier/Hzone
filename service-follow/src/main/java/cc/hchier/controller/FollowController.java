@@ -37,17 +37,21 @@ public class FollowController {
         return followService.unFollow(dto.setFollower(req.getHeader("username")));
     }
 
-    @PostMapping("/follow/followInfo/{username}/{pageNum}")
-    public RestResponse<List<FollowVO>> followInfo(@PathVariable String username, @PathVariable Integer pageNum) {
-        return followService.followInfo(username, pageNum * 20, 20);
+    @PostMapping("/follow/followList/{follower}/{type}/{pageNum}")
+    public RestResponse<List<FollowVO>> followList(
+        @PathVariable String follower,
+        @PathVariable Integer type,
+        @PathVariable Integer pageNum,
+        HttpServletRequest req) {
+        return followService.followList(follower, type, req.getHeader("username"), pageNum * 20, 20);
     }
 
-    @PostMapping("/follow/followedInfo/{followee}/{type}/{pageNum}")
-    public RestResponse<List<String>> followedInfo(
+    @PostMapping("/follow/followedList/{followee}/{type}/{pageNum}")
+    public RestResponse<List<String>> followedList(
         @PathVariable String followee,
         @PathVariable Integer type,
         @PathVariable Integer pageNum) {
-        return followService.followedInfo(followee, type, pageNum * 20, 20);
+        return followService.followedList(followee, type, pageNum * 20, 20);
     }
 
     @PostMapping("/follow/exist/{follower}/{followee}/{type}")

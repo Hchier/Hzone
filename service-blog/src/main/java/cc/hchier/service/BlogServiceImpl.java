@@ -9,7 +9,6 @@ import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.Blog;
 import cc.hchier.mapper.BlogFavorMapper;
 import cc.hchier.mapper.BlogMapper;
-import cc.hchier.vo.BlogTinyVO;
 import cc.hchier.vo.BlogVO;
 import io.seata.core.context.RootContext;
 import io.seata.core.exception.TransactionException;
@@ -19,6 +18,7 @@ import io.seata.tm.TransactionManagerHolder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +41,39 @@ public class BlogServiceImpl implements BlogService {
         this.topicService = topicService;
         this.blogFavorMapper = blogFavorMapper;
         this.userService = userService;
+    }
+
+    /**
+     * 将{@link Blog}转为{@link BlogVO}。
+     * 但是{@link BlogVO}中的favored和updatePermission在这儿搞不定
+     *
+     * @param blog 博客
+     * @return {@link BlogVO}
+     */
+    BlogVO mapBlogToBlogVO(Blog blog, String currentUser) {
+        return new BlogVO()
+            .setId(blog.getId())
+            .setPublisher(blog.getPublisher())
+            .setTitle(blog.getTitle())
+            .setContent(blog.getContent())
+            .setFavorNum(blog.getFavorNum())
+            .setCommentNum(blog.getCommentNum())
+            .setRewardNum(blog.getRewardNum())
+            .setSelfVisible(blog.getSelfVisible())
+            .setFavored(blogFavorMapper.favorCount(blog.getId(), currentUser) > 0)
+            .setHidden(blog.getHidden())
+            .setCommentForbidden(blog.getCommentForbidden())
+            .setUpdateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(blog.getUpdateTime()))
+            .setUpdatePermission(blog.getPublisher().equals(currentUser))
+            .setTopic(blog.getTopic());
+    }
+
+    List<BlogVO> mapBlogListToBlogVOList(List<Blog> blogList, String currentUser) {
+        List<BlogVO> blogVOList = new ArrayList<>();
+        for (Blog blog : blogList) {
+            blogVOList.add(mapBlogToBlogVO(blog, currentUser));
+        }
+        return blogVOList;
     }
 
     @Override
@@ -106,11 +139,7 @@ public class BlogServiceImpl implements BlogService {
             return RestResponse.build(ResponseCode.PERMISSION_DENIED);
         }
 
-        BlogVO blogVO = BlogService.map(blog)
-            .setFavored(blogFavorMapper.favorCount(id, currentUser) > 0)
-            .setUpdatePermission(blog.getPublisher().equals(currentUser));
-
-        return RestResponse.ok(blogVO);
+        return RestResponse.ok(mapBlogToBlogVO(blog, currentUser));
     }
 
     @Override
@@ -127,36 +156,26 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public RestResponse<List<BlogTinyVO>> getPublishedList(String publisher, int startIndex, int rowNum) {
-        return RestResponse.ok(blogMapper.getTinyList(publisher, null, startIndex, rowNum));
+    public RestResponse<List<BlogVO>> getPublishedList(String publisher, String currentUser, int startIndex, int rowNum) {
+        List<Blog> blogList = blogMapper.getPublishedOrFavorList(publisher, null, startIndex, rowNum);
+        return RestResponse.ok(mapBlogListToBlogVOList(blogList, currentUser));
     }
 
     @Override
-    public RestResponse<List<BlogTinyVO>> getFavoredList(String liker, int startIndex, int rowNum) {
-        return RestResponse.ok(blogMapper.getTinyList(null, liker, startIndex, rowNum));
+    public RestResponse<List<BlogVO>> getFavoredList(String liker, int startIndex, int rowNum) {
+        List<Blog> blogList = blogMapper.getPublishedOrFavorList(null, liker, startIndex, rowNum);
+        return RestResponse.ok(mapBlogListToBlogVOList(blogList, liker));
     }
 
     @Override
     public RestResponse<List<BlogVO>> getListByTopic(String topic, int startIndex, int rowNum, String currentUser) {
         List<Blog> blogList = blogMapper.getListByTopic(topic, startIndex, rowNum);
-        List<BlogVO> blogVOList = new ArrayList<>();
-        for (Blog blog : blogList) {
-            blogVOList.add(BlogService.map(blog)
-                .setFavored(blogFavorMapper.favorCount(blog.getId(), currentUser) > 0)
-                .setUpdatePermission(blog.getPublisher().equals(currentUser)));
-        }
-        return RestResponse.ok(blogVOList);
+        return RestResponse.ok(mapBlogListToBlogVOList(blogList, currentUser));
     }
 
     @Override
     public RestResponse<List<BlogVO>> getHomeList(String currentUser) {
         List<Blog> blogList = blogMapper.getHomeList();
-        List<BlogVO> blogVOList = new ArrayList<>();
-        for (Blog blog : blogList) {
-            blogVOList.add(BlogService.map(blog)
-                .setFavored(blogFavorMapper.favorCount(blog.getId(), currentUser) > 0)
-                .setUpdatePermission(blog.getPublisher().equals(currentUser)));
-        }
-        return RestResponse.ok(blogVOList);
+        return RestResponse.ok(mapBlogListToBlogVOList(blogList, currentUser));
     }
 }

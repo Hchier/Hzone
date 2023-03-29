@@ -25,7 +25,7 @@ public class BlogFavorController {
         return blogFavorService.favor(id, req.getHeader("username"), author);
     }
 
-    @PostMapping("/blog/unFavorfavor/{id}/{author}")
+    @PostMapping("/blog/unFavor/{id}/{author}")
     public RestResponse<Object> unFavorfavor(@PathVariable Integer id, @PathVariable String author, HttpServletRequest req) throws Exception {
         return blogFavorService.unFavor(id, req.getHeader("username"), author);
     }

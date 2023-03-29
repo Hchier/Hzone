@@ -1,6 +1,5 @@
 package cc.hchier.entity;
 
-import cc.hchier.vo.BlogTinyVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

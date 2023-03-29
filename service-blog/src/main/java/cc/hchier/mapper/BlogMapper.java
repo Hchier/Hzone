@@ -3,8 +3,6 @@ package cc.hchier.mapper;
 import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;
 import cc.hchier.entity.Blog;
-import cc.hchier.vo.BlogTinyVO;
-import cc.hchier.vo.BlogVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -76,16 +74,16 @@ public interface BlogMapper {
     String getAuthorById(@Param("id") Integer id);
 
     /**
-     * 得到BlogTinyVOList
+     * 得到BlogVOList
      * 可以得到某人发表的博客或某人点赞的博客
      *
      * @param publisher  作者
      * @param liker      点赞者
      * @param startIndex startIndex
      * @param rowNum     rowNum
-     * @return {@link List}<{@link BlogTinyVO}>
+     * @return {@link List}<{@link Blog}>
      */
-    List<BlogTinyVO> getTinyList(
+    List<Blog> getPublishedOrFavorList(
         @Param("publisher") String publisher,
         @Param("liker") String liker,
         @Param("startIndex") Integer startIndex,
