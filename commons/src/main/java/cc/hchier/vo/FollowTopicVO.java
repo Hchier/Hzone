@@ -18,7 +18,7 @@ public class FollowTopicVO {
 
     private String followee;
 
-    private String totalReadNum;
+    private Integer totalReadNum;
 
     /**
      * 当前用户是否关注了该话题

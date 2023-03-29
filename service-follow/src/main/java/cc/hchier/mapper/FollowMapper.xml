@@ -68,15 +68,6 @@
         limit #{startIndex}, #{rowNum}
     </select>
 
-    <select id="selectFollowerUsernameByFollowee" resultType="java.lang.String">
-        select follower
-        from follow
-        where followee = #{followee}
-          and type = #{type}
-          and deleted = 0
-        limit #{startIndex}, #{rowNum}
-    </select>
-
     <select id="selectTopicList" resultMap="FollowTopicVOMap">
         SELECT t1.id,
                t1.follower,
@@ -88,11 +79,13 @@
               FROM follow
                        LEFT JOIN topic ON follow.followee = topic.NAME
               WHERE follower = #{follower}
-                AND type = 2) AS t1
+                AND type = 2
+                and deleted = 0) AS t1
                  LEFT JOIN (SELECT follower, followee
                             FROM follow
                             WHERE follower = #{currentUser}
-                              AND type = 2) AS t2
+                              AND type = 2
+                              and deleted = 0) AS t2
                            ON t2.followee = t1.followee
         LIMIT #{startIndex}, #{rowNum}
     </select>
@@ -106,9 +99,31 @@
               FROM follow
                        LEFT JOIN topic ON follow.followee = topic.NAME
               WHERE follower = #{follower}
-                AND type = 1) AS t1
-                 LEFT JOIN (SELECT follower, followee FROM follow WHERE follower = #{currentUser} AND type = 1) AS t2
+                AND type = 1
+                and deleted = 0) AS t1
+                 LEFT JOIN (SELECT follower, followee
+                            FROM follow
+                            WHERE follower = #{currentUser}
+                              AND type = 1
+                              and deleted = 0) AS t2
                            ON t2.followee = t1.followee
+        LIMIT #{startIndex}, #{rowNum}
+    </select>
+
+    <select id="selectFollowerList" resultMap="FollowUserVOMap">
+        SELECT t1.id,
+               t1.follower,
+               t1.followee,
+               (CASE t2.follower WHEN isnull(t2.follower) THEN TRUE ELSE FALSE END) AS 'followed'
+        FROM (SELECT follow.*
+              FROM follow
+                       LEFT JOIN topic ON follow.followee = topic.NAME
+              WHERE followee = #{followee}
+                AND type = #{type}
+                AND deleted = 0) AS t1
+                 LEFT JOIN (SELECT follower, followee
+                            FROM follow
+                            WHERE follower = #{currentUser} AND type = 1 AND deleted = 0) AS t2 ON t2.followee = t1.follower
         LIMIT #{startIndex}, #{rowNum}
     </select>
 </mapper>

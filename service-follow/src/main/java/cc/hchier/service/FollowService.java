@@ -7,6 +7,7 @@ import cc.hchier.vo.FollowTopicVO;
 import cc.hchier.vo.FollowUserVO;
 
 import io.seata.core.exception.TransactionException;
+
 import java.util.List;
 
 /**
@@ -51,17 +52,6 @@ public interface FollowService {
     boolean existFollow(String follower, String followee, Integer type);
 
     /**
-     * 查找关注某人或某话题的用户的用户名
-     *
-     * @param followee   followee
-     * @param startIndex 开始index
-     * @param rowNum     行num
-     * @param type       类型
-     * @return {@link RestResponse}<{@link List}<{@link String}>>
-     */
-    RestResponse<List<String>> followedList(String followee, Integer type, Integer startIndex, Integer rowNum);
-
-    /**
      * 查找某人关注的主题
      *
      * @param follower    追随者
@@ -82,4 +72,21 @@ public interface FollowService {
      * @return {@link RestResponse}<{@link List}<{@link FollowUserVO}>>
      */
     RestResponse<List<FollowUserVO>> getFollowUserList(String follower, String currentUser, Integer startIndex, Integer rowNum);
+
+    /**
+     * 关注某人或某话题的用户列表
+     *
+     * @param followee    followee
+     * @param type        类型
+     * @param currentUser 当前用户
+     * @param startIndex  开始指数
+     * @param rowNum      行num
+     * @return {@link RestResponse}<{@link List}<{@link FollowUserVO}>>
+     */
+    RestResponse<List<FollowUserVO>> getFollowerList(
+        String followee,
+        Integer type,
+        String currentUser,
+        Integer startIndex,
+        Integer rowNum);
 }

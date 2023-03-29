@@ -40,11 +40,12 @@ public class FollowController {
     }
 
     @PostMapping("/follow/followerList/{followee}/{type}/{pageNum}")
-    public RestResponse<List<String>> followerList(
+    public RestResponse<List<FollowUserVO>> followerList(
         @PathVariable String followee,
         @PathVariable Integer type,
-        @PathVariable Integer pageNum) {
-        return followService.followedList(followee, type, pageNum * 10, 10);
+        @PathVariable Integer pageNum,
+        HttpServletRequest req) {
+        return followService.getFollowerList(followee, type, req.getHeader("username"), pageNum * 10, 10);
     }
 
     @PostMapping("/follow/exist/{follower}/{followee}/{type}")
