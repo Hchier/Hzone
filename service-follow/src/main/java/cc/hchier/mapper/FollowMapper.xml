@@ -9,6 +9,22 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="deleted" jdbcType="BIT" property="deleted"/>
     </resultMap>
+
+    <resultMap id="FollowTopicVOMap" type="cc.hchier.vo.FollowTopicVO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="follower" jdbcType="VARCHAR" property="follower"/>
+        <result column="followee" jdbcType="VARCHAR" property="followee"/>
+        <result column="total_read_num" jdbcType="INTEGER" property="totalReadNum"/>
+        <result column="followed" jdbcType="BIT" property="followed"/>
+    </resultMap>
+
+    <resultMap id="FollowUserVOMap" type="cc.hchier.vo.FollowUserVO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="follower" jdbcType="VARCHAR" property="follower"/>
+        <result column="followee" jdbcType="VARCHAR" property="followee"/>
+        <result column="followed" jdbcType="BIT" property="followed"/>
+    </resultMap>
+
     <delete id="delete" parameterType="cc.hchier.dto.FollowCancelDTO">
         update follow
         set deleted = 1
@@ -59,5 +75,40 @@
           and type = #{type}
           and deleted = 0
         limit #{startIndex}, #{rowNum}
+    </select>
+
+    <select id="selectTopicList" resultMap="FollowTopicVOMap">
+        SELECT t1.id,
+               t1.follower,
+               t1.followee,
+               t1.total_read_num,
+               (CASE t2.follower WHEN isnull(t2.follower) THEN TRUE ELSE FALSE END) AS 'followed'
+        FROM (SELECT follow.*,
+                     topic.total_read_num
+              FROM follow
+                       LEFT JOIN topic ON follow.followee = topic.NAME
+              WHERE follower = #{follower}
+                AND type = 2) AS t1
+                 LEFT JOIN (SELECT follower, followee
+                            FROM follow
+                            WHERE follower = #{currentUser}
+                              AND type = 2) AS t2
+                           ON t2.followee = t1.followee
+        LIMIT #{startIndex}, #{rowNum}
+    </select>
+
+    <select id="selectUserList" resultMap="FollowUserVOMap">
+        SELECT t1.id,
+               t1.follower,
+               t1.followee,
+               (CASE t2.follower WHEN isnull(t2.follower) THEN TRUE ELSE FALSE END) AS 'followed'
+        FROM (SELECT follow.*
+              FROM follow
+                       LEFT JOIN topic ON follow.followee = topic.NAME
+              WHERE follower = #{follower}
+                AND type = 1) AS t1
+                 LEFT JOIN (SELECT follower, followee FROM follow WHERE follower = #{currentUser} AND type = 1) AS t2
+                           ON t2.followee = t1.followee
+        LIMIT #{startIndex}, #{rowNum}
     </select>
 </mapper>

@@ -3,9 +3,10 @@ package cc.hchier.service;
 import cc.hchier.RestResponse;
 import cc.hchier.dto.FollowCancelDTO;
 import cc.hchier.dto.FollowDTO;
-import cc.hchier.vo.FollowVO;
-import io.seata.core.exception.TransactionException;
+import cc.hchier.vo.FollowTopicVO;
+import cc.hchier.vo.FollowUserVO;
 
+import io.seata.core.exception.TransactionException;
 import java.util.List;
 
 /**
@@ -50,18 +51,6 @@ public interface FollowService {
     boolean existFollow(String follower, String followee, Integer type);
 
     /**
-     * 关注信息
-     *
-     * @param follower   追随者
-     * @param type   关注类型
-     * @param currentUser   当前用户
-     * @param startIndex 开始index
-     * @param rowNum     行num
-     * @return {@link RestResponse}<{@link List}<{@link FollowVO}>>
-     */
-    RestResponse<List<FollowVO>> followList(String follower, Integer type,String currentUser, Integer startIndex, Integer rowNum);
-
-    /**
      * 查找关注某人或某话题的用户的用户名
      *
      * @param followee   followee
@@ -71,4 +60,26 @@ public interface FollowService {
      * @return {@link RestResponse}<{@link List}<{@link String}>>
      */
     RestResponse<List<String>> followedList(String followee, Integer type, Integer startIndex, Integer rowNum);
+
+    /**
+     * 查找某人关注的主题
+     *
+     * @param follower    追随者
+     * @param currentUser 当前用户
+     * @param startIndex  开始指数
+     * @param rowNum      行num
+     * @return {@link RestResponse}<{@link List}<{@link FollowTopicVO}>>
+     */
+    RestResponse<List<FollowTopicVO>> getFollowTopicList(String follower, String currentUser, Integer startIndex, Integer rowNum);
+
+    /**
+     * 查找某人关注的用户
+     *
+     * @param follower    追随者
+     * @param currentUser 当前用户
+     * @param startIndex  开始指数
+     * @param rowNum      行num
+     * @return {@link RestResponse}<{@link List}<{@link FollowUserVO}>>
+     */
+    RestResponse<List<FollowUserVO>> getFollowUserList(String follower, String currentUser, Integer startIndex, Integer rowNum);
 }
