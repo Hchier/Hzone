@@ -1,13 +1,12 @@
 package cc.hchier.service;
 
-import cc.hchier.consts.FollowType;
 import cc.hchier.consts.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.dto.FollowCancelDTO;
 import cc.hchier.dto.FollowDTO;
-import cc.hchier.entity.Follow;
 import cc.hchier.mapper.FollowMapper;
-import cc.hchier.vo.FollowVO;
+import cc.hchier.vo.FollowTopicVO;
+import cc.hchier.vo.FollowUserVO;
 import io.seata.core.context.RootContext;
 import io.seata.core.exception.TransactionException;
 import io.seata.core.model.TransactionManager;
@@ -15,7 +14,6 @@ import io.seata.spring.annotation.GlobalTransactional;
 import io.seata.tm.TransactionManagerHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,23 +80,18 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public RestResponse<List<FollowVO>> followList(String follower, Integer type, String currentUser, Integer startIndex, Integer rowNum) {
-        List<Follow> followList = followMapper.selectByFollower(follower, type, startIndex, rowNum);
-        List<FollowVO> followVOList = new ArrayList<>();
-        for (Follow follow : followList) {
-            followVOList.add(new FollowVO(
-                follow.getId(),
-                follow.getType(),
-                follow.getFollower(),
-                follow.getFollowee(),
-                existFollow(currentUser, follow.getFollowee(), FollowType.TOPIC.getCode())));
-        }
-        return RestResponse.ok(followVOList);
-    }
-
-    @Override
     public RestResponse<List<String>> followedList(String followee, Integer type, Integer startIndex, Integer rowNum) {
         List<String> followList = followMapper.selectFollowerUsernameByFollowee(followee, type, startIndex, rowNum);
         return RestResponse.ok(followList);
+    }
+
+    @Override
+    public RestResponse<List<FollowTopicVO>> getFollowTopicList(String follower, String currentUser, Integer startIndex, Integer rowNum) {
+        return RestResponse.ok(followMapper.selectTopicList(follower, currentUser, startIndex, rowNum));
+    }
+
+    @Override
+    public RestResponse<List<FollowUserVO>> getFollowUserList(String follower, String currentUser, Integer startIndex, Integer rowNum) {
+        return RestResponse.ok(followMapper.selectUserList(follower, currentUser, startIndex, rowNum));
     }
 }

@@ -3,6 +3,8 @@ package cc.hchier.mapper;
 import cc.hchier.dto.FollowCancelDTO;
 import cc.hchier.dto.FollowDTO;
 import cc.hchier.entity.Follow;
+import cc.hchier.vo.FollowTopicVO;
+import cc.hchier.vo.FollowUserVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -45,7 +47,7 @@ public interface FollowMapper {
      * 查找某人的关注情况
      *
      * @param follower   追随者
-     * @param type   类型
+     * @param type       类型
      * @param startIndex 开始index
      * @param rowNum     行num
      * @return {@link List}<{@link Follow}>
@@ -81,6 +83,36 @@ public interface FollowMapper {
     List<String> selectFollowerUsernameByFollowee(
         @Param("followee") String followee,
         @Param("type") Integer type,
+        @Param("startIndex") Integer startIndex,
+        @Param("rowNum") Integer rowNum);
+
+    /**
+     * 查找某人关注的主题
+     *
+     * @param follower    追随者
+     * @param currentUser 当前用户
+     * @param startIndex  开始指数
+     * @param rowNum      行num
+     * @return {@link List}<{@link FollowTopicVO}>
+     */
+    List<FollowTopicVO> selectTopicList(
+        @Param("follower") String follower,
+        @Param("currentUser") String currentUser,
+        @Param("startIndex") Integer startIndex,
+        @Param("rowNum") Integer rowNum);
+
+    /**
+     * 查找某人关注的用户
+     *
+     * @param follower    追随者
+     * @param currentUser 当前用户
+     * @param startIndex  开始指数
+     * @param rowNum      行num
+     * @return {@link List}<{@link FollowUserVO}>
+     */
+    List<FollowUserVO> selectUserList(
+        @Param("follower") String follower,
+        @Param("currentUser") String currentUser,
         @Param("startIndex") Integer startIndex,
         @Param("rowNum") Integer rowNum);
 }
