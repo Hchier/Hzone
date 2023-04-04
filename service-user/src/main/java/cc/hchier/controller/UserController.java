@@ -3,12 +3,10 @@ package cc.hchier.controller;
 import cc.hchier.consts.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.configuration.Properties;
-import cc.hchier.dto.UserEmailUpdateDTO;
-import cc.hchier.dto.UserLoginDTO;
-import cc.hchier.dto.UserPwdUpdateDTO;
-import cc.hchier.dto.UserRegisterDTO;
+import cc.hchier.dto.*;
 import cc.hchier.service.UserService;
 import cc.hchier.vo.UserVO;
+import cc.hchier.ws.MyEndpoint;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -28,10 +27,12 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
     private final Properties properties;
+    private final MyEndpoint myEndpoint;
 
-    public UserController(UserService userService, Properties properties) {
+    public UserController(UserService userService, Properties properties, MyEndpoint myEndpoint) {
         this.userService = userService;
         this.properties = properties;
+        this.myEndpoint = myEndpoint;
     }
 
     @PostMapping("/user/register")
@@ -116,5 +117,16 @@ public class UserController {
             username = currentUser;
         }
         return userService.getUserVO(username, currentUser);
+    }
+
+    @PostMapping("/user/sendPrivateMsg")
+    public RestResponse<Object> sendPrivateMsg(@Valid @RequestBody WsMsgDTO dto) throws IOException {
+        myEndpoint.sendMessage(dto);
+        return RestResponse.ok();
+    }
+
+    @PostMapping("/user/isOnline/{username}")
+    public RestResponse<Boolean> isOnline(@PathVariable String username) {
+        return RestResponse.ok(myEndpoint.existUser(username));
     }
 }
