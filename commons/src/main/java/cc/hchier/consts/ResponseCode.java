@@ -30,6 +30,8 @@ public enum ResponseCode {
     TARGET_USER_NOT_EXIST(423, "目标用户不存在"),
     BLOG_NOT_EXIST(424, "博客不存在"),
 
+    NETTY_CHANNEL_CREATE_FAIL(425,"channel创建失败"),
+
     XXX(999, "999");
 
     private final int code;

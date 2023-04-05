@@ -27,12 +27,14 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final Properties properties;
     private final FollowService followService;
+    private final TalkService talkService;
 
-    public UserServiceImpl(RedisTemplate<String, Object> redisTemplate, UserMapper userMapper, Properties properties, FollowService followService) {
+    public UserServiceImpl(RedisTemplate<String, Object> redisTemplate, UserMapper userMapper, Properties properties, FollowService followService, TalkService talkService) {
         this.redisTemplate = redisTemplate;
         this.userMapper = userMapper;
         this.properties = properties;
         this.followService = followService;
+        this.talkService = talkService;
     }
 
     @Override
@@ -73,6 +75,8 @@ public class UserServiceImpl implements UserService {
         }
         redisTemplate.opsForZSet().removeRangeByScore(properties.zsetForTokenExpireTime, 0, System.currentTimeMillis());
         for (Object expiredToken : expiredTokens) {
+            String username = (String) redisTemplate.opsForHash().get(properties.hashForToken, expiredToken);
+            talkService.closeChannel(username);
             redisTemplate.opsForHash().delete(properties.hashForToken, expiredToken);
         }
     }

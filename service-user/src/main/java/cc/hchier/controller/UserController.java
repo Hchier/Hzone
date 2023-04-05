@@ -4,6 +4,7 @@ import cc.hchier.consts.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.configuration.Properties;
 import cc.hchier.dto.*;
+import cc.hchier.service.TalkService;
 import cc.hchier.service.UserService;
 import cc.hchier.vo.UserVO;
 import cc.hchier.ws.MyEndpoint;
@@ -28,11 +29,13 @@ public class UserController {
     private final UserService userService;
     private final Properties properties;
     private final MyEndpoint myEndpoint;
+    private final TalkService talkService;
 
-    public UserController(UserService userService, Properties properties, MyEndpoint myEndpoint) {
+    public UserController(UserService userService, Properties properties, MyEndpoint myEndpoint, TalkService talkService) {
         this.userService = userService;
         this.properties = properties;
         this.myEndpoint = myEndpoint;
+        this.talkService = talkService;
     }
 
     @PostMapping("/user/register")
@@ -49,7 +52,12 @@ public class UserController {
             cookie.setPath("/");
             cookie.setMaxAge(properties.tokenLifeCycle * 60);
             resp.addCookie(cookie);
-            return RestResponse.ok();
+            if (talkService.createChannel(dto.getUsername()).getCode() == ResponseCode.OK.getCode()) {
+                return RestResponse.ok();
+            } else {
+                return RestResponse.build(ResponseCode.NETTY_CHANNEL_CREATE_FAIL);
+            }
+
         }
         return RestResponse.build(ResponseCode.AUTH_FAIL);
     }
@@ -120,7 +128,7 @@ public class UserController {
     }
 
     @PostMapping("/user/sendPrivateMsg")
-    public RestResponse<Object> sendPrivateMsg(@Valid @RequestBody WsMsgDTO dto) throws IOException {
+    public RestResponse<Object> sendPrivateMsg(@Valid @RequestBody PrivateChatAddDTO dto) throws IOException {
         myEndpoint.sendMessage(dto);
         return RestResponse.ok();
     }

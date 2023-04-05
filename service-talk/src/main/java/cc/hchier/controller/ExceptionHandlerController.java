@@ -23,6 +23,6 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(Exception.class)
     public RestResponse<Object> handleException(Exception e) {
-        return RestResponse.build(999, e.getCause().getMessage(), null);
+        return RestResponse.build(999, e.getCause().getMessage(), e.toString());
     }
 }

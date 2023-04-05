@@ -4,7 +4,7 @@ import cc.hchier.RestResponse;
 import cc.hchier.consts.ResponseCode;
 import cc.hchier.service.PrivateMessageService;
 import cc.hchier.service.UserService;
-import cc.hchier.talk.client.service.ClientService;
+import cc.hchier.nettyTalk.client.service.ClientService;
 import cc.hchier.dto.PrivateChatAddDTO;
 import cc.hchier.vo.PrivateMessageVO;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,9 +32,15 @@ public class TalkController {
         this.privateMessageService = privateMessageService;
     }
 
-    @PostMapping("/talk/createChannel")
-    public RestResponse<Object> createChannel(HttpServletRequest req) {
-        return (clientService.createChannel(req.getHeader("username"))) != null ? RestResponse.ok() : RestResponse.fail();
+    @PostMapping("/talk/createChannel/{username}")
+    public RestResponse<Object> createChannel(@PathVariable String username) {
+        return (clientService.getChannel(username)) != null ? RestResponse.ok() : RestResponse.fail();
+    }
+
+    @PostMapping("/talk/closeChannel/{username}")
+    public RestResponse<Boolean> closeChannel(@PathVariable String username){
+        clientService.closeChannel(username);
+        return RestResponse.ok(true);
     }
 
     @PostMapping("/talk/privateTalk")

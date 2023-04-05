@@ -1,7 +1,7 @@
 package cc.hchier.ws;
 
 import cc.hchier.configuration.Properties;
-import cc.hchier.dto.WsMsgDTO;
+import cc.hchier.dto.PrivateChatAddDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class MyEndpoint {
         onlineUsers.put(username, session);
     }
 
-    public void sendMessage(WsMsgDTO dto) throws IOException {
+    public void sendMessage(PrivateChatAddDTO dto) throws IOException {
         Session session = onlineUsers.get(dto.getTo());
         if (session == null) {
             return;
@@ -72,7 +72,7 @@ public class MyEndpoint {
     }
 
     @OnError
-    public void onError(Session session, Throwable throwable) {
-        // NO-OP by default
+    public void onError(@PathParam("token") String token, Session session, Throwable throwable) {
+        onlineUsers.remove(token);
     }
 }
