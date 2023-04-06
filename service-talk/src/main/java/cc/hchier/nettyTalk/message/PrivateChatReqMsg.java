@@ -22,7 +22,7 @@ public class PrivateChatReqMsg extends Message {
 
     private String content;
 
-    private Date createTime;
+    private String createTime;
 
     public PrivateChatReqMsg() {
         super.msgType = 1;

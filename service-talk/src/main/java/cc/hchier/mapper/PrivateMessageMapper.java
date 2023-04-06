@@ -2,6 +2,7 @@ package cc.hchier.mapper;
 
 import cc.hchier.dto.PrivateChatAddDTO;
 import cc.hchier.entity.PrivateMessage;
+import cc.hchier.vo.ChatUserVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,20 +29,20 @@ public interface PrivateMessageMapper {
      * @param from 从
      * @return int
      */
-    int delete(@Param("id") Integer id, @Param("from") String from);
+    int recall(@Param("id") Integer id, @Param("from") String from);
 
     /**
      * 查找2人之间的聊天记录
      *
-     * @param from       from
-     * @param to         to
+     * @param username1       username1
+     * @param username2         username2
      * @param startIndex 开始指数
      * @param rowNum     行num
      * @return {@link List}<{@link PrivateMessage}>
      */
     List<PrivateMessage> select(
-        @Param("from") String from,
-        @Param("to") String to,
+        @Param("username1") String username1,
+        @Param("username2") String username2,
         @Param("startIndex") Integer startIndex,
         @Param("rowNum") Integer rowNum);
 
@@ -53,4 +54,12 @@ public interface PrivateMessageMapper {
      * @return int
      */
     int setMsgsRead(@Param("from") String from, @Param("to") String to);
+
+    /**
+     * 得到ChatUserVOList
+     *
+     * @param receiver 接收者
+     * @return {@link List}<{@link ChatUserVO}>
+     */
+    List<ChatUserVO> getChatUserVOList(@Param("receiver") String receiver);
 }

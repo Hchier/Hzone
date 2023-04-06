@@ -15,7 +15,12 @@ public enum WsMsgType {
     /**
      * 私信
      */
-    PrivateChatMsg(2);
+    PrivateChatMsg(2),
+
+    /**
+     * 私信撤回
+     */
+    MsgRecall(3);
 
     private final int code;
 

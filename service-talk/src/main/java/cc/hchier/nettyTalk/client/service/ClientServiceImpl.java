@@ -1,6 +1,7 @@
 package cc.hchier.nettyTalk.client.service;
 
 import cc.hchier.RestResponse;
+import cc.hchier.dto.PrivateChatAddSuccessDTO;
 import cc.hchier.service.PrivateMessageService;
 import cc.hchier.service.UserService;
 import cc.hchier.nettyTalk.client.handler.PongMsgHandler;
@@ -17,10 +18,12 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +33,7 @@ import java.util.concurrent.Executors;
  * @Date 2023/2/25 10:35
  */
 @Service
+@Slf4j
 public class ClientServiceImpl implements ClientService {
     private final ChannelService channelService;
     private final PrivateMessageService privateMessageService;
@@ -38,6 +42,7 @@ public class ClientServiceImpl implements ClientService {
     private final Properties properties;
 
     private final UserService userService;
+
     public ClientServiceImpl(@Qualifier("localChannelServiceImpl") ChannelService channelService, PrivateMessageService privateMessageService, MessageCodecSharable messageCodecSharable, Properties properties, UserService userService) {
         this.channelService = channelService;
         this.privateMessageService = privateMessageService;
@@ -96,26 +101,35 @@ public class ClientServiceImpl implements ClientService {
             new PingMsg()
                 .setUsername(username)
         );
+        log.info("已为用户" + username + "创建频道");
         channelService.bind(channel, username);
         return channel;
     }
 
     @Override
-    public RestResponse<Object> privateTalk(PrivateChatAddDTO dto) {
+    public RestResponse<PrivateChatAddSuccessDTO> privateTalk(PrivateChatAddDTO dto) {
         dto.setCreateTime(new Date());
         if (!privateMessageService.add(dto)) {
             return RestResponse.fail();
         }
 
         Channel channel = getChannel(dto.getFrom());
+        String dateNowStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dto.getCreateTime());
         channel.writeAndFlush(
             new PrivateChatReqMsg()
                 .setId(dto.getId())
                 .setFrom(dto.getFrom())
                 .setTo(dto.getTo())
                 .setContent(dto.getContent())
-                .setCreateTime(new Date()));
-        return RestResponse.ok();
+                .setCreateTime(dateNowStr));
+
+        return RestResponse.ok(
+            new PrivateChatAddSuccessDTO()
+                .setId(dto.getId())
+                .setFrom(dto.getFrom())
+                .setTo(dto.getTo())
+                .setContent(dto.getContent())
+                .setCreateTime(dateNowStr));
     }
 
     @Override

@@ -2,10 +2,12 @@ package cc.hchier.controller;
 
 import cc.hchier.RestResponse;
 import cc.hchier.consts.ResponseCode;
+import cc.hchier.dto.PrivateChatAddSuccessDTO;
 import cc.hchier.service.PrivateMessageService;
 import cc.hchier.service.UserService;
 import cc.hchier.nettyTalk.client.service.ClientService;
 import cc.hchier.dto.PrivateChatAddDTO;
+import cc.hchier.vo.ChatUserVO;
 import cc.hchier.vo.PrivateMessageVO;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,25 +40,25 @@ public class TalkController {
     }
 
     @PostMapping("/talk/closeChannel/{username}")
-    public RestResponse<Boolean> closeChannel(@PathVariable String username){
+    public RestResponse<Boolean> closeChannel(@PathVariable String username) {
         clientService.closeChannel(username);
         return RestResponse.ok(true);
     }
 
     @PostMapping("/talk/privateTalk")
-    public RestResponse<Object> privateTalk(@Valid @RequestBody PrivateChatAddDTO dto, HttpServletRequest req) {
+    public RestResponse<PrivateChatAddSuccessDTO> privateTalk(@Valid @RequestBody PrivateChatAddDTO dto, HttpServletRequest req) {
         if (userService.existUser(dto.getTo()).getCode() != ResponseCode.OK.getCode()) {
             return RestResponse.build(ResponseCode.TARGET_USER_NOT_EXIST);
         }
         return clientService.privateTalk(dto.setFrom(req.getHeader("username")));
     }
 
-    @PostMapping("/talk/getPrivateMsgsWith/{to}/{pageSize}")
+    @PostMapping("/talk/getPrivateMsgsWith/{username}/{pageSize}")
     public RestResponse<List<PrivateMessageVO>> getPrivateMsgsWith(
-        @PathVariable String to,
+        @PathVariable String username,
         @PathVariable Integer pageSize,
         HttpServletRequest req) {
-        return privateMessageService.getPrivateMessages(req.getHeader("username"), to, pageSize * 10, 10);
+        return privateMessageService.getPrivateMessages(req.getHeader("username"), username, pageSize * 10, 10);
     }
 
     @PostMapping("/talk/recall/{id}")
@@ -67,5 +69,10 @@ public class TalkController {
     @PostMapping("/talk/setMsgsRead/{from}")
     public RestResponse<Integer> setMsgsRead(@PathVariable String from, HttpServletRequest req) {
         return privateMessageService.setMsgsRead(from, req.getHeader("username"));
+    }
+
+    @PostMapping("/talk/getChatUserVOList")
+    public RestResponse<List<ChatUserVO>> getChatUserVOList(HttpServletRequest req) {
+        return privateMessageService.getChatUserVOList(req.getHeader("username"));
     }
 }

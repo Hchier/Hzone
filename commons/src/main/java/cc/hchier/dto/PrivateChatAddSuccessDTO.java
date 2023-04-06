@@ -1,21 +1,22 @@
-package cc.hchier.vo;
+package cc.hchier.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
  * @author by Hchier
- * @Date 2023/2/25 20:27
+ * @Date 2023/4/6 15:56
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class PrivateMessageVO {
+public class PrivateChatAddSuccessDTO {
     private Integer id;
 
     private String from;
@@ -25,6 +26,4 @@ public class PrivateMessageVO {
     private String content;
 
     private String createTime;
-
-    private Boolean fromCurrentUser;
 }

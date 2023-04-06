@@ -24,7 +24,7 @@ public class PrivateChatRespMsg extends Message {
 
     private String content;
 
-    private Date createTime;
+    private String createTime;
 
     public PrivateChatRespMsg() {
         super.msgType = 2;

@@ -10,13 +10,14 @@
         <result column="recalled" jdbcType="BIT" property="recalled"/>
         <result column="read" jdbcType="BIT" property="read"/>
     </resultMap>
-    <delete id="delete">
+    <update id="recall">
         update
             private_message
         set recalled = 1
         where id = #{id,jdbcType=INTEGER}
           and `from` = #{from}
-    </delete>
+          and time_to_sec(timediff(NOW(), create_time)) &lt; 120
+    </update>
 
     <insert id="insert" parameterType="cc.hchier.dto.PrivateChatAddDTO">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -33,7 +34,7 @@
     <select id="select" resultMap="BaseResultMap">
         select id, `from`, `to`, content, create_time
         from private_message
-        where ((`from` = #{from} and `to` = #{to}) or (`from` = #{to} and `to` = #{from}))
+        where ((`from` = #{username1} and `to` = #{username2}) or (`from` = #{username2} and `to` = #{username1}))
           and `recalled` = 0
         order by `create_time` desc
         limit #{startIndex}, #{rowNum}
@@ -45,4 +46,14 @@
         where `from` = #{from}
           and `to` = #{to}
     </update>
+
+    <select id="getChatUserVOList" resultType="cc.hchier.vo.ChatUserVO">
+        SELECT `from`   'sender',
+               count(*) 'unReadNum'
+        FROM `private_message`
+        WHERE `to` = #{receiver}
+          AND recalled = 0
+          AND `read` = 0
+        GROUP BY `from`
+    </select>
 </mapper>

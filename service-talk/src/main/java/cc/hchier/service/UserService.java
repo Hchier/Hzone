@@ -1,14 +1,10 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
-import cc.hchier.dto.PrivateChatAddDTO;
+import cc.hchier.dto.WsMsgDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
-import java.io.IOException;
 
 /**
  * @author hchier
@@ -30,6 +26,6 @@ public interface UserService {
      * @param dto dto
      * @return {@link RestResponse}<{@link Object}>
      */
-    @PostMapping("/user/sendPrivateMsg")
-    RestResponse<Object> sendPrivateMsg(@Valid @RequestBody PrivateChatAddDTO dto);
+    @PostMapping("/user/sendWsDTO")
+    RestResponse<Object> sendWsDTO(WsMsgDTO<Object> dto);
 }

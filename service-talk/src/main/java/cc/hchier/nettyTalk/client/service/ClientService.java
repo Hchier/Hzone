@@ -2,6 +2,7 @@ package cc.hchier.nettyTalk.client.service;
 
 import cc.hchier.RestResponse;
 import cc.hchier.dto.PrivateChatAddDTO;
+import cc.hchier.dto.PrivateChatAddSuccessDTO;
 import io.netty.channel.Channel;
 
 /**
@@ -22,9 +23,9 @@ public interface ClientService {
      * 发送私信
      *
      * @param dto dto
-     * @return {@link RestResponse}<{@link Object}>
+     * @return {@link RestResponse}<{@link PrivateChatAddSuccessDTO}>
      */
-    RestResponse<Object> privateTalk(PrivateChatAddDTO dto);
+    RestResponse<PrivateChatAddSuccessDTO> privateTalk(PrivateChatAddDTO dto);
 
     /**
      * 关闭频道

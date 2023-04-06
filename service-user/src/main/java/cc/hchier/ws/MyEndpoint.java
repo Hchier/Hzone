@@ -1,7 +1,7 @@
 package cc.hchier.ws;
 
 import cc.hchier.configuration.Properties;
-import cc.hchier.dto.PrivateChatAddDTO;
+import cc.hchier.dto.WsMsgDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +47,16 @@ public class MyEndpoint {
             return;
         }
         onlineUsers.put(username, session);
+        log.info("用户：" + username + "上线了");
     }
 
-    public void sendMessage(PrivateChatAddDTO dto) throws IOException {
-        Session session = onlineUsers.get(dto.getTo());
+    public void sendMessage(WsMsgDTO<Object> dto) throws IOException {
+        Session session = onlineUsers.get(dto.getReceiver());
         if (session == null) {
+            log.info("用户" + dto.getReceiver() + "的session为空，无法发送ws消息：" + dto);
             return;
         }
+        log.info("已向用户" + dto.getReceiver() + "发送" + dto);
         session.getBasicRemote().sendText(objectMapper.writeValueAsString(dto));
     }
 
@@ -68,11 +71,21 @@ public class MyEndpoint {
 
     @OnClose
     public void onClose(@PathParam("token") String token, Session session, CloseReason closeReason) {
-        onlineUsers.remove(token);
+        String username = (String) redisTemplate.opsForHash().get(properties.hashForToken, token);
+        if (username == null) {
+            return;
+        }
+        onlineUsers.remove(username);
+        log.info("用户：" + username + "下线了");
     }
 
     @OnError
     public void onError(@PathParam("token") String token, Session session, Throwable throwable) {
-        onlineUsers.remove(token);
+        String username = (String) redisTemplate.opsForHash().get(properties.hashForToken, token);
+        if (username == null) {
+            return;
+        }
+        onlineUsers.remove(username);
+        log.info("用户：" + username + "发生异常，强制下线");
     }
 }

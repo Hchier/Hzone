@@ -127,8 +127,8 @@ public class UserController {
         return userService.getUserVO(username, currentUser);
     }
 
-    @PostMapping("/user/sendPrivateMsg")
-    public RestResponse<Object> sendPrivateMsg(@Valid @RequestBody PrivateChatAddDTO dto) throws IOException {
+    @PostMapping("/user/sendWsDTO")
+    public RestResponse<Object> sendPrivateMsg(@RequestBody WsMsgDTO<Object> dto) throws IOException {
         myEndpoint.sendMessage(dto);
         return RestResponse.ok();
     }
