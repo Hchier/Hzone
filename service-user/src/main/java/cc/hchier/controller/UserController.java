@@ -137,4 +137,13 @@ public class UserController {
     public RestResponse<Boolean> isOnline(@PathVariable String username) {
         return RestResponse.ok(myEndpoint.existUser(username));
     }
+
+    @PostMapping("/user/loginByToken")
+    public RestResponse<Object> loginByToken(HttpServletRequest req) {
+        if (talkService.createChannel(req.getHeader("username")).getCode() == ResponseCode.OK.getCode()) {
+            return RestResponse.ok();
+        } else {
+            return RestResponse.build(ResponseCode.NETTY_CHANNEL_CREATE_FAIL);
+        }
+    }
 }
