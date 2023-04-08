@@ -1,7 +1,10 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
+import cc.hchier.consts.WsMsgType;
 import cc.hchier.dto.PrivateChatAddDTO;
+import cc.hchier.dto.PrivateMsgRecallDTO;
+import cc.hchier.dto.WsMsgDTO;
 import cc.hchier.entity.PrivateMessage;
 import cc.hchier.mapper.PrivateMessageMapper;
 import cc.hchier.vo.ChatUserVO;
@@ -19,9 +22,11 @@ import java.util.List;
 @Service
 public class PrivateMessageServiceImpl implements PrivateMessageService {
     private final PrivateMessageMapper privateMessageMapper;
+    private final UserService userService;
 
-    public PrivateMessageServiceImpl(PrivateMessageMapper privateMessageMapper) {
+    public PrivateMessageServiceImpl(PrivateMessageMapper privateMessageMapper, UserService userService) {
         this.privateMessageMapper = privateMessageMapper;
+        this.userService = userService;
     }
 
     @Override
@@ -47,10 +52,11 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     }
 
     @Override
-    public RestResponse<Object> recall(int id, String from) {
-        if (privateMessageMapper.recall(id, from) == 0) {
+    public RestResponse<Object> recall(PrivateMsgRecallDTO dto) {
+        if (privateMessageMapper.recall(dto.getId(), dto.getSender()) == 0) {
             return RestResponse.fail();
         }
+        userService.sendWsDTO(WsMsgDTO.build(WsMsgType.PrivateMsgRecall.getCode(), dto.getReceiver(), dto));
         return RestResponse.ok();
     }
 

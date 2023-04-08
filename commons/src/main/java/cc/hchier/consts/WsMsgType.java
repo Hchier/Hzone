@@ -20,7 +20,7 @@ public enum WsMsgType {
     /**
      * 私信撤回
      */
-    MsgRecall(3);
+    PrivateMsgRecall(3);
 
     private final int code;
 

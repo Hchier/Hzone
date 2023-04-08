@@ -3,6 +3,7 @@ package cc.hchier.controller;
 import cc.hchier.RestResponse;
 import cc.hchier.consts.ResponseCode;
 import cc.hchier.dto.PrivateChatAddSuccessDTO;
+import cc.hchier.dto.PrivateMsgRecallDTO;
 import cc.hchier.service.PrivateMessageService;
 import cc.hchier.service.UserService;
 import cc.hchier.nettyTalk.client.service.ClientService;
@@ -61,9 +62,9 @@ public class TalkController {
         return privateMessageService.getPrivateMessages(req.getHeader("username"), username, pageSize * 10, 10);
     }
 
-    @PostMapping("/talk/recall/{id}")
-    public RestResponse<Object> recall(@PathVariable Integer id, HttpServletRequest req) {
-        return privateMessageService.recall(id, req.getHeader("username"));
+    @PostMapping("/talk/recall")
+    public RestResponse<Object> recall(@Valid @RequestBody PrivateMsgRecallDTO dto, HttpServletRequest req) {
+        return privateMessageService.recall(dto.setSender(req.getHeader("username")));
     }
 
     @PostMapping("/talk/setMsgsRead/{from}")

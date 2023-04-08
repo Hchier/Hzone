@@ -2,6 +2,7 @@ package cc.hchier.service;
 
 import cc.hchier.RestResponse;
 import cc.hchier.dto.PrivateChatAddDTO;
+import cc.hchier.dto.PrivateMsgRecallDTO;
 import cc.hchier.vo.ChatUserVO;
 import cc.hchier.vo.PrivateMessageVO;
 import org.apache.ibatis.annotations.Param;
@@ -31,14 +32,14 @@ public interface PrivateMessageService {
      */
     RestResponse<List<PrivateMessageVO>> getPrivateMessages(String username1, String username2, int startIndex, int rowNum);
 
+
     /**
      * 撤回私信
      *
-     * @param id   id
-     * @param from 发送者
+     * @param dto dto
      * @return {@link RestResponse}<{@link Object}>
      */
-    RestResponse<Object> recall(int id, String from);
+    RestResponse<Object> recall(PrivateMsgRecallDTO dto);
 
     /**
      * 设置某人发来的所有私信已读

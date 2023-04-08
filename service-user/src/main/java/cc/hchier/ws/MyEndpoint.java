@@ -43,7 +43,12 @@ public class MyEndpoint {
     @OnOpen
     public void onOpen(@PathParam("token") String token, Session session, EndpointConfig config) {
         String username = (String) redisTemplate.opsForHash().get(properties.hashForToken, token);
+        //token无效
         if (username == null) {
+            return;
+        }
+        if (onlineUsers.get(username) != null) {
+            //todo web端能不能共享ws
             return;
         }
         onlineUsers.put(username, session);
