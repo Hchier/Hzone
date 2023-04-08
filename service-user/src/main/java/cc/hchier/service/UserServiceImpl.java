@@ -1,7 +1,7 @@
 package cc.hchier.service;
 
-import cc.hchier.consts.FollowType;
-import cc.hchier.consts.ResponseCode;
+import cc.hchier.enums.FollowType;
+import cc.hchier.enums.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.Utils;
 import cc.hchier.configuration.Properties;

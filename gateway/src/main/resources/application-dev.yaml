@@ -40,8 +40,8 @@ spring:
       routes:
         - id: ws
           #gateway转发ws有点儿问题
-         #uri: lb:ws://service-user
-          uri: ws://localhost:8001
+         #uri: lb:ws://service-ws
+          uri: ws://localhost:8071
           predicates:
             - Path=/ws/**
 

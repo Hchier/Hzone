@@ -1,7 +1,11 @@
 package cc.hchier.ws;
 
 import cc.hchier.configuration.Properties;
-import cc.hchier.dto.WsMsgDTO;
+import cc.hchier.handler.Handler;
+import cc.hchier.handler.Handlers;
+import cc.hchier.wsMsgs.WsMsg;
+import cc.hchier.wsMsgs.WsMsgDTO;
+import cc.hchier.wsMsgs.WsMsgType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +32,20 @@ public class MyEndpoint {
     private static Properties properties;
     private static ObjectMapper objectMapper;
 
-    private static final Map<String, Session> onlineUsers = new ConcurrentHashMap<>();
+    private static final Map<String, Session> ONLINE_USERS = new ConcurrentHashMap<>();
+
+    private static Handlers handlers;
+
 
     public MyEndpoint() {
     }
 
     @Autowired
-    public MyEndpoint(RedisTemplate<String, Object> redisTemplate, Properties properties, ObjectMapper objectMapper) {
+    public MyEndpoint(RedisTemplate<String, Object> redisTemplate, Properties properties, ObjectMapper objectMapper, Handlers handlers) {
         MyEndpoint.redisTemplate = redisTemplate;
         MyEndpoint.properties = properties;
         MyEndpoint.objectMapper = objectMapper;
+        MyEndpoint.handlers = handlers;
     }
 
     @OnOpen
@@ -47,26 +55,35 @@ public class MyEndpoint {
         if (username == null) {
             return;
         }
-        if (onlineUsers.get(username) != null) {
+        if (ONLINE_USERS.get(username) != null) {
             //todo web端能不能共享ws
             return;
         }
-        onlineUsers.put(username, session);
+        ONLINE_USERS.put(username, session);
         log.info("用户：" + username + "上线了");
     }
 
     public void sendMessage(WsMsgDTO<Object> dto) throws IOException {
-        Session session = onlineUsers.get(dto.getReceiver());
-        if (session == null) {
-            log.info("用户" + dto.getReceiver() + "的session为空，无法发送ws消息：" + dto);
+        String typeName = "";
+        Class<? extends WsMsg> msgClass = null;
+        for (WsMsgType type : WsMsgType.values()) {
+            if (type.getCode() == dto.getType()) {
+                typeName = type.getMsgClass().getTypeName();
+                msgClass = type.getMsgClass();
+                break;
+            }
+        }
+        Handler handler = handlers.handlerMap.get(typeName);
+        if (handler == null) {
+            log.error("对应的消息处理器缺失：" + typeName);
             return;
         }
-        log.info("已向用户" + dto.getReceiver() + "发送" + dto);
-        session.getBasicRemote().sendText(objectMapper.writeValueAsString(dto));
+        WsMsg msg = objectMapper.readValue(objectMapper.writeValueAsString(dto.getBody()), msgClass);
+        handler.handle(msg, ONLINE_USERS);
     }
 
     public boolean existUser(String username) {
-        return onlineUsers.get(username) != null;
+        return ONLINE_USERS.get(username) != null;
     }
 
     @OnMessage
@@ -80,7 +97,7 @@ public class MyEndpoint {
         if (username == null) {
             return;
         }
-        onlineUsers.remove(username);
+        ONLINE_USERS.remove(username);
         log.info("用户：" + username + "下线了");
     }
 
@@ -90,7 +107,7 @@ public class MyEndpoint {
         if (username == null) {
             return;
         }
-        onlineUsers.remove(username);
+        ONLINE_USERS.remove(username);
         log.info("用户：" + username + "发生异常，强制下线");
     }
 }

@@ -1,4 +1,4 @@
-package cc.hchier.dto;
+package cc.hchier.wsMsgs;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,11 +14,9 @@ import lombok.NoArgsConstructor;
 public class WsMsgDTO<T> {
     private Integer type;
 
-    private String receiver;
-
     private T body;
 
-    public static <T> WsMsgDTO<T> build(Integer type, String receiver, T body) {
-        return new WsMsgDTO<>(type, receiver, body);
+    public static <T> WsMsgDTO<T> build(Integer type, T body) {
+        return new WsMsgDTO<>(type, body);
     }
 }

@@ -1,7 +1,7 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
-import cc.hchier.consts.FollowType;
+import cc.hchier.enums.FollowType;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

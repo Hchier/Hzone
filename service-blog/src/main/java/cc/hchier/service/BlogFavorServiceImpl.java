@@ -1,6 +1,6 @@
 package cc.hchier.service;
 
-import cc.hchier.consts.ResponseCode;
+import cc.hchier.enums.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.entity.BlogFavor;
 import cc.hchier.mapper.BlogFavorMapper;

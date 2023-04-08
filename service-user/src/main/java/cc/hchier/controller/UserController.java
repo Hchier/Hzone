@@ -1,13 +1,12 @@
 package cc.hchier.controller;
 
-import cc.hchier.consts.ResponseCode;
+import cc.hchier.enums.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.configuration.Properties;
 import cc.hchier.dto.*;
 import cc.hchier.service.TalkService;
 import cc.hchier.service.UserService;
 import cc.hchier.vo.UserVO;
-import cc.hchier.ws.MyEndpoint;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +16,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -28,13 +26,11 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
     private final Properties properties;
-    private final MyEndpoint myEndpoint;
     private final TalkService talkService;
 
-    public UserController(UserService userService, Properties properties, MyEndpoint myEndpoint, TalkService talkService) {
+    public UserController(UserService userService, Properties properties, TalkService talkService) {
         this.userService = userService;
         this.properties = properties;
-        this.myEndpoint = myEndpoint;
         this.talkService = talkService;
     }
 
@@ -125,17 +121,6 @@ public class UserController {
             username = currentUser;
         }
         return userService.getUserVO(username, currentUser);
-    }
-
-    @PostMapping("/user/sendWsDTO")
-    public RestResponse<Object> sendPrivateMsg(@RequestBody WsMsgDTO<Object> dto) throws IOException {
-        myEndpoint.sendMessage(dto);
-        return RestResponse.ok();
-    }
-
-    @PostMapping("/user/isOnline/{username}")
-    public RestResponse<Boolean> isOnline(@PathVariable String username) {
-        return RestResponse.ok(myEndpoint.existUser(username));
     }
 
     @PostMapping("/user/loginByToken")

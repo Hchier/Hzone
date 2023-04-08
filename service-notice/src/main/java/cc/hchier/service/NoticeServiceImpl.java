@@ -1,8 +1,8 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
-import cc.hchier.consts.FollowType;
-import cc.hchier.consts.NoticeType;
+import cc.hchier.enums.FollowType;
+import cc.hchier.enums.NoticeType;
 import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.entity.Notice;
 import cc.hchier.mapper.NoticeMapper;

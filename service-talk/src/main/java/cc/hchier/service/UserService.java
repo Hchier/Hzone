@@ -1,7 +1,6 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
-import cc.hchier.dto.WsMsgDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,12 +19,4 @@ public interface UserService {
     @PostMapping("/user/existUser/{username}")
     RestResponse<Object> existUser(@PathVariable("username") String username);
 
-    /**
-     * 发送私信
-     *
-     * @param dto dto
-     * @return {@link RestResponse}<{@link Object}>
-     */
-    @PostMapping("/user/sendWsDTO")
-    RestResponse<Object> sendWsDTO(WsMsgDTO<Object> dto);
 }

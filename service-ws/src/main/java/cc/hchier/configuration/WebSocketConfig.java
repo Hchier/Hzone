@@ -1,4 +1,4 @@
-package cc.hchier.ws;
+package cc.hchier.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

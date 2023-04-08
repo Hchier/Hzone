@@ -1,7 +1,7 @@
 package cc.hchier.controller;
 
 import cc.hchier.RestResponse;
-import cc.hchier.consts.ResponseCode;
+import cc.hchier.enums.ResponseCode;
 import cc.hchier.dto.PrivateChatAddSuccessDTO;
 import cc.hchier.dto.PrivateMsgRecallDTO;
 import cc.hchier.service.PrivateMessageService;

@@ -1,4 +1,4 @@
-package cc.hchier.consts;
+package cc.hchier.enums;
 
 import lombok.AllArgsConstructor;
 

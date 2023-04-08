@@ -1,14 +1,17 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
-import cc.hchier.consts.WsMsgType;
 import cc.hchier.dto.PrivateChatAddDTO;
 import cc.hchier.dto.PrivateMsgRecallDTO;
-import cc.hchier.dto.WsMsgDTO;
 import cc.hchier.entity.PrivateMessage;
 import cc.hchier.mapper.PrivateMessageMapper;
 import cc.hchier.vo.ChatUserVO;
 import cc.hchier.vo.PrivateMessageVO;
+import cc.hchier.wsMsgs.PrivateChatRecallMsg;
+import cc.hchier.wsMsgs.WsMsg;
+import cc.hchier.wsMsgs.WsMsgDTO;
+import cc.hchier.wsMsgs.WsMsgType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -20,13 +23,14 @@ import java.util.List;
  * @Date 2023/2/25 20:37
  */
 @Service
+@Slf4j
 public class PrivateMessageServiceImpl implements PrivateMessageService {
     private final PrivateMessageMapper privateMessageMapper;
-    private final UserService userService;
+    private final WsService wsService;
 
-    public PrivateMessageServiceImpl(PrivateMessageMapper privateMessageMapper, UserService userService) {
+    public PrivateMessageServiceImpl(PrivateMessageMapper privateMessageMapper, WsService wsService) {
         this.privateMessageMapper = privateMessageMapper;
-        this.userService = userService;
+        this.wsService = wsService;
     }
 
     @Override
@@ -56,7 +60,12 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
         if (privateMessageMapper.recall(dto.getId(), dto.getSender()) == 0) {
             return RestResponse.fail();
         }
-        userService.sendWsDTO(WsMsgDTO.build(WsMsgType.PrivateMsgRecall.getCode(), dto.getReceiver(), dto));
+        WsMsg msg = new PrivateChatRecallMsg()
+            .setId(dto.getId())
+            .setSender(dto.getSender())
+            .setReceiver(dto.getReceiver());
+        log.info("发送wsMsg：" + msg);
+        wsService.sendWsDTO(WsMsgDTO.build(WsMsgType.PrivateChatRecallMsg.getCode(), msg));
         return RestResponse.ok();
     }
 

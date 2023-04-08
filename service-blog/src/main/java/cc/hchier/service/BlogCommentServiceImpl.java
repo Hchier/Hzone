@@ -1,7 +1,7 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
-import cc.hchier.consts.NoticeType;
+import cc.hchier.enums.NoticeType;
 import cc.hchier.dto.BlogCommentDeleteDTO;
 import cc.hchier.dto.BlogCommentGetDTO;
 import cc.hchier.dto.BlogCommentPublishDTO;

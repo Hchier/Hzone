@@ -1,7 +1,7 @@
 package cc.hchier.service;
 
 import cc.hchier.RestResponse;
-import cc.hchier.consts.NoticeType;
+import cc.hchier.enums.NoticeType;
 import cc.hchier.dto.NoticeAddDTO;
 import cc.hchier.dto.WallAddDTO;
 import cc.hchier.entity.Wall;

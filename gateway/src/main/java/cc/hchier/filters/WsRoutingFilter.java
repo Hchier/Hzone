@@ -2,7 +2,7 @@ package cc.hchier.filters;
 
 import cc.hchier.RestResponse;
 import cc.hchier.configuration.Properties;
-import cc.hchier.consts.ResponseCode;
+import cc.hchier.enums.ResponseCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.ObjectProvider;

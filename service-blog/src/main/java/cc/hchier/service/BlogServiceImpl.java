@@ -1,7 +1,7 @@
 package cc.hchier.service;
 
-import cc.hchier.consts.NoticeType;
-import cc.hchier.consts.ResponseCode;
+import cc.hchier.enums.NoticeType;
+import cc.hchier.enums.ResponseCode;
 import cc.hchier.RestResponse;
 import cc.hchier.dto.BlogPublishDTO;
 import cc.hchier.dto.BlogUpdateDTO;

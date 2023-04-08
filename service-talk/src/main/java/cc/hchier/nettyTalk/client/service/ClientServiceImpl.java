@@ -3,7 +3,6 @@ package cc.hchier.nettyTalk.client.service;
 import cc.hchier.RestResponse;
 import cc.hchier.dto.PrivateChatAddSuccessDTO;
 import cc.hchier.service.PrivateMessageService;
-import cc.hchier.service.UserService;
 import cc.hchier.nettyTalk.client.handler.PongMsgHandler;
 import cc.hchier.nettyTalk.client.handler.PrivateChatRespMsgHandler;
 import cc.hchier.nettyTalk.configuration.Properties;
@@ -12,6 +11,7 @@ import cc.hchier.nettyTalk.message.PingMsg;
 import cc.hchier.nettyTalk.message.PrivateChatReqMsg;
 import cc.hchier.nettyTalk.protocol.MessageCodecSharable;
 import cc.hchier.nettyTalk.server.service.ChannelService;
+import cc.hchier.service.WsService;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -41,14 +41,19 @@ public class ClientServiceImpl implements ClientService {
 
     private final Properties properties;
 
-    private final UserService userService;
+    private final WsService wsService;
 
-    public ClientServiceImpl(@Qualifier("localChannelServiceImpl") ChannelService channelService, PrivateMessageService privateMessageService, MessageCodecSharable messageCodecSharable, Properties properties, UserService userService) {
+    public ClientServiceImpl(
+        @Qualifier("localChannelServiceImpl") ChannelService channelService,
+        PrivateMessageService privateMessageService,
+        MessageCodecSharable messageCodecSharable,
+        Properties properties,
+        WsService wsService) {
         this.channelService = channelService;
         this.privateMessageService = privateMessageService;
         this.messageCodecSharable = messageCodecSharable;
         this.properties = properties;
-        this.userService = userService;
+        this.wsService = wsService;
     }
 
 
@@ -71,7 +76,7 @@ public class ClientServiceImpl implements ClientService {
                         ch.pipeline()
                             .addLast(new LengthFieldBasedFrameDecoder(1024, 7, 4, 0, 0))
                             .addLast(messageCodecSharable)
-                            .addLast(new PrivateChatRespMsgHandler(userService))
+                            .addLast(new PrivateChatRespMsgHandler(wsService))
                             .addLast(new PongMsgHandler());
                     }
                 })
