@@ -2,7 +2,7 @@ package cc.hchier.ws;
 
 import cc.hchier.configuration.Properties;
 import cc.hchier.handler.Handler;
-import cc.hchier.handler.Handlers;
+import cc.hchier.handler.HandlerMap;
 import cc.hchier.wsMsgs.WsMsgDTO;
 import cc.hchier.wsMsgs.WsMsgTypeMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,18 +33,18 @@ public class MyEndpoint {
 
     private static final Map<String, Session> ONLINE_USERS = new ConcurrentHashMap<>();
 
-    private static Handlers handlers;
+    private static HandlerMap handlerMap;
 
 
     public MyEndpoint() {
     }
 
     @Autowired
-    public MyEndpoint(RedisTemplate<String, Object> redisTemplate, Properties properties, ObjectMapper objectMapper, Handlers handlers) {
+    public MyEndpoint(RedisTemplate<String, Object> redisTemplate, Properties properties, ObjectMapper objectMapper, HandlerMap handlerMap) {
         MyEndpoint.redisTemplate = redisTemplate;
         MyEndpoint.properties = properties;
         MyEndpoint.objectMapper = objectMapper;
-        MyEndpoint.handlers = handlers;
+        MyEndpoint.handlerMap = handlerMap;
     }
 
     @OnOpen
@@ -70,7 +70,7 @@ public class MyEndpoint {
             return;
         }
         String typeName = msgClass.getTypeName();
-        Handler handler = handlers.handlerMap.get(typeName);
+        Handler handler = handlerMap.handlerMap.get(typeName);
         if (handler == null) {
             log.error("对应的消息处理器缺失：" + typeName);
             return;

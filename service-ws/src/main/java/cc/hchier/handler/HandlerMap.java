@@ -13,13 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @Component
-public class Handlers {
+public class HandlerMap {
     public final Map<String, Handler> handlerMap = new ConcurrentHashMap<>();
 
 
     public List<Handler> handlerList = new ArrayList<>();
 
-    public Handlers(
+    public HandlerMap(
         PrivateChatMsgHandler privateChatMsgHandler,
         PrivateChatRecallMsgHandler privateChatRecallMsgHandler) {
 
