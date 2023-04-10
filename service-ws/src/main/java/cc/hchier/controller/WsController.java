@@ -27,7 +27,7 @@ public class WsController {
 
     @PostMapping("/ws/sendWsDTO")
     public RestResponse<Object> sendPrivateMsg(@RequestBody WsMsgDTO<Object> dto) throws IOException {
-        log.info("Controller收到消息："+dto);
+        log.info("Controller收到WsMsgDTO：" + dto);
         myEndpoint.sendMessage(dto);
         return RestResponse.ok();
     }

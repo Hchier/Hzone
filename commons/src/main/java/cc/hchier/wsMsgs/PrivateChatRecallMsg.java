@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * @author by Hchier
@@ -17,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class PrivateChatRecallMsg extends WsMsg {
+public class PrivateChatRecallMsg {
     private Integer id;
 
     private String sender;

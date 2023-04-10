@@ -7,10 +7,7 @@ import cc.hchier.entity.PrivateMessage;
 import cc.hchier.mapper.PrivateMessageMapper;
 import cc.hchier.vo.ChatUserVO;
 import cc.hchier.vo.PrivateMessageVO;
-import cc.hchier.wsMsgs.PrivateChatRecallMsg;
-import cc.hchier.wsMsgs.WsMsg;
-import cc.hchier.wsMsgs.WsMsgDTO;
-import cc.hchier.wsMsgs.WsMsgType;
+import cc.hchier.wsMsgs.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -60,12 +57,13 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
         if (privateMessageMapper.recall(dto.getId(), dto.getSender()) == 0) {
             return RestResponse.fail();
         }
-        WsMsg msg = new PrivateChatRecallMsg()
+        PrivateChatRecallMsg msg = new PrivateChatRecallMsg()
             .setId(dto.getId())
             .setSender(dto.getSender())
             .setReceiver(dto.getReceiver());
-        log.info("发送wsMsg：" + msg);
-        wsService.sendWsDTO(WsMsgDTO.build(WsMsgType.PrivateChatRecallMsg.getCode(), msg));
+        WsMsgDTO<Object> wsMsgDTO = WsMsgDTO.build(WsMsgTypeMap.CLASS_CODE_MAP.get(msg.getClass()), msg);
+        log.info("发送WsMsgDTO" + wsMsgDTO);
+        wsService.sendWsDTO(wsMsgDTO);
         return RestResponse.ok();
     }
 

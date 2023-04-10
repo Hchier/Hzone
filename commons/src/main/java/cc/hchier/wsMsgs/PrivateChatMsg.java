@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class PrivateChatMsg extends WsMsg {
+public class PrivateChatMsg {
     private Integer id;
 
     private String sender;

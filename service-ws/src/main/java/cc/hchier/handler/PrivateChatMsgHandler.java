@@ -1,8 +1,8 @@
 package cc.hchier.handler;
 
 import cc.hchier.wsMsgs.PrivateChatMsg;
-import cc.hchier.wsMsgs.WsMsgType;
 import cc.hchier.wsMsgs.WsMsgDTO;
+import cc.hchier.wsMsgs.WsMsgTypeMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ public class PrivateChatMsgHandler extends WsMsgHandler<PrivateChatMsg> {
             log.info("用户" + msg.getReceiver() + "的session为空，无法发送ws消息：" + msg);
             return;
         }
-        WsMsgDTO<PrivateChatMsg> dto = WsMsgDTO.build(WsMsgType.PrivateChatMsg.getCode(), msg);
+        WsMsgDTO<PrivateChatMsg> dto = WsMsgDTO.build(WsMsgTypeMap.CLASS_CODE_MAP.get(msg.getClass()), msg);
         log.info("已向用户" + msg.getReceiver() + "发送ws消息" + dto);
         session.getBasicRemote().sendText(objectMapper.writeValueAsString(dto));
     }

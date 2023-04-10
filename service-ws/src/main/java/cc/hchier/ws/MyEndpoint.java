@@ -3,9 +3,8 @@ package cc.hchier.ws;
 import cc.hchier.configuration.Properties;
 import cc.hchier.handler.Handler;
 import cc.hchier.handler.Handlers;
-import cc.hchier.wsMsgs.WsMsg;
 import cc.hchier.wsMsgs.WsMsgDTO;
-import cc.hchier.wsMsgs.WsMsgType;
+import cc.hchier.wsMsgs.WsMsgTypeMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,21 +63,19 @@ public class MyEndpoint {
     }
 
     public void sendMessage(WsMsgDTO<Object> dto) throws IOException {
-        String typeName = "";
-        Class<? extends WsMsg> msgClass = null;
-        for (WsMsgType type : WsMsgType.values()) {
-            if (type.getCode() == dto.getType()) {
-                typeName = type.getMsgClass().getTypeName();
-                msgClass = type.getMsgClass();
-                break;
-            }
+        Integer type = dto.getType();
+        Class<?> msgClass = WsMsgTypeMap.CODE_CLASS_MAP.get(type);
+        if (msgClass == null) {
+            log.error("msgClass为空。type：" + type);
+            return;
         }
+        String typeName = msgClass.getTypeName();
         Handler handler = handlers.handlerMap.get(typeName);
         if (handler == null) {
             log.error("对应的消息处理器缺失：" + typeName);
             return;
         }
-        WsMsg msg = objectMapper.readValue(objectMapper.writeValueAsString(dto.getBody()), msgClass);
+        Object msg = objectMapper.readValue(objectMapper.writeValueAsString(dto.getBody()), msgClass);
         handler.handle(msg, ONLINE_USERS);
     }
 

@@ -4,7 +4,7 @@ import cc.hchier.nettyTalk.message.PrivateChatRespMsg;
 import cc.hchier.service.WsService;
 import cc.hchier.wsMsgs.PrivateChatMsg;
 import cc.hchier.wsMsgs.WsMsgDTO;
-import cc.hchier.wsMsgs.WsMsgType;
+import cc.hchier.wsMsgs.WsMsgTypeMap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,9 @@ public class PrivateChatRespMsgHandler extends SimpleChannelInboundHandler<Priva
             .setReceiver(msg.getTo())
             .setContent(msg.getContent())
             .setCreateTime(msg.getCreateTime());
-        log.info("用户" + wsMsg.getReceiver() + "收到消息：" + msg + "并发送wsMsg：" + wsMsg);
-        wsService.sendWsDTO(WsMsgDTO.build(WsMsgType.PrivateChatMsg.getCode(), wsMsg));
+
+        WsMsgDTO<Object> dto = WsMsgDTO.build(WsMsgTypeMap.CLASS_CODE_MAP.get(wsMsg.getClass()), wsMsg);
+        log.info("发送WsMsgDTO" + dto);
+        wsService.sendWsDTO(dto);
     }
 }
