@@ -10,6 +10,7 @@ import cc.hchier.vo.WallVO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +30,7 @@ public class WallServiceImpl implements WallService {
     }
 
     @Override
-    public RestResponse<Integer> add(WallAddDTO dto) {
+    public RestResponse<WallVO> add(WallAddDTO dto) {
         if (wallMapper.insert(dto) == 1) {
             rabbitTemplate.convertAndSend(
                 "directExchange",
@@ -42,7 +43,15 @@ public class WallServiceImpl implements WallService {
                     .setLink(dto.getCommentee())
                     .setCreateTime(new Date())
             );
-            return RestResponse.ok(dto.getId());
+            return RestResponse.ok(
+                new WallVO()
+                    .setId(dto.getId())
+                    .setContent(dto.getContent())
+                    .setSender(dto.getCommenter())
+                    .setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dto.getCreateTime()))
+                    .setHiddenPermission(dto.getCommentee().equals(dto.getCommenter()))
+                    .setDeletePermission(true)
+            );
         }
         return RestResponse.fail();
     }
@@ -72,9 +81,8 @@ public class WallServiceImpl implements WallService {
                 new WallVO()
                     .setId(wall.getId())
                     .setContent(wall.getContent())
-                    .setCommenter(wall.getCommenter())
-                    .setCommenterAvatar("pic")
-                    .setCreateTime(wall.getCreateTime())
+                    .setSender(wall.getCommenter())
+                    .setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(wall.getCreateTime()))
                     .setHiddenPermission(wall.getCommentee().equals(currentUser))
                     .setDeletePermission(wall.getCommenter().equals(currentUser)));
         }

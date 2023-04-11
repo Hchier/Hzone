@@ -21,11 +21,9 @@ public class WallVO implements Serializable {
 
     private String content;
 
-    private String commenter;
+    private String sender;
 
-    private String commenterAvatar;
-
-    private Date createTime;
+    private String createTime;
 
     private Boolean deletePermission;
 

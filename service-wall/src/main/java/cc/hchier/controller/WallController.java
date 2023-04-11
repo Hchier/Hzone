@@ -27,7 +27,7 @@ public class WallController {
     }
 
     @PostMapping("/wall/add")
-    public RestResponse<Integer> add(@Valid @RequestBody WallAddDTO dto, HttpServletRequest req) {
+    public RestResponse<WallVO> add(@Valid @RequestBody WallAddDTO dto, HttpServletRequest req) {
         String currentUser = req.getHeader("username");
         dto.setCommenter(currentUser).setCreateTime(new Date());
         return wallService.add(dto);
