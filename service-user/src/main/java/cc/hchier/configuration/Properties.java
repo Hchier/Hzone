@@ -12,12 +12,27 @@ import java.util.Map;
 @Component
 public class Properties {
 
-    @Value("${properties.hashForToken}")
+    @Value("${properties.redis.hashForToken}")
     public String hashForToken;
 
-    @Value("${properties.tokenLifeCycle}")
+    @Value("${properties.redis.tokenLifeCycle}")
     public int tokenLifeCycle;
 
-    @Value("${properties.zsetForTokenExpireTime}")
+    @Value("${properties.redis.zsetForTokenExpireTime}")
     public String zsetForTokenExpireTime;
+
+    @Value("${properties.staticResources.path}")
+    public String path;
+
+    @Value("${properties.staticResources.avatarPathPrefix}")
+    public String avatarPathPrefix;
+
+    @Value("${properties.staticResources.picPathPrefix}")
+    public String picPathPrefix;
+
+    @Value("${properties.staticResources.videoPathPrefix}")
+    public String videoPathPrefix;
+
+    @Value("${properties.nginx.addr}")
+    public String nginxAddr;
 }

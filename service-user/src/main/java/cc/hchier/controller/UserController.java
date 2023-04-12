@@ -7,31 +7,37 @@ import cc.hchier.dto.*;
 import cc.hchier.service.TalkService;
 import cc.hchier.service.UserService;
 import cc.hchier.vo.UserVO;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import cn.hutool.Hutool;
+import cn.hutool.core.lang.Snowflake;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.UUID;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author by Hchier
  * @Date 2023/2/12 19:42
  */
 @RestController
+@Slf4j
 public class UserController {
     private final UserService userService;
     private final Properties properties;
     private final TalkService talkService;
+    private final Snowflake snowflake;
 
-    public UserController(UserService userService, Properties properties, TalkService talkService) {
+    public UserController(UserService userService, Properties properties, TalkService talkService, Snowflake snowflake) {
         this.userService = userService;
         this.properties = properties;
         this.talkService = talkService;
+        this.snowflake = snowflake;
     }
 
     @PostMapping("/user/register")
@@ -130,5 +136,56 @@ public class UserController {
         } else {
             return RestResponse.build(ResponseCode.NETTY_CHANNEL_CREATE_FAIL);
         }
+    }
+
+    @PostMapping("/user/uploadPic")
+    public String uploadPic(@RequestPart("pic") MultipartFile file, HttpServletRequest req) throws IOException {
+        if (file == null) {
+            log.error("file null");
+            return "{     \"errno\": 1,  \"message\": \"file null\" }";
+        }
+        StringBuilder picRelativePath = new StringBuilder();
+        picRelativePath.append(properties.picPathPrefix).append(snowflake.nextIdStr()).append("_").append(req.getHeader("username")).append(".").append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
+
+        String picFullAbsPath = properties.path + picRelativePath;
+        String picUrl = properties.nginxAddr + picRelativePath;
+        file.transferTo(new File(picFullAbsPath));
+        return "{\n" + "    \"errno\": 0,\n" + "    \"data\": {\n" + "        \"url\": \"" + picUrl + "\",\n" + "        \"alt\": \"\",\n" + "        \"href\": \"" + picUrl + "\"\n" + "    }\n" + "}";
+    }
+
+    @PostMapping("/user/uploadVideo")
+    public String uploadVideo(@RequestPart("video") MultipartFile file, HttpServletRequest req) throws IOException {
+        System.out.println("------");
+        if (file == null) {
+            log.error("file null");
+            return "{     \"errno\": 1,  \"message\": \"file null\" }";
+        }
+        StringBuilder videoRelativePath = new StringBuilder();
+        videoRelativePath.append(properties.videoPathPrefix).append(snowflake.nextIdStr()).append("_").append(req.getHeader("username")).append(".").append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
+
+        String videoFullAbsPath = properties.path + videoRelativePath;
+        String videoUrl = properties.nginxAddr + videoRelativePath;
+        file.transferTo(new File(videoFullAbsPath));
+        return "{\n" + "    \"errno\": 0,\n" + "    \"data\": {\n" + "        \"url\": \"" + videoUrl + "\"\n" + "    }\n" + "}";
+    }
+
+
+    @PostMapping("/user/deletePicList")
+    public RestResponse<Object> deletePic(@RequestBody List<String> list, HttpServletRequest req) {
+        list.forEach((url) -> {
+            String username = url.substring(url.indexOf("_") + 1, url.indexOf("."));
+            String currentUser = req.getHeader("username");
+            if (!currentUser.equals(username)) {
+                log.error("用户" + currentUser + "企图删除" + url);
+            }
+            String picPath = properties.path + properties.picPathPrefix + url.substring(url.lastIndexOf("/") + 1);
+            File file = new File(picPath);
+            if (file.delete()) {
+                log.info("删除 " + picPath + " 成功");
+            } else {
+                log.info("删除 " + picPath + " 失败");
+            }
+        });
+        return RestResponse.ok();
     }
 }

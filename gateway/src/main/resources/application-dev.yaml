@@ -87,11 +87,7 @@ properties:
   # 无需登录就可以访问的接口
   whitePaths: '{
     "/user/register":"null",
-    "/user/login":"null",
-    "/topic/incrReadNum":"null",
-    "/topic/totalReadNumChart":"null",
-    "/topic/weekReadNumChart":"null",
-    "/topic/dayReadNumChart":"null"
+    "/user/login":"null"
   }'
 
 

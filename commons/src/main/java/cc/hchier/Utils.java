@@ -30,7 +30,7 @@ public class Utils {
      * @param str str
      * @return {@link String}
      */
-    public static String md5Encode(String str){
+    public static String md5Encode(String str) {
         return DigestUtils.md5DigestAsHex(str.getBytes(StandardCharsets.UTF_8));
     }
 }

@@ -28,16 +28,37 @@ spring:
   #      # 最大重定向数
   #      max-redirects: 6
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+
 
 properties:
-  # redis中存放token的hash
-  hashForToken: tokens
+  redis:
+    # redis中存放token的hash
+    hashForToken: tokens
 
-  # redis中存放token过期时间的zset
-  zsetForTokenExpireTime: tokenExpireTime
+    # redis中存放token过期时间的zset
+    zsetForTokenExpireTime: tokenExpireTime
 
-  # token的生存时长（分钟）
-  tokenLifeCycle: 60
+    # token的生存时长（分钟）
+    tokenLifeCycle: 60
+
+  staticResources:
+    # 存放图片的路径
+    path: E:/static
+    # 存放用户头像的目录
+    avatarPathPrefix: /hzone/avatar/
+    # 存放其它图片的目录
+    picPathPrefix: /hzone/pic/
+    # 存放视频的目录
+    videoPathPrefix: /hzone/video/
+
+  nginx:
+    #
+    addr: http://localhost:7010
 
 
 seata:
@@ -76,4 +97,3 @@ mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #输出sql到控制台
     map-underscore-to-camel-case: true
-
