@@ -1,6 +1,6 @@
 package cc.hchier.service;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.entity.Notice;
 import cc.hchier.vo.NoticeVO;
 

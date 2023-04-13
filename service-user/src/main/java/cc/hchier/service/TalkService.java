@@ -1,11 +1,9 @@
 package cc.hchier.service;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author hchier

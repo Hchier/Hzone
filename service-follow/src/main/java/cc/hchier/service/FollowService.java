@@ -1,6 +1,6 @@
 package cc.hchier.service;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.dto.FollowCancelDTO;
 import cc.hchier.dto.FollowDTO;
 import cc.hchier.vo.FollowTopicVO;

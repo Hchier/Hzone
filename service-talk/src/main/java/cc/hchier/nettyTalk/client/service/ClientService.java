@@ -1,6 +1,6 @@
 package cc.hchier.nettyTalk.client.service;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.dto.PrivateChatAddDTO;
 import cc.hchier.dto.PrivateChatAddSuccessDTO;
 import io.netty.channel.Channel;

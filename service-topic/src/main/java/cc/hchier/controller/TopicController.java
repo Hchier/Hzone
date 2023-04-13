@@ -1,6 +1,6 @@
 package cc.hchier.controller;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.entity.Topic;
 import cc.hchier.service.TopicService;
 import org.springframework.validation.annotation.Validated;

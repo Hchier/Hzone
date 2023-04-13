@@ -1,6 +1,6 @@
 package cc.hchier.nettyTalk.client.service;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.dto.PrivateChatAddSuccessDTO;
 import cc.hchier.service.PrivateMessageService;
 import cc.hchier.nettyTalk.client.handler.PongMsgHandler;

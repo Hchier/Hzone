@@ -1,7 +1,7 @@
 package cc.hchier.filters;
 
 import cc.hchier.enums.ResponseCode;
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.configuration.Properties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;

@@ -1,6 +1,6 @@
 package cc.hchier.controller;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.service.NoticeService;
 import cc.hchier.vo.NoticeVO;
 import org.springframework.web.bind.annotation.PathVariable;

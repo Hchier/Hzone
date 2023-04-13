@@ -1,6 +1,6 @@
 package cc.hchier.service;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.dto.PrivateChatAddDTO;
 import cc.hchier.dto.PrivateMsgRecallDTO;
 import cc.hchier.entity.PrivateMessage;

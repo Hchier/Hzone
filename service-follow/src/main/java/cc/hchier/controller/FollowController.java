@@ -1,6 +1,6 @@
 package cc.hchier.controller;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.dto.FollowCancelDTO;
 import cc.hchier.dto.FollowDTO;
 import cc.hchier.service.FollowService;

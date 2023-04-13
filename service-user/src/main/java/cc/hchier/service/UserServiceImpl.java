@@ -2,7 +2,7 @@ package cc.hchier.service;
 
 import cc.hchier.enums.FollowType;
 import cc.hchier.enums.ResponseCode;
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.Utils;
 import cc.hchier.configuration.Properties;
 import cc.hchier.dto.UserEmailUpdateDTO;

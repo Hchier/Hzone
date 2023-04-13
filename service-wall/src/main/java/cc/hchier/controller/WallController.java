@@ -1,6 +1,6 @@
 package cc.hchier.controller;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.dto.WallAddDTO;
 import cc.hchier.service.WallService;
 import cc.hchier.vo.WallVO;

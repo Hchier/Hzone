@@ -1,7 +1,7 @@
 package cc.hchier.service;
 
 import cc.hchier.enums.ResponseCode;
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.configuration.Properties;
 import cc.hchier.entity.Topic;
 import cc.hchier.mapper.TopicMapper;

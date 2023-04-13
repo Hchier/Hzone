@@ -1,13 +1,14 @@
 package cc.hchier.controller;
 
 import cc.hchier.enums.ResponseCode;
-import cc.hchier.RestResponse;
+import cc.hchier.response.ResourceUploadResp;
+import cc.hchier.response.RestResponse;
 import cc.hchier.configuration.Properties;
 import cc.hchier.dto.*;
 import cc.hchier.service.TalkService;
 import cc.hchier.service.UserService;
+import cc.hchier.sets.SuffixSet;
 import cc.hchier.vo.UserVO;
-import cn.hutool.Hutool;
 import cn.hutool.core.lang.Snowflake;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -138,39 +139,75 @@ public class UserController {
         }
     }
 
-    @PostMapping("/user/uploadPic")
-    public String uploadPic(@RequestPart("pic") MultipartFile file, HttpServletRequest req) throws IOException {
+//    @PostMapping("/user/uploadPic")
+//    public String uploadPic(@RequestPart("pic") MultipartFile file, HttpServletRequest req) throws IOException {
+//        if (file == null) {
+//            log.error("file null");
+//            return "{     \"errno\": 1,  \"message\": \"file null\" }";
+//        }
+//        StringBuilder picRelativePath = new StringBuilder();
+//        picRelativePath.append(properties.picPathPrefix).append(snowflake.nextIdStr()).append("_").append(req.getHeader("username")).append(".").append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
+//
+//        String picFullAbsPath = properties.path + picRelativePath;
+//        String picUrl = properties.nginxAddr + picRelativePath;
+//        file.transferTo(new File(picFullAbsPath));
+//        return "{\n" + "    \"errno\": 0,\n" + "    \"data\": {\n" + "        \"url\": \"" + picUrl + "\",\n" + "        \"alt\": \"\",\n" + "        \"href\": \"" + picUrl + "\"\n" + "    }\n" + "}";
+//    }
+//
+//    @PostMapping("/user/uploadVideo")
+//    public String uploadVideo(@RequestPart("video") MultipartFile file, HttpServletRequest req) throws IOException {
+//        if (file == null) {
+//            log.error("file null");
+//            return "{     \"errno\": 1,  \"message\": \"file null\" }";
+//        }
+//        StringBuilder videoRelativePath = new StringBuilder();
+//        videoRelativePath.append(properties.videoPathPrefix).append(snowflake.nextIdStr()).append("_").append(req.getHeader("username")).append(".").append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
+//
+//        String videoFullAbsPath = properties.path + videoRelativePath;
+//        String videoUrl = properties.nginxAddr + videoRelativePath;
+//        file.transferTo(new File(videoFullAbsPath));
+//        return "{\n" + "    \"errno\": 0,\n" + "    \"data\": {\n" + "        \"url\": \"" + videoUrl + "\"\n" + "    }\n" + "}";
+//    }
+
+
+    @PostMapping("/user/uploadResource")
+    public Object uploadResource(@RequestPart("resource") MultipartFile file, HttpServletRequest req) throws IOException {
         if (file == null) {
             log.error("file null");
-            return "{     \"errno\": 1,  \"message\": \"file null\" }";
+            return ResourceUploadResp.fail("file null");
         }
-        StringBuilder picRelativePath = new StringBuilder();
-        picRelativePath.append(properties.picPathPrefix).append(snowflake.nextIdStr()).append("_").append(req.getHeader("username")).append(".").append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
+        String suffixName = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1].toLowerCase();
+        StringBuilder relativePath = new StringBuilder();
+        if (SuffixSet.isPic(suffixName)) {
+            relativePath
+                .append(properties.picPathPrefix);
+        }
+        if (SuffixSet.isVideo(suffixName)) {
+            relativePath
+                .append(properties.videoPathPrefix);
+        }
+        if (relativePath.length() == 0) {
+            log.error("未知的后缀：" + suffixName);
+            return ResourceUploadResp.fail("未知的后缀：" + suffixName);
+        }
+        relativePath
+            .append(snowflake.nextIdStr())
+            .append("_")
+            .append(req.getHeader("username"))
+            .append(".")
+            .append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
 
-        String picFullAbsPath = properties.path + picRelativePath;
-        String picUrl = properties.nginxAddr + picRelativePath;
-        file.transferTo(new File(picFullAbsPath));
-        return "{\n" + "    \"errno\": 0,\n" + "    \"data\": {\n" + "        \"url\": \"" + picUrl + "\",\n" + "        \"alt\": \"\",\n" + "        \"href\": \"" + picUrl + "\"\n" + "    }\n" + "}";
+        String fullAbsPath = properties.path + relativePath;
+        String url = properties.nginxAddr + relativePath;
+        file.transferTo(new File(fullAbsPath));
+        if (SuffixSet.isPic(suffixName)) {
+            return ResourceUploadResp.picOk( url, "😄", url);
+        } else {
+            return ResourceUploadResp.videoOk(url, "https://lupic.cdn.bcebos.com/20220812/3087451592_14_474_338.jpg");
+        }
     }
 
-    @PostMapping("/user/uploadVideo")
-    public String uploadVideo(@RequestPart("video") MultipartFile file, HttpServletRequest req) throws IOException {
-        System.out.println("------");
-        if (file == null) {
-            log.error("file null");
-            return "{     \"errno\": 1,  \"message\": \"file null\" }";
-        }
-        StringBuilder videoRelativePath = new StringBuilder();
-        videoRelativePath.append(properties.videoPathPrefix).append(snowflake.nextIdStr()).append("_").append(req.getHeader("username")).append(".").append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
-
-        String videoFullAbsPath = properties.path + videoRelativePath;
-        String videoUrl = properties.nginxAddr + videoRelativePath;
-        file.transferTo(new File(videoFullAbsPath));
-        return "{\n" + "    \"errno\": 0,\n" + "    \"data\": {\n" + "        \"url\": \"" + videoUrl + "\"\n" + "    }\n" + "}";
-    }
-
-
-    @PostMapping("/user/deletePicList")
+    @PostMapping("/user/deleteResourceList")
     public RestResponse<Object> deletePic(@RequestBody List<String> list, HttpServletRequest req) {
         list.forEach((url) -> {
             String username = url.substring(url.indexOf("_") + 1, url.indexOf("."));
@@ -178,12 +215,23 @@ public class UserController {
             if (!currentUser.equals(username)) {
                 log.error("用户" + currentUser + "企图删除" + url);
             }
-            String picPath = properties.path + properties.picPathPrefix + url.substring(url.lastIndexOf("/") + 1);
-            File file = new File(picPath);
-            if (file.delete()) {
-                log.info("删除 " + picPath + " 成功");
+            String suffixName = url.substring(url.lastIndexOf(".") + 1);
+            String fullAbsPath = null;
+            if (SuffixSet.isPic(suffixName)) {
+                fullAbsPath = properties.path + properties.picPathPrefix + url.substring(url.lastIndexOf("/") + 1);
+            }
+            if (SuffixSet.isVideo(suffixName)) {
+                fullAbsPath = properties.path + properties.videoPathPrefix + url.substring(url.lastIndexOf("/") + 1);
+            }
+            if (fullAbsPath == null) {
+                log.error("未知的后缀：" + suffixName);
             } else {
-                log.info("删除 " + picPath + " 失败");
+                File file = new File(fullAbsPath);
+                if (file.delete()) {
+                    log.info("删除 " + fullAbsPath + " 成功");
+                } else {
+                    log.info("删除 " + fullAbsPath + " 失败");
+                }
             }
         });
         return RestResponse.ok();

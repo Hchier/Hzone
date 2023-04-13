@@ -1,6 +1,6 @@
 package cc.hchier.filters;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.configuration.Properties;
 import cc.hchier.enums.ResponseCode;
 import com.fasterxml.jackson.databind.ObjectMapper;

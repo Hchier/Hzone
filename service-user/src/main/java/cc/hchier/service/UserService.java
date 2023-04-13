@@ -1,6 +1,6 @@
 package cc.hchier.service;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.dto.UserEmailUpdateDTO;
 import cc.hchier.dto.UserLoginDTO;
 import cc.hchier.dto.UserPwdUpdateDTO;

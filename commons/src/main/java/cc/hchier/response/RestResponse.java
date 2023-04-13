@@ -1,4 +1,4 @@
-package cc.hchier;
+package cc.hchier.response;
 
 import cc.hchier.enums.ResponseCode;
 import lombok.AllArgsConstructor;

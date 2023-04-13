@@ -1,7 +1,7 @@
 package cc.hchier.controller;
 
 import cc.hchier.enums.ResponseCode;
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,6 +1,6 @@
 package cc.hchier.controller;
 
-import cc.hchier.RestResponse;
+import cc.hchier.response.RestResponse;
 import cc.hchier.ws.MyEndpoint;
 import cc.hchier.wsMsgs.WsMsgDTO;
 import lombok.extern.slf4j.Slf4j;
