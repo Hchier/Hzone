@@ -15,7 +15,7 @@ public class WsMsgTypeMap {
         /**
          * 通知数量+1
          */
-        NoticeNumIncr(1, null),
+        NoticeNumIncr(1, NoticeNumIncrMsg.class),
         /**
          * 私信
          */
@@ -39,15 +39,12 @@ public class WsMsgTypeMap {
         }
     }
 
-
-    public final static Map<Integer, Class<?>> CODE_CLASS_MAP = new HashMap<>();
-    public final static Map<Class<?>, Integer> CLASS_CODE_MAP = new HashMap<>();
+    public final static Map<String, Integer> TYPENAME_CODE_MAP = new HashMap<>();
 
     static {
         WsMsgType[] arr = WsMsgType.values();
         for (WsMsgType item : arr) {
-            CODE_CLASS_MAP.put(item.getCode(), item.getMsgClass());
-            CLASS_CODE_MAP.put(item.getMsgClass(), item.getCode());
+            TYPENAME_CODE_MAP.put(item.getMsgClass().getTypeName(), item.getCode());
         }
     }
 }

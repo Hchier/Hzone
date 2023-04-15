@@ -2,6 +2,7 @@ package cc.hchier.controller;
 
 import cc.hchier.response.RestResponse;
 import cc.hchier.enums.ResponseCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,15 +15,18 @@ import java.util.stream.Collectors;
  * @Date 2023/2/12 19:57
  */
 @RestControllerAdvice
+@Slf4j
 public class ExceptionHandlerController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public RestResponse<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error(e.toString());
         return RestResponse.build(ResponseCode.INVALID_PARAM,
             "MethodArgumentNotValidException: " + e.getBindingResult().getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList()));
     }
 
     @ExceptionHandler(Exception.class)
     public RestResponse<Object> handleException(Exception e) {
+        log.error(e.toString());
         return RestResponse.build(999, e.getCause().getMessage(), e.toString());
     }
 }

@@ -6,17 +6,17 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author by Hchier
- * @Date 2023/4/6 18:42
+ * @Date 2023/4/15 19:07
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WsMsgDTO<T> {
-    private Class<?> msgClass;
+public class WsMsgVO<T> {
+    private Integer type;
 
     private T body;
 
-    public static <T> WsMsgDTO<T> build(T body) {
-        return new WsMsgDTO<>(body.getClass(), body);
+    public static <T> WsMsgVO<T> build(int type, T body) {
+        return new WsMsgVO<>(type, body);
     }
 }

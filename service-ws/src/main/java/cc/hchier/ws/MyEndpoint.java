@@ -4,7 +4,6 @@ import cc.hchier.configuration.Properties;
 import cc.hchier.handler.Handler;
 import cc.hchier.handler.HandlerMap;
 import cc.hchier.wsMsgs.WsMsgDTO;
-import cc.hchier.wsMsgs.WsMsgTypeMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,19 +62,12 @@ public class MyEndpoint {
     }
 
     public void sendMessage(WsMsgDTO<Object> dto) throws IOException {
-        Integer type = dto.getType();
-        Class<?> msgClass = WsMsgTypeMap.CODE_CLASS_MAP.get(type);
-        if (msgClass == null) {
-            log.error("msgClass为空。type：" + type);
-            return;
-        }
-        String typeName = msgClass.getTypeName();
-        Handler handler = handlerMap.handlerMap.get(typeName);
+        Handler handler = handlerMap.handlerMap.get(dto.getMsgClass().getTypeName());
         if (handler == null) {
-            log.error("对应的消息处理器缺失：" + typeName);
+            log.error("对应的消息处理器缺失：" + dto.getMsgClass().getTypeName());
             return;
         }
-        Object msg = objectMapper.readValue(objectMapper.writeValueAsString(dto.getBody()), msgClass);
+        Object msg = objectMapper.readValue(objectMapper.writeValueAsString(dto.getBody()), dto.getMsgClass());
         handler.handle(msg, ONLINE_USERS);
     }
 

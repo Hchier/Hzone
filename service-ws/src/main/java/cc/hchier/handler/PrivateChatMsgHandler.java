@@ -1,8 +1,8 @@
 package cc.hchier.handler;
 
 import cc.hchier.wsMsgs.PrivateChatMsg;
-import cc.hchier.wsMsgs.WsMsgDTO;
 import cc.hchier.wsMsgs.WsMsgTypeMap;
+import cc.hchier.wsMsgs.WsMsgVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,14 +25,13 @@ public class PrivateChatMsgHandler extends WsMsgHandler<PrivateChatMsg> {
     }
 
     @Override
-    public void handle0(PrivateChatMsg msg, Map<String, Session> onlineUsers) throws IOException {
-        Session session = onlineUsers.get(msg.getReceiver());
+    public void handle0(WsMsgVO<PrivateChatMsg> vo, Map<String, Session> onlineUsers) throws IOException {
+        Session session = onlineUsers.get(vo.getBody().getReceiver());
         if (session == null) {
-            log.info("用户" + msg.getReceiver() + "的session为空，无法发送ws消息：" + msg);
+            log.info("用户" + vo.getBody().getReceiver() + "的session为空，无法发送ws消息：" + vo);
             return;
         }
-        WsMsgDTO<PrivateChatMsg> dto = WsMsgDTO.build(WsMsgTypeMap.CLASS_CODE_MAP.get(msg.getClass()), msg);
-        log.info("已向用户" + msg.getReceiver() + "发送ws消息" + dto);
-        session.getBasicRemote().sendText(objectMapper.writeValueAsString(dto));
+        log.info("已向用户" + vo.getBody().getReceiver() + "发送ws消息" + vo);
+        session.getBasicRemote().sendText(objectMapper.writeValueAsString(vo));
     }
 }

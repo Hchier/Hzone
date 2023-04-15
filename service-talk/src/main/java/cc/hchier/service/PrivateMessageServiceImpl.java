@@ -61,7 +61,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
             .setId(dto.getId())
             .setSender(dto.getSender())
             .setReceiver(dto.getReceiver());
-        WsMsgDTO<Object> wsMsgDTO = WsMsgDTO.build(WsMsgTypeMap.CLASS_CODE_MAP.get(msg.getClass()), msg);
+        WsMsgDTO<Object> wsMsgDTO = WsMsgDTO.build(msg);
         log.info("发送WsMsgDTO" + wsMsgDTO);
         wsService.sendWsDTO(wsMsgDTO);
         return RestResponse.ok();

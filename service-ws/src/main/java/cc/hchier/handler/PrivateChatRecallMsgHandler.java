@@ -23,14 +23,13 @@ public class PrivateChatRecallMsgHandler extends WsMsgHandler<PrivateChatRecallM
     }
 
     @Override
-    public void handle0(PrivateChatRecallMsg msg, Map<String, Session> onlineUsers) throws IOException {
-        Session session = onlineUsers.get(msg.getReceiver());
+    public void handle0(WsMsgVO<PrivateChatRecallMsg> vo, Map<String, Session> onlineUsers) throws IOException {
+        Session session = onlineUsers.get(vo.getBody().getReceiver());
         if (session == null) {
-            log.info("用户" + msg.getReceiver() + "的session为空，无法发送ws消息：" + msg);
+            log.info("用户" + vo.getBody().getReceiver() + "的session为空，无法发送ws消息：" + vo);
             return;
         }
-        WsMsgDTO<PrivateChatRecallMsg> dto = WsMsgDTO.build(WsMsgTypeMap.CLASS_CODE_MAP.get(msg.getClass()), msg);
-        log.info("已向用户" + msg.getReceiver() + "发送ws消息" + dto);
-        session.getBasicRemote().sendText(objectMapper.writeValueAsString(dto));
+        log.info("已向用户" + vo.getBody().getReceiver() + "发送ws消息" + vo);
+        session.getBasicRemote().sendText(objectMapper.writeValueAsString(vo));
     }
 }
