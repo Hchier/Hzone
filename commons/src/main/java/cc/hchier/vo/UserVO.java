@@ -29,4 +29,6 @@ public class UserVO {
     private Integer followedNum;
 
     private Boolean followed;
+
+    private Boolean isOnline;
 }

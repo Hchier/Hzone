@@ -11,25 +11,50 @@
         <result column="followed_num" jdbcType="INTEGER" property="followedNum"/>
     </resultMap>
 
+    <resultMap id="TopicVOResultMap" type="cc.hchier.vo.TopicVO">
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
+        <result column="visible" jdbcType="BIT" property="visible"/>
+        <result column="total_read_num" jdbcType="INTEGER" property="totalReadNum"/>
+        <result column="week_read_num" jdbcType="INTEGER" property="weekReadNum"/>
+        <result column="day_read_num" jdbcType="INTEGER" property="dayReadNum"/>
+        <result column="discussion_num" jdbcType="INTEGER" property="discussionNum"/>
+        <result column="followed_num" jdbcType="INTEGER" property="followedNum"/>
+        <result column="followed" jdbcType="BIT" property="followed"/>
+    </resultMap>
+
     <insert id="insert" parameterType="java.lang.String">
-        insert into topic (`name`)
-        values (#{name,jdbcType=VARCHAR})
+        insert into topic (`name`, pic_url)
+        values (#{name}, #{picUrl})
     </insert>
 
-    <!--  <update id="updateByPrimaryKey" parameterType="cc.hchier.entity.Topic">-->
-    <!--    update topic-->
-    <!--    set `name` = #{name,jdbcType=VARCHAR},-->
-    <!--      visible = #{visible,jdbcType=BIT},-->
-    <!--      read_num = #{readNum,jdbcType=INTEGER},-->
-    <!--      discussion_num = #{discussionNum,jdbcType=INTEGER},-->
-    <!--      followed_num = #{followedNum,jdbcType=INTEGER}-->
-    <!--    where id = #{id,jdbcType=INTEGER}-->
-    <!--  </update>-->
-
-    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select `name`, visible, total_read_num, week_read_num, day_read_num, discussion_num, followed_num
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(*)
         from topic
-        where name = #{name,jdbcType=VARCHAR}
+        where name = #{name}
+    </select>
+
+    <select id="selectVO" parameterType="java.lang.String" resultMap="TopicVOResultMap">
+        SELECT t1.*,
+               (CASE t2.followee WHEN isnull(t2.followee) THEN TRUE ELSE FALSE END) AS 'followed'
+        FROM (SELECT `name`,
+                     pic_url,
+                     visible,
+                     total_read_num,
+                     week_read_num,
+                     day_read_num,
+                     discussion_num,
+                     followed_num
+              FROM topic
+              WHERE `name` = #{name}
+                AND visible = 1) AS t1
+                 LEFT JOIN (SELECT followee
+                            FROM follow
+                            WHERE follower = #{currentUser}
+                              AND followee = #{name}
+                              and type = 2
+                              AND deleted = 0) AS t2
+                           ON t1.NAME = t2.followee
     </select>
 
     <update id="incrNum" parameterType="cc.hchier.entity.Topic">
@@ -45,21 +70,24 @@
     </update>
 
     <select id="selectTopByTotalReadNum" resultMap="BaseResultMap">
-        select name, total_read_num, week_read_num, day_read_num
+        select name, pic_url, total_read_num, week_read_num, day_read_num
         from topic
-        order by total_read_num desc limit 0, 10
+        order by total_read_num desc
+        limit 0, 10
     </select>
 
     <select id="selectTopByWeekReadNum" resultMap="BaseResultMap">
-        select name, total_read_num, week_read_num, day_read_num
+        select name, pic_url, total_read_num, week_read_num, day_read_num
         from topic
-        order by week_read_num desc limit 0, 10
+        order by week_read_num desc
+        limit 0, 10
     </select>
 
     <select id="selectTopByDayReadNum" resultMap="BaseResultMap">
-        select name, total_read_num, week_read_num, day_read_num
+        select name, pic_url, total_read_num, week_read_num, day_read_num
         from topic
-        order by day_read_num desc limit 0, 10
+        order by day_read_num desc
+        limit 0, 10
     </select>
 
     <update id="updateTotalReadNum" parameterType="java.util.List">

@@ -1,11 +1,13 @@
 package cc.hchier.controller;
 
 import cc.hchier.response.RestResponse;
-import cc.hchier.entity.Topic;
 import cc.hchier.service.TopicService;
+import cc.hchier.vo.TopicTinyVO;
+import cc.hchier.vo.TopicVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -22,37 +24,27 @@ public class TopicController {
     }
 
     @PostMapping("/topic/get/{name}")
-    public RestResponse<Object> get(@PathVariable(name = "name") String name) {
-        return topicService.get(name);
+    public RestResponse<TopicVO> get(@PathVariable String name, HttpServletRequest req) {
+        return topicService.get(name, req.getHeader("username"));
     }
 
     @PostMapping("/topic/incrReadNum/{name}/{incr}")
-    public RestResponse<Object> incrReadNum(@PathVariable(name = "name") String name, @PathVariable Integer incr) {
+    public RestResponse<Object> incrReadNum(@PathVariable String name, @PathVariable Integer incr) {
         return topicService.incrReadNum(name, incr);
     }
 
     @PostMapping("/topic/incrDiscussionNum/{name}/{incr}")
-    public RestResponse<Object> incrDiscussionNum(@PathVariable(name = "name") String name, @PathVariable Integer incr) {
+    public RestResponse<Object> incrDiscussionNum(@PathVariable String name, @PathVariable Integer incr) {
         return topicService.incrDiscussionNum(name, incr);
     }
 
     @PostMapping("/topic/incrFollowedNum/{name}/{incr}")
-    public RestResponse<Object> incrFollowedNum(@PathVariable(name = "name") String name, @PathVariable Integer incr) {
+    public RestResponse<Object> incrFollowedNum(@PathVariable String name, @PathVariable Integer incr) {
         return topicService.incrFollowedNum(name, incr);
     }
 
-    @PostMapping("/topic/totalReadNumChart")
-    public RestResponse<List<Topic>> getTotalReadNumChart() {
-        return topicService.getTotalReadNumChart();
-    }
-
-    @PostMapping("/topic/weekReadNumChart")
-    public RestResponse<List<Topic>> geWeekReadNumChart() {
-        return topicService.getWeekReadNumChart();
-    }
-
-    @PostMapping("/topic/dayReadNumChart")
-    public RestResponse<List<Topic>> getDayReadNumChart() {
-        return topicService.getDayReadNumChart();
+    @PostMapping("/topic/readNumChart/{type}")
+    public RestResponse<List<TopicTinyVO>> getReadNumChart(@PathVariable String type) {
+        return topicService.getReadNumChart(type);
     }
 }

@@ -18,6 +18,8 @@ public class Topic implements Serializable {
 
     private String name;
 
+    private String picUrl;
+
     private Boolean visible;
 
     private Integer totalReadNum;

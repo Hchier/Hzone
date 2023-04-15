@@ -1,6 +1,7 @@
 package cc.hchier.mapper;
 
 import cc.hchier.entity.Topic;
+import cc.hchier.vo.TopicVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,10 +16,11 @@ public interface TopicMapper {
     /**
      * 插入话题
      *
-     * @param name 话题名
+     * @param name   话题名
+     * @param picUrl picUrl
      * @return int
      */
-    int insert(String name);
+    int insert(@Param("name") String name, @Param("picUrl") String picUrl);
 
     /**
      * 根据name查找话题
@@ -26,7 +28,17 @@ public interface TopicMapper {
      * @param name 名字
      * @return {@link Topic}
      */
-    Topic selectByName(String name);
+    int selectCount(@Param("name") String name);
+
+
+    /**
+     * get vo
+     *
+     * @param name        名字
+     * @param currentUser 当前用户
+     * @return {@link Topic}
+     */
+    TopicVO selectVO(@Param("name") String name, @Param("currentUser") String currentUser);
 
     /**
      * 各种num + 1

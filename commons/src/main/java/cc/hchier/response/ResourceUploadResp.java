@@ -3,7 +3,6 @@ package cc.hchier.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * @author by Hchier
@@ -63,9 +62,5 @@ public class ResourceUploadResp {
 
     public static ResourceUploadResp fail(String message) {
         return new ResourceUploadResp(1, message);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(ResourceUploadResp.picOk("1", "2", "3").toString());
     }
 }

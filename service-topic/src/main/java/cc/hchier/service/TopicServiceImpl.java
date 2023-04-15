@@ -5,6 +5,9 @@ import cc.hchier.response.RestResponse;
 import cc.hchier.configuration.Properties;
 import cc.hchier.entity.Topic;
 import cc.hchier.mapper.TopicMapper;
+import cc.hchier.vo.TopicTinyVO;
+import cc.hchier.vo.TopicVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,7 @@ import java.util.*;
  * @Date 2023/2/13 20:12
  */
 @Service
+@Slf4j
 public class TopicServiceImpl implements TopicService {
     private final TopicMapper topicMapper;
     private final Properties properties;
@@ -30,19 +34,20 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public RestResponse<Object> add(String name) {
-        if (topicMapper.selectByName(name) != null) {
+        if (topicMapper.selectCount(name) > 0) {
             return RestResponse.ok();
         }
-        if (topicMapper.insert(name) == 0) {
+        //todo
+        if (topicMapper.insert(name, "") == 0) {
             return RestResponse.fail();
         }
         return RestResponse.ok();
     }
 
     @Override
-    public RestResponse<Object> get(String name) {
-        Topic topic = topicMapper.selectByName(name);
-        return topic != null ? RestResponse.ok(topic) : RestResponse.build(ResponseCode.TOPIC_NOT_EXIST);
+    public RestResponse<TopicVO> get(String name, String currentUser) {
+        TopicVO vo = topicMapper.selectVO(name, currentUser);
+        return vo != null ? RestResponse.ok(vo) : RestResponse.build(ResponseCode.TOPIC_NOT_EXIST);
     }
 
     @Override
@@ -168,52 +173,37 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public RestResponse<List<Topic>> getTotalReadNumChart() {
-        List<Topic> list = new ArrayList<>();
-        Set<ZSetOperations.TypedTuple<Object>> totalChart = redisTemplate.opsForZSet().reverseRangeWithScores(properties.topicTotalReadNumChart, 0, 10);
-        if (totalChart == null || totalChart.isEmpty()) {
-            return RestResponse.ok();
-        }
-        for (ZSetOperations.TypedTuple<Object> item : totalChart) {
-            String topicName = (String) item.getValue();
-            Double readNumD = item.getScore();
-            assert readNumD != null;
-            int readNum = (int) Math.round(readNumD);
-            list.add(new Topic().setName(topicName).setTotalReadNum(readNum));
-        }
-        return RestResponse.ok(list);
-    }
+    public RestResponse<List<TopicTinyVO>> getReadNumChart(String type) {
+        List<TopicTinyVO> list = new ArrayList<>();
 
-    @Override
-    public RestResponse<List<Topic>> getWeekReadNumChart() {
-        List<Topic> list = new ArrayList<>();
-        Set<ZSetOperations.TypedTuple<Object>> weekChart = redisTemplate.opsForZSet().reverseRangeWithScores(properties.topicWeekReadNumChart, 0, 10);
-        if (weekChart == null || weekChart.isEmpty()) {
+        Set<ZSetOperations.TypedTuple<Object>> chart = null;
+        switch (type) {
+            case "total":
+                chart = redisTemplate.opsForZSet().reverseRangeWithScores(properties.topicTotalReadNumChart, 0, 10);
+                break;
+            case "week":
+                chart = redisTemplate.opsForZSet().reverseRangeWithScores(properties.topicWeekReadNumChart, 0, 10);
+                break;
+            case "day":
+                chart = redisTemplate.opsForZSet().reverseRangeWithScores(properties.topicDayReadNumChart, 0, 10);
+                break;
+            default:
+                log.error("位置的排行榜类型：" + type);
+                break;
+        }
+        if (chart == null || chart.isEmpty()) {
             return RestResponse.ok();
         }
-        for (ZSetOperations.TypedTuple<Object> item : weekChart) {
+        for (ZSetOperations.TypedTuple<Object> item : chart) {
             String topicName = (String) item.getValue();
             Double readNumD = item.getScore();
             assert readNumD != null;
             int readNum = (int) Math.round(readNumD);
-            list.add(new Topic().setName(topicName).setWeekReadNum(readNum));
-        }
-        return RestResponse.ok(list);
-    }
-
-    @Override
-    public RestResponse<List<Topic>> getDayReadNumChart() {
-        List<Topic> list = new ArrayList<>();
-        Set<ZSetOperations.TypedTuple<Object>> dayChart = redisTemplate.opsForZSet().reverseRangeWithScores(properties.topicDayReadNumChart, 0, 10);
-        if (dayChart == null || dayChart.isEmpty()) {
-            return RestResponse.ok();
-        }
-        for (ZSetOperations.TypedTuple<Object> item : dayChart) {
-            String topicName = (String) item.getValue();
-            Double readNumD = item.getScore();
-            assert readNumD != null;
-            int readNum = (int) Math.round(readNumD);
-            list.add(new Topic().setName(topicName).setDayReadNum(readNum));
+            list.add(
+                new TopicTinyVO()
+                    .setName(topicName)
+                    .setReadNum(readNum)
+            );
         }
         return RestResponse.ok(list);
     }

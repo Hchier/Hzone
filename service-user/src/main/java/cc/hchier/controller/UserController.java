@@ -139,37 +139,6 @@ public class UserController {
         }
     }
 
-//    @PostMapping("/user/uploadPic")
-//    public String uploadPic(@RequestPart("pic") MultipartFile file, HttpServletRequest req) throws IOException {
-//        if (file == null) {
-//            log.error("file null");
-//            return "{     \"errno\": 1,  \"message\": \"file null\" }";
-//        }
-//        StringBuilder picRelativePath = new StringBuilder();
-//        picRelativePath.append(properties.picPathPrefix).append(snowflake.nextIdStr()).append("_").append(req.getHeader("username")).append(".").append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
-//
-//        String picFullAbsPath = properties.path + picRelativePath;
-//        String picUrl = properties.nginxAddr + picRelativePath;
-//        file.transferTo(new File(picFullAbsPath));
-//        return "{\n" + "    \"errno\": 0,\n" + "    \"data\": {\n" + "        \"url\": \"" + picUrl + "\",\n" + "        \"alt\": \"\",\n" + "        \"href\": \"" + picUrl + "\"\n" + "    }\n" + "}";
-//    }
-//
-//    @PostMapping("/user/uploadVideo")
-//    public String uploadVideo(@RequestPart("video") MultipartFile file, HttpServletRequest req) throws IOException {
-//        if (file == null) {
-//            log.error("file null");
-//            return "{     \"errno\": 1,  \"message\": \"file null\" }";
-//        }
-//        StringBuilder videoRelativePath = new StringBuilder();
-//        videoRelativePath.append(properties.videoPathPrefix).append(snowflake.nextIdStr()).append("_").append(req.getHeader("username")).append(".").append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
-//
-//        String videoFullAbsPath = properties.path + videoRelativePath;
-//        String videoUrl = properties.nginxAddr + videoRelativePath;
-//        file.transferTo(new File(videoFullAbsPath));
-//        return "{\n" + "    \"errno\": 0,\n" + "    \"data\": {\n" + "        \"url\": \"" + videoUrl + "\"\n" + "    }\n" + "}";
-//    }
-
-
     @PostMapping("/user/uploadResource")
     public Object uploadResource(@RequestPart("resource") MultipartFile file, HttpServletRequest req) throws IOException {
         if (file == null) {
@@ -198,12 +167,13 @@ public class UserController {
             .append(Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1]);
 
         String fullAbsPath = properties.path + relativePath;
-        String url = properties.nginxAddr + relativePath;
+        //String url = properties.nginxAddr + relativePath;
         file.transferTo(new File(fullAbsPath));
         if (SuffixSet.isPic(suffixName)) {
-            return ResourceUploadResp.picOk( url, "😄", url);
+            //返回图片相对url，前端再拼接图片服务器的域名
+            return ResourceUploadResp.picOk(relativePath.toString(), "😄", relativePath.toString());
         } else {
-            return ResourceUploadResp.videoOk(url, "https://lupic.cdn.bcebos.com/20220812/3087451592_14_474_338.jpg");
+            return ResourceUploadResp.videoOk(relativePath.toString(), "https://lupic.cdn.bcebos.com/20220812/3087451592_14_474_338.jpg");
         }
     }
 

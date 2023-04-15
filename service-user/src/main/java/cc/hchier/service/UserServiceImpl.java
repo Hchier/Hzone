@@ -29,12 +29,15 @@ public class UserServiceImpl implements UserService {
     private final FollowService followService;
     private final TalkService talkService;
 
-    public UserServiceImpl(RedisTemplate<String, Object> redisTemplate, UserMapper userMapper, Properties properties, FollowService followService, TalkService talkService) {
+    private final WsService wsService;
+
+    public UserServiceImpl(RedisTemplate<String, Object> redisTemplate, UserMapper userMapper, Properties properties, FollowService followService, TalkService talkService, WsService wsService) {
         this.redisTemplate = redisTemplate;
         this.userMapper = userMapper;
         this.properties = properties;
         this.followService = followService;
         this.talkService = talkService;
+        this.wsService = wsService;
     }
 
     @Override
@@ -175,7 +178,8 @@ public class UserServiceImpl implements UserService {
             .setFavoredNum(user.getFavoredNum())
             .setFollowNum(user.getFollowNum())
             .setFollowedNum(user.getFollowedNum())
-            .setFollowed(followService.existFollow(currentUser, targetUser, FollowType.USER.getCode()).getBody());
+            .setFollowed(followService.existFollow(currentUser, targetUser, FollowType.USER.getCode()).getBody())
+            .setIsOnline(wsService.isOnline(targetUser).getBody());
         return RestResponse.ok(userVO);
     }
 }

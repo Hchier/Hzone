@@ -58,17 +58,17 @@ public class BlogController {
 
     @PostMapping("/blog/publishedList/{username}/{pageNum}")
     public RestResponse<List<BlogVO>> getPublishedList(@PathVariable String username, @PathVariable Integer pageNum, HttpServletRequest req) {
-        return blogService.getPublishedList(username, req.getHeader("username"), pageNum * 20, 20);
+        return blogService.getPublishedList(username, req.getHeader("username"), pageNum * 10, 10);
     }
 
     @PostMapping("/blog/favorList/{username}/{pageNum}")
     public RestResponse<List<BlogVO>> getFavoredList(@PathVariable String username, @PathVariable Integer pageNum) {
-        return blogService.getFavoredList(username, pageNum * 20, 20);
+        return blogService.getFavoredList(username, pageNum * 10, 10);
     }
 
     @PostMapping("/blog/listByTopic/{topic}/{pageNum}")
     public RestResponse<List<BlogVO>> getListByTopic(@PathVariable String topic, @PathVariable Integer pageNum, HttpServletRequest req) {
-        return blogService.getListByTopic(topic, pageNum * 20, 20, req.getHeader("username"));
+        return blogService.getListByTopic(topic, pageNum * 10, 10, req.getHeader("username"));
     }
 
     @PostMapping("/blog/homeList")

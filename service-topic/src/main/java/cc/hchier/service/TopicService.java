@@ -1,7 +1,8 @@
 package cc.hchier.service;
 
 import cc.hchier.response.RestResponse;
-import cc.hchier.entity.Topic;
+import cc.hchier.vo.TopicTinyVO;
+import cc.hchier.vo.TopicVO;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public interface TopicService {
     /**
      * 新增话题
-     * 先判断是否存在，若存在，则直接返回ok
+     * 先判断是否存在，若存在，则直接返回ok。若不存在，则创建
      *
      * @param name 名字
      * @return {@link RestResponse}<{@link Object}>
@@ -23,9 +24,10 @@ public interface TopicService {
      * 存在返回ok，否则返回fail
      *
      * @param name 名字
+     * @param currentUser 当前用户
      * @return {@link RestResponse}
      */
-    RestResponse<Object> get(String name);
+    RestResponse<TopicVO> get(String name, String currentUser);
 
     /**
      * 阅读量+incr
@@ -70,25 +72,13 @@ public interface TopicService {
      */
     void updateReadNum();
 
-    /**
-     * 得到话题总阅读榜
-     *
-     * @return {@link RestResponse}<{@link List}>
-     */
-    RestResponse<List<Topic>> getTotalReadNumChart();
 
     /**
-     * 得到话题周阅读榜
+     * 返回总榜、周榜或日榜
      *
-     * @return {@link RestResponse}<{@link List}<{@link Topic}>>
+     * @param type 类型
+     * @return {@link RestResponse}<{@link List}<{@link TopicTinyVO}>>
      */
-    RestResponse<List<Topic>> getWeekReadNumChart();
-
-    /**
-     * 得到话题日阅读榜
-     *
-     * @return {@link RestResponse}<{@link List}<{@link Topic}>>
-     */
-    RestResponse<List<Topic>> getDayReadNumChart();
+    RestResponse<List<TopicTinyVO>> getReadNumChart(String type);
 
 }

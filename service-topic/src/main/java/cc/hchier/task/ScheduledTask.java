@@ -39,7 +39,10 @@ public class ScheduledTask {
     @Scheduled(cron = "55 59 23 * * ?")
     public void resetTopicDayReadNum() {
         Set<Object> names = redisTemplate.opsForZSet().range(properties.topicDayReadNumChart, 0, -1);
-        if (names == null || names.isEmpty()) return;
+        //todo
+        if (names == null || names.isEmpty()) {
+            return;
+        }
         for (Object topicName : names) {
             redisTemplate.opsForZSet().add(properties.topicDayReadNumChart, topicName, 0);
         }
@@ -51,7 +54,9 @@ public class ScheduledTask {
     @Scheduled(cron = "55 59 23 ? * SUN")
     public void resetTopicWeekReadNum() {
         Set<Object> names = redisTemplate.opsForZSet().range(properties.topicWeekReadNumChart, 0, -1);
-        if (names == null || names.isEmpty()) return;
+        if (names == null || names.isEmpty()) {
+            return;
+        }
         for (Object topicName : names) {
             redisTemplate.opsForZSet().add(properties.topicWeekReadNumChart, topicName, 0);
         }
