@@ -24,7 +24,12 @@ public class WsMsgTypeMap {
         /**
          * 私信撤回
          */
-        PrivateChatRecallMsg(3, PrivateChatRecallMsg.class);
+        PrivateChatRecallMsg(3, PrivateChatRecallMsg.class),
+
+        /**
+         * 广播聊天
+         */
+        BroadcastChatMsg(4, BroadcastChatMsg.class);
 
         private final int code;
 

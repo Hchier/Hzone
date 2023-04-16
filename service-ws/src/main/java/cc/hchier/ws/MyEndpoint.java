@@ -62,7 +62,7 @@ public class MyEndpoint {
     }
 
     public void sendMessage(WsMsgDTO<Object> dto) throws IOException {
-        Handler handler = handlerMap.handlerMap.get(dto.getMsgClass().getTypeName());
+        Handler handler = handlerMap.getHandler(dto.getMsgClass().getTypeName());
         if (handler == null) {
             log.error("对应的消息处理器缺失：" + dto.getMsgClass().getTypeName());
             return;

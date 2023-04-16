@@ -1,5 +1,8 @@
 package cc.hchier.nettyTalk.client.service;
 
+import cc.hchier.dto.BroadcastMsgAddDTO;
+import cc.hchier.nettyTalk.client.handler.BroadcastChatRespMsgHandler;
+import cc.hchier.nettyTalk.message.BroadcastChatReqMsg;
 import cc.hchier.response.RestResponse;
 import cc.hchier.dto.PrivateChatAddSuccessDTO;
 import cc.hchier.service.PrivateMessageService;
@@ -12,6 +15,7 @@ import cc.hchier.nettyTalk.message.PrivateChatReqMsg;
 import cc.hchier.nettyTalk.protocol.MessageCodecSharable;
 import cc.hchier.nettyTalk.server.service.ChannelService;
 import cc.hchier.service.WsService;
+import cc.hchier.vo.ChatMsgVO;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -77,6 +81,7 @@ public class ClientServiceImpl implements ClientService {
                             .addLast(new LengthFieldBasedFrameDecoder(1024, 7, 4, 0, 0))
                             .addLast(messageCodecSharable)
                             .addLast(new PrivateChatRespMsgHandler(wsService))
+                            .addLast(new BroadcastChatRespMsgHandler(wsService))
                             .addLast(new PongMsgHandler());
                     }
                 })
@@ -112,7 +117,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public RestResponse<PrivateChatAddSuccessDTO> privateTalk(PrivateChatAddDTO dto) {
+    public RestResponse<ChatMsgVO> privateTalk(PrivateChatAddDTO dto) {
         dto.setCreateTime(new Date());
         if (!privateMessageService.add(dto)) {
             return RestResponse.fail();
@@ -129,12 +134,26 @@ public class ClientServiceImpl implements ClientService {
                 .setCreateTime(dateNowStr));
 
         return RestResponse.ok(
-            new PrivateChatAddSuccessDTO()
+            new ChatMsgVO()
                 .setId(dto.getId())
                 .setFrom(dto.getFrom())
                 .setTo(dto.getTo())
                 .setContent(dto.getContent())
-                .setCreateTime(dateNowStr));
+                .setCreateTime(dateNowStr)
+                .setFromCurrentUser(true));
+    }
+
+    @Override
+    public void broadcastTalk(BroadcastMsgAddDTO dto) {
+        Channel channel = getChannel(dto.getFrom());
+        String dateNowStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dto.getCreateTime());
+        BroadcastChatReqMsg reqMsg = new BroadcastChatReqMsg()
+            .setId(dto.getId())
+            .setFrom(dto.getFrom())
+            .setContent(dto.getContent())
+            .setCreateTime(dateNowStr);
+        log.info("已发送BroadcastChatReqMsg："+reqMsg);
+        channel.writeAndFlush(reqMsg);
     }
 
     @Override

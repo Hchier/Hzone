@@ -10,19 +10,16 @@ import java.util.Date;
 
 /**
  * @author by Hchier
- * @Date 2023/2/25 14:31
+ * @Date 2023/4/16 11:58
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class PrivateChatAddDTO {
+public class BroadcastMsgAddDTO {
     private Integer id;
 
     private String from;
-
-    @NotBlank(message = "to blank")
-    private String to;
 
     @NotBlank(message = "content blank")
     private String content;

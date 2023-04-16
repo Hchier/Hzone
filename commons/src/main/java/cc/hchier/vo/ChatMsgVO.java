@@ -1,31 +1,29 @@
-package cc.hchier.dto;
+package cc.hchier.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-import java.util.Date;
-
 /**
  * @author by Hchier
- * @Date 2023/2/25 14:31
+ * @Date 2023/4/16 15:54
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class PrivateChatAddDTO {
+public class ChatMsgVO {
     private Integer id;
 
     private String from;
 
-    @NotBlank(message = "to blank")
     private String to;
 
-    @NotBlank(message = "content blank")
     private String content;
 
-    private Date createTime;
+    private String createTime;
+
+    private Boolean fromCurrentUser;
+
 }

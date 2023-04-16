@@ -14,6 +14,8 @@ public class MsgType {
         put((byte) 2, PrivateChatRespMsg.class);
         put((byte) 3, PingMsg.class);
         put((byte) 4, PongMsg.class);
+        put((byte) 5, BroadcastChatReqMsg.class);
+        put((byte) 6, BroadcastChatRespMsg.class);
     }};
 
     public static Class<? extends Message> getClassType(byte i) {

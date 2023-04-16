@@ -1,6 +1,7 @@
 package cc.hchier.nettyTalk.server;
 
 
+import cc.hchier.nettyTalk.server.handler.BroadcastChatReqMsgHandler;
 import cc.hchier.nettyTalk.server.handler.PingMsgHandler;
 import cc.hchier.nettyTalk.server.handler.PrivateChatReqMsgHandler;
 import cc.hchier.nettyTalk.server.handler.QuitHandler;
@@ -49,6 +50,7 @@ public class ChatServer {
                         .addLast(new MessageCodecSharable())
                         .addLast(new PingMsgHandler(channelService))
                         .addLast(new PrivateChatReqMsgHandler(channelService))
+                        .addLast(new BroadcastChatReqMsgHandler(channelService))
                         .addLast(new QuitHandler(channelService));
                 }
             }).bind(properties.serverPort);

@@ -5,6 +5,7 @@ import cc.hchier.dto.PrivateChatAddDTO;
 import cc.hchier.dto.PrivateMsgRecallDTO;
 import cc.hchier.entity.PrivateMessage;
 import cc.hchier.mapper.PrivateMessageMapper;
+import cc.hchier.vo.ChatMsgVO;
 import cc.hchier.vo.ChatUserVO;
 import cc.hchier.vo.PrivateMessageVO;
 import cc.hchier.wsMsgs.*;
@@ -36,18 +37,19 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     }
 
     @Override
-    public RestResponse<List<PrivateMessageVO>> getPrivateMessages(String username1, String username2, int startIndex, int rowNum) {
+    public RestResponse<List<ChatMsgVO>> getPrivateMessages(String username1, String username2, int startIndex, int rowNum) {
         List<PrivateMessage> privateMessageList = privateMessageMapper.select(username1, username2, startIndex, rowNum);
-        List<PrivateMessageVO> privateMessageVOList = new ArrayList<>();
+        List<ChatMsgVO> privateMessageVOList = new ArrayList<>();
         for (PrivateMessage privateMessage : privateMessageList) {
             privateMessageVOList.add(
-                new PrivateMessageVO()
+                new ChatMsgVO()
                     .setId(privateMessage.getId())
                     .setFrom(privateMessage.getFrom())
                     .setTo(privateMessage.getTo())
                     .setContent(privateMessage.getContent())
                     .setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(privateMessage.getCreateTime()))
-                    .setFromCurrentUser(username1.equals(privateMessage.getFrom())));
+                    .setFromCurrentUser(username1.equals(privateMessage.getFrom()))
+            );
         }
         return RestResponse.ok(privateMessageVOList);
     }

@@ -1,13 +1,14 @@
 package cc.hchier.controller;
 
+import cc.hchier.dto.*;
 import cc.hchier.response.RestResponse;
 import cc.hchier.enums.ResponseCode;
-import cc.hchier.dto.PrivateChatAddSuccessDTO;
-import cc.hchier.dto.PrivateMsgRecallDTO;
+import cc.hchier.service.BroadcastMessageService;
 import cc.hchier.service.PrivateMessageService;
 import cc.hchier.service.UserService;
 import cc.hchier.nettyTalk.client.service.ClientService;
-import cc.hchier.dto.PrivateChatAddDTO;
+import cc.hchier.vo.BroadcastMsgVO;
+import cc.hchier.vo.ChatMsgVO;
 import cc.hchier.vo.ChatUserVO;
 import cc.hchier.vo.PrivateMessageVO;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,10 +31,13 @@ public class TalkController {
     private final UserService userService;
     private final PrivateMessageService privateMessageService;
 
-    public TalkController(ClientService clientService, UserService userService, PrivateMessageService privateMessageService) {
+    private final BroadcastMessageService broadcastMessageService;
+
+    public TalkController(ClientService clientService, UserService userService, PrivateMessageService privateMessageService, BroadcastMessageService broadcastMessageService) {
         this.clientService = clientService;
         this.userService = userService;
         this.privateMessageService = privateMessageService;
+        this.broadcastMessageService = broadcastMessageService;
     }
 
     @PostMapping("/talk/createChannel/{username}")
@@ -47,7 +52,7 @@ public class TalkController {
     }
 
     @PostMapping("/talk/privateTalk")
-    public RestResponse<PrivateChatAddSuccessDTO> privateTalk(@Valid @RequestBody PrivateChatAddDTO dto, HttpServletRequest req) {
+    public RestResponse<ChatMsgVO> privateTalk(@Valid @RequestBody PrivateChatAddDTO dto, HttpServletRequest req) {
         if (userService.existUser(dto.getTo()).getCode() != ResponseCode.OK.getCode()) {
             return RestResponse.build(ResponseCode.TARGET_USER_NOT_EXIST);
         }
@@ -55,14 +60,14 @@ public class TalkController {
     }
 
     @PostMapping("/talk/getPrivateMsgsWith/{username}/{pageSize}")
-    public RestResponse<List<PrivateMessageVO>> getPrivateMsgsWith(
+    public RestResponse<List<ChatMsgVO>> getPrivateMsgsWith(
         @PathVariable String username,
         @PathVariable Integer pageSize,
         HttpServletRequest req) {
         return privateMessageService.getPrivateMessages(req.getHeader("username"), username, pageSize * 10, 10);
     }
 
-    @PostMapping("/talk/recall")
+    @PostMapping("/talk/privateMsgRecall")
     public RestResponse<Object> recall(@Valid @RequestBody PrivateMsgRecallDTO dto, HttpServletRequest req) {
         return privateMessageService.recall(dto.setSender(req.getHeader("username")));
     }
@@ -75,5 +80,20 @@ public class TalkController {
     @PostMapping("/talk/getChatUserVOList")
     public RestResponse<List<ChatUserVO>> getChatUserVOList(HttpServletRequest req) {
         return privateMessageService.getChatUserVOList(req.getHeader("username"));
+    }
+
+    @PostMapping("/talk/broadcastTalk")
+    public RestResponse<BroadcastMsgAddSuccessDTO> broadcastTalk(@Valid @RequestBody BroadcastMsgAddDTO dto, HttpServletRequest req) {
+        return broadcastMessageService.add(dto.setFrom(req.getHeader("username")).setCreateTime(new Date()));
+    }
+
+    @PostMapping("/talk/getBroadcastMsgs/{pageSize}")
+    public RestResponse<List<BroadcastMsgVO>> getBroadcastMsgs(@PathVariable Integer pageSize, HttpServletRequest req) {
+        return broadcastMessageService.getBroadcastMsgs(req.getHeader("username"), pageSize * 10, 10);
+    }
+
+    @PostMapping("/talk/broadcastMsgRecall/{id}")
+    public RestResponse<Object> broadcastMsgRecall(@PathVariable Integer id, HttpServletRequest req) {
+        return broadcastMessageService.recall(id, req.getHeader("username"));
     }
 }

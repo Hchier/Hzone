@@ -3,6 +3,7 @@ package cc.hchier.service;
 import cc.hchier.response.RestResponse;
 import cc.hchier.dto.PrivateChatAddDTO;
 import cc.hchier.dto.PrivateMsgRecallDTO;
+import cc.hchier.vo.ChatMsgVO;
 import cc.hchier.vo.ChatUserVO;
 import cc.hchier.vo.PrivateMessageVO;
 
@@ -27,9 +28,9 @@ public interface PrivateMessageService {
      * @param username2         username2
      * @param startIndex 开始index
      * @param rowNum     行num
-     * @return {@link RestResponse}<{@link List}<{@link PrivateMessageVO}>>
+     * @return {@link RestResponse}<{@link List}<{@link ChatMsgVO}>>
      */
-    RestResponse<List<PrivateMessageVO>> getPrivateMessages(String username1, String username2, int startIndex, int rowNum);
+    RestResponse<List<ChatMsgVO>> getPrivateMessages(String username1, String username2, int startIndex, int rowNum);
 
 
     /**

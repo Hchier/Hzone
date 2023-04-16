@@ -14,16 +14,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class HandlerMap {
-    public final Map<String, Handler> handlerMap = new ConcurrentHashMap<>();
+    private final Map<String, Handler> handlerMap = new ConcurrentHashMap<>();
 
     public HandlerMap(
         PrivateChatMsgHandler privateChatMsgHandler,
-        PrivateChatRecallMsgHandler privateChatRecallMsgHandler) {
+        PrivateChatRecallMsgHandler privateChatRecallMsgHandler,
+        BroadcastChatMsgHandler broadcastChatMsgHandler
+    ) {
 
         //新的消息处理器需要先注册
         List<Handler> handlerList = new ArrayList<>();
         handlerList.add(privateChatMsgHandler);
         handlerList.add(privateChatRecallMsgHandler);
+        handlerList.add(broadcastChatMsgHandler);
+
 
         for (Handler handler : handlerList) {
             String typeName = handler.getClass().getGenericSuperclass().getTypeName();
@@ -31,5 +35,9 @@ public class HandlerMap {
             String msgTypeName = typeName.substring(first, last);
             handlerMap.put(msgTypeName, handler);
         }
+    }
+
+    public Handler getHandler(String typeName) {
+        return handlerMap.get(typeName);
     }
 }
