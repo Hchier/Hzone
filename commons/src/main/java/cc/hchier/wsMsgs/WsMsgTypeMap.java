@@ -29,7 +29,12 @@ public class WsMsgTypeMap {
         /**
          * 广播聊天
          */
-        BroadcastChatMsg(4, BroadcastChatMsg.class);
+        BroadcastChatMsg(4, BroadcastChatMsg.class),
+
+        /**
+         * 广播聊天信息撤回
+         */
+        BroadcastChatRecallMsg(5, BroadcastChatRecallMsg.class);
 
         private final int code;
 

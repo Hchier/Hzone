@@ -22,7 +22,7 @@
     <select id="selectList" resultMap="BaseResultMap">
         select id, `from`, content, create_time
         from broadcast_message
-        where recalled = 0
+        where recalled = 0 order by create_time desc
         limit #{startIndex}, #{rowNum}
     </select>
 

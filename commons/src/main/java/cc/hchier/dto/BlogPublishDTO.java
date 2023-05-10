@@ -29,5 +29,6 @@ public class BlogPublishDTO {
 
     private Date updateTime;
 
+    @NotBlank(message = "topic blank")
     private String topic;
 }

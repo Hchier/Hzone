@@ -59,12 +59,12 @@ public class TalkController {
         return clientService.privateTalk(dto.setFrom(req.getHeader("username")));
     }
 
-    @PostMapping("/talk/getPrivateMsgsWith/{username}/{pageSize}")
+    @PostMapping("/talk/getPrivateMsgsWith/{username}/{pageNum}")
     public RestResponse<List<ChatMsgVO>> getPrivateMsgsWith(
         @PathVariable String username,
-        @PathVariable Integer pageSize,
+        @PathVariable Integer pageNum,
         HttpServletRequest req) {
-        return privateMessageService.getPrivateMessages(req.getHeader("username"), username, pageSize * 10, 10);
+        return privateMessageService.getPrivateMessages(req.getHeader("username"), username, pageNum * 10, 10);
     }
 
     @PostMapping("/talk/privateMsgRecall")
@@ -87,9 +87,9 @@ public class TalkController {
         return broadcastMessageService.add(dto.setFrom(req.getHeader("username")).setCreateTime(new Date()));
     }
 
-    @PostMapping("/talk/getBroadcastMsgs/{pageSize}")
-    public RestResponse<List<BroadcastMsgVO>> getBroadcastMsgs(@PathVariable Integer pageSize, HttpServletRequest req) {
-        return broadcastMessageService.getBroadcastMsgs(req.getHeader("username"), pageSize * 10, 10);
+    @PostMapping("/talk/getBroadcastMsgs/{pageNum}")
+    public RestResponse<List<BroadcastMsgVO>> getBroadcastMsgs(@PathVariable Integer pageNum, HttpServletRequest req) {
+        return broadcastMessageService.getBroadcastMsgs(req.getHeader("username"), pageNum * 10, 10);
     }
 
     @PostMapping("/talk/broadcastMsgRecall/{id}")

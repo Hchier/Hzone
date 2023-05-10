@@ -89,10 +89,8 @@ public class BlogServiceImpl implements BlogService {
     public RestResponse<Integer> publish(BlogPublishDTO dto) throws TransactionException {
         String xid = RootContext.getXID();
         int incrDiscussionNumCode = ResponseCode.OK.getCode();
-        if (dto.getTopic() != null && !dto.getTopic().isEmpty()) {
-            //todo 话题可能不存在，得新建话题
-            incrDiscussionNumCode = topicService.incrDiscussionNum(dto.getTopic(), 1).getCode();
-        }
+        //todo 话题可能不存在，得新建话题
+        incrDiscussionNumCode = topicService.incrDiscussionNum(dto.getTopic(), 1).getCode();
         TransactionManager manager = TransactionManagerHolder.get();
         if (blogMapper.insert(dto) == 0 ||
             incrDiscussionNumCode != ResponseCode.OK.getCode() ||

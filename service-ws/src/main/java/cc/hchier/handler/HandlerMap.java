@@ -19,7 +19,8 @@ public class HandlerMap {
     public HandlerMap(
         PrivateChatMsgHandler privateChatMsgHandler,
         PrivateChatRecallMsgHandler privateChatRecallMsgHandler,
-        BroadcastChatMsgHandler broadcastChatMsgHandler
+        BroadcastChatMsgHandler broadcastChatMsgHandler,
+        BroadcastChatRecallMsgHandler broadcastChatRecallMsgHandler
     ) {
 
         //新的消息处理器需要先注册
@@ -27,7 +28,7 @@ public class HandlerMap {
         handlerList.add(privateChatMsgHandler);
         handlerList.add(privateChatRecallMsgHandler);
         handlerList.add(broadcastChatMsgHandler);
-
+        handlerList.add(broadcastChatRecallMsgHandler);
 
         for (Handler handler : handlerList) {
             String typeName = handler.getClass().getGenericSuperclass().getTypeName();

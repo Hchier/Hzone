@@ -7,6 +7,9 @@ import cc.hchier.mapper.BroadcastMessageMapper;
 import cc.hchier.nettyTalk.client.service.ClientService;
 import cc.hchier.response.RestResponse;
 import cc.hchier.vo.BroadcastMsgVO;
+import cc.hchier.wsMsgs.BroadcastChatRecallMsg;
+import cc.hchier.wsMsgs.WsMsgDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -18,13 +21,17 @@ import java.util.List;
  * @Date 2023/4/16 12:37
  */
 @Service
+@Slf4j
 public class BroadcastMessageServiceImpl implements BroadcastMessageService {
     private final BroadcastMessageMapper broadcastMessageMapper;
     private final ClientService clientService;
 
-    public BroadcastMessageServiceImpl(BroadcastMessageMapper broadcastMessageMapper, ClientService clientService) {
+    private final WsService wsService;
+
+    public BroadcastMessageServiceImpl(BroadcastMessageMapper broadcastMessageMapper, ClientService clientService, WsService wsService) {
         this.broadcastMessageMapper = broadcastMessageMapper;
         this.clientService = clientService;
+        this.wsService = wsService;
     }
 
     @Override
@@ -64,7 +71,9 @@ public class BroadcastMessageServiceImpl implements BroadcastMessageService {
         if (broadcastMessageMapper.recall(id, from) == 0) {
             return RestResponse.fail();
         }
-        //todo ws
+        WsMsgDTO<Object> wsMsgDTO = WsMsgDTO.build(new BroadcastChatRecallMsg(id, from));
+        wsService.sendWsDTO(wsMsgDTO);
+        log.info("发送WsMsgDTO" + wsMsgDTO);
         return RestResponse.ok();
     }
 }
