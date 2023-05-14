@@ -32,6 +32,7 @@ public enum ResponseCode {
 
     NETTY_CHANNEL_CREATE_FAIL(425,"channel创建失败"),
 
+
     XXX(999, "999");
 
     private final int code;

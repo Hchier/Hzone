@@ -1,10 +1,7 @@
 package cc.hchier.service;
 
+import cc.hchier.dto.*;
 import cc.hchier.response.RestResponse;
-import cc.hchier.dto.UserEmailUpdateDTO;
-import cc.hchier.dto.UserLoginDTO;
-import cc.hchier.dto.UserPwdUpdateDTO;
-import cc.hchier.dto.UserRegisterDTO;
 import cc.hchier.vo.UserVO;
 
 /**
@@ -139,4 +136,13 @@ public interface UserService {
      * @return {@link RestResponse}<{@link UserVO}>
      */
     RestResponse<UserVO> getUserVO(String targetUser, String currentUser);
+
+
+    /**
+     * 通过电子邮件更新密码
+     *
+     * @param dto dto
+     * @return {@link RestResponse}<{@link Boolean}>
+     */
+    RestResponse<Boolean> updatePasswordByEmail(ResetPasswordDTO dto);
 }

@@ -1,14 +1,11 @@
 package cc.hchier.service;
 
+import cc.hchier.dto.*;
 import cc.hchier.enums.FollowType;
 import cc.hchier.enums.ResponseCode;
 import cc.hchier.response.RestResponse;
 import cc.hchier.Utils;
 import cc.hchier.configuration.Properties;
-import cc.hchier.dto.UserEmailUpdateDTO;
-import cc.hchier.dto.UserLoginDTO;
-import cc.hchier.dto.UserPwdUpdateDTO;
-import cc.hchier.dto.UserRegisterDTO;
 import cc.hchier.entity.User;
 import cc.hchier.mapper.UserMapper;
 import cc.hchier.vo.UserVO;
@@ -42,6 +39,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RestResponse<Object> register(UserRegisterDTO userRegisterDTO) {
+        if (!userRegisterDTO.getPassword().equals(userRegisterDTO.getRepeatedPassword())) {
+            return RestResponse.fail();
+        }
         if (!userRegisterDTO.getAuthCode().equals(redisTemplate.opsForValue().get(userRegisterDTO.getEmail()))) {
             return RestResponse.build(ResponseCode.AUTH_FAIL);
         }
@@ -181,5 +181,18 @@ public class UserServiceImpl implements UserService {
             .setFollowed(followService.existFollow(currentUser, targetUser, FollowType.USER.getCode()).getBody())
             .setIsOnline(wsService.isOnline(targetUser).getBody());
         return RestResponse.ok(userVO);
+    }
+
+    @Override
+    public RestResponse<Boolean> updatePasswordByEmail(ResetPasswordDTO dto) {
+
+        if (!dto.getAuthCode().equals(redisTemplate.opsForValue().get(dto.getEmail()))) {
+            return RestResponse.build(ResponseCode.AUTH_FAIL);
+        }
+        dto.setPassword(Utils.md5Encode(dto.getPassword()));
+        if (userMapper.updatePasswordByEmail(dto.getPassword(), dto.getEmail()) == 0) {
+            return RestResponse.fail();
+        }
+        return RestResponse.ok();
     }
 }

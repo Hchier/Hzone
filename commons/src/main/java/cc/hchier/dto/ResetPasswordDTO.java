@@ -4,31 +4,25 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 /**
  * @author by Hchier
- * @Date 2023/2/12 12:00
+ * @Date 2023/5/12 19:04
  */
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDTO {
-
-    @NotBlank(message = "username blank")
-    private String username;
-
+@NoArgsConstructor
+@Data
+public class ResetPasswordDTO {
     @NotBlank(message = "password blank")
     private String password;
 
     @NotBlank(message = "repeatedPassword blank")
     private String repeatedPassword;
 
-    @Email(message = "邮箱格式错误")
+    @NotBlank(message = "authCode blank")
+    private String authCode;
+
     @NotBlank(message = "email blank")
     private String email;
-
-    @NotBlank(message = "验证码 blank")
-    private String authCode;
 }

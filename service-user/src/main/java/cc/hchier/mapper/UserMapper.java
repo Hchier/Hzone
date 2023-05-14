@@ -68,5 +68,14 @@ public interface UserMapper {
      * @param username 用户名
      * @return {@link User}
      */
-    User selectUser(@Param("username")String username);
+    User selectUser(@Param("username") String username);
+
+    /**
+     * 通过电子邮件更新密码
+     *
+     * @param password 密码
+     * @param email    电子邮件
+     * @return int
+     */
+    int updatePasswordByEmail(@Param("password") String password, @Param("email") String email);
 }

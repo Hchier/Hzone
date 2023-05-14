@@ -34,15 +34,15 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendAuthCode(String receiver) throws MessagingException {
+    public void sendAuthCode(String email) throws MessagingException {
         String authCode = Utils.authCode(6);
-        redisTemplate.opsForValue().set(receiver, authCode, properties.authCodeLifeCycle, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(email, authCode, properties.authCodeLifeCycle, TimeUnit.SECONDS);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false);
-        String context = "<b>验证码：" + authCode + "</b>";
+        String context = "<b>验证码：" + authCode + "，有效期5分钟。如果非您本人操作，请忽略该邮件😄。</b>";
         helper.setFrom("hchier@qq.com");
-        helper.setTo(new String[]{receiver});
+        helper.setTo(new String[]{email});
         helper.setSubject("验证码");
         helper.setSentDate(new Date());
         helper.setText(context, true);

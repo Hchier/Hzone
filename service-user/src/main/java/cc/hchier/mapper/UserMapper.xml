@@ -75,4 +75,10 @@
         where username = #{username}
           and closed = 0
     </select>
+
+    <update id="updatePasswordByEmail">
+        update user
+        set password = #{password}
+        where email = #{email}
+    </update>
 </mapper>

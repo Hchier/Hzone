@@ -206,4 +206,12 @@ public class UserController {
         });
         return RestResponse.ok();
     }
+
+    @PostMapping("/user/resetPassword")
+    public RestResponse<Boolean> restResponse(@Valid @RequestBody ResetPasswordDTO dto) {
+        if (!dto.getPassword().equals(dto.getRepeatedPassword())) {
+            return RestResponse.fail();
+        }
+        return userService.updatePasswordByEmail(dto);
+    }
 }
