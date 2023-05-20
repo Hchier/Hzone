@@ -173,7 +173,7 @@ public class UserController {
             //返回图片相对url，前端再拼接图片服务器的域名
             return ResourceUploadResp.picOk(relativePath.toString(), "😄", relativePath.toString());
         } else {
-            return ResourceUploadResp.videoOk(relativePath.toString(), "https://lupic.cdn.bcebos.com/20220812/3087451592_14_474_338.jpg");
+            return ResourceUploadResp.videoOk(relativePath.toString(), "");
         }
     }
 

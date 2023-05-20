@@ -8,6 +8,7 @@ import cc.hchier.vo.FollowTopicVO;
 import cc.hchier.vo.FollowUserVO;
 
 import io.seata.core.exception.TransactionException;
+import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,13 +30,15 @@ public class FollowController {
         this.followService = followService;
     }
 
+    @SneakyThrows
     @PostMapping("/follow/follow")
-    public RestResponse<Object> follow(@RequestBody FollowDTO dto, HttpServletRequest req) throws TransactionException {
+    public RestResponse<Object> follow(@RequestBody FollowDTO dto, HttpServletRequest req) {
         return followService.follow(dto.setFollower(req.getHeader("username")).setCreateTime(new Date()));
     }
 
+    @SneakyThrows
     @PostMapping("/follow/unFollow")
-    public RestResponse<Object> unFollow(@RequestBody FollowCancelDTO dto, HttpServletRequest req) throws TransactionException {
+    public RestResponse<Object> unFollow(@RequestBody FollowCancelDTO dto, HttpServletRequest req) {
         return followService.unFollow(dto.setFollower(req.getHeader("username")));
     }
 
@@ -45,7 +48,12 @@ public class FollowController {
         @PathVariable Integer type,
         @PathVariable Integer pageNum,
         HttpServletRequest req) {
-        return followService.getFollowerList(followee, type, req.getHeader("username"), pageNum * 10, 10);
+        return followService.getFollowerList(
+            followee,
+            type,
+            req.getHeader("username"),
+            pageNum * 10,
+            10);
     }
 
     @PostMapping("/follow/exist/{follower}/{followee}/{type}")

@@ -13,7 +13,7 @@ public interface WsService {
     /**
      * 发送私信
      *
-     * @param dto dto
+     * @param dto 数据传输对象
      * @return {@link RestResponse}<{@link Object}>
      */
     @PostMapping("/ws/sendWsDTO")

@@ -36,9 +36,7 @@ public class BlogCommentVO implements Serializable {
     private Integer baseComment;
 
     private Integer commentOf;
-    /**
-     * 当前用户：传去前端判断一些权限
-     */
+
     private String currentUser;
 
     private String createTime;

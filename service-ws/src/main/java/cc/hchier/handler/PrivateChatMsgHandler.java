@@ -4,6 +4,7 @@ import cc.hchier.wsMsgs.PrivateChatMsg;
 import cc.hchier.wsMsgs.WsMsgTypeMap;
 import cc.hchier.wsMsgs.WsMsgVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
+@SuppressWarnings("all")
 public class PrivateChatMsgHandler extends WsMsgHandler<PrivateChatMsg> {
     private final ObjectMapper objectMapper;
 
@@ -24,8 +26,9 @@ public class PrivateChatMsgHandler extends WsMsgHandler<PrivateChatMsg> {
         this.objectMapper = objectMapper;
     }
 
+    @SneakyThrows
     @Override
-    public void handle0(WsMsgVO<PrivateChatMsg> vo, Map<String, Session> onlineUsers) throws IOException {
+    public void handle0(WsMsgVO<PrivateChatMsg> vo, Map<String, Session> onlineUsers)  {
         Session session = onlineUsers.get(vo.getBody().getReceiver());
         if (session == null) {
             log.info("用户" + vo.getBody().getReceiver() + "的session为空，无法发送ws消息：" + vo);

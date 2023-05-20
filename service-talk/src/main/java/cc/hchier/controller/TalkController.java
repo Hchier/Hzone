@@ -64,7 +64,11 @@ public class TalkController {
         @PathVariable String username,
         @PathVariable Integer pageNum,
         HttpServletRequest req) {
-        return privateMessageService.getPrivateMessages(req.getHeader("username"), username, pageNum * 10, 10);
+        return privateMessageService.getPrivateMessages(
+            req.getHeader("username"),
+            username,
+            pageNum * 10,
+            10);
     }
 
     @PostMapping("/talk/privateMsgRecall")

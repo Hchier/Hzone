@@ -73,7 +73,12 @@ public class TopicServiceImpl implements TopicService {
             return RestResponse.ok();
         }
 
-        if (topicMapper.incrNum(new Topic().setName(name).setTotalReadNum(incr).setWeekReadNum(incr).setDayReadNum(incr)) == 0) {
+        if (topicMapper.incrNum(
+            new Topic()
+                .setName(name)
+                .setTotalReadNum(incr)
+                .setWeekReadNum(incr)
+                .setDayReadNum(incr)) == 0) {
             return RestResponse.fail();
         }
 

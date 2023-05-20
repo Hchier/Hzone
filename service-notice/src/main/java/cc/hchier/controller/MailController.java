@@ -27,7 +27,9 @@ public class MailController {
     }
 
     @PostMapping("/notice/sendAuthCode")
-    public RestResponse<Object> sendAuthCode(@Email(message = "邮箱格式错误") @RequestParam(value = "email", required = true) String email) throws MessagingException {
+    public RestResponse<Object> sendAuthCode(
+        @Email(message = "邮箱格式错误")
+        @RequestParam(value = "email") String email) throws MessagingException {
         mailService.sendAuthCode(email);
         return RestResponse.ok();
     }

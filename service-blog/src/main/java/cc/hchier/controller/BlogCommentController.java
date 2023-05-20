@@ -7,6 +7,7 @@ import cc.hchier.dto.BlogCommentPublishDTO;
 import cc.hchier.service.BlogCommentService;
 import cc.hchier.vo.BlogCommentVO;
 import io.seata.core.exception.TransactionException;
+import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,13 +30,15 @@ public class BlogCommentController {
         this.blogCommentService = blogCommentService;
     }
 
+    @SneakyThrows
     @PostMapping("/blog/comment/publish")
-    public RestResponse<BlogCommentVO> publish(@Valid @RequestBody BlogCommentPublishDTO dto, HttpServletRequest req) throws TransactionException {
+    public RestResponse<BlogCommentVO> publish(@Valid @RequestBody BlogCommentPublishDTO dto, HttpServletRequest req) {
         return blogCommentService.publish(dto.setPublisher(req.getHeader("username")).setCreateTime(new Date()));
     }
 
+    @SneakyThrows
     @PostMapping("/blog/comment/delete")
-    public RestResponse<Object> delete(@Valid @RequestBody BlogCommentDeleteDTO dto, HttpServletRequest req) throws TransactionException {
+    public RestResponse<Object> delete(@Valid @RequestBody BlogCommentDeleteDTO dto, HttpServletRequest req) {
         return blogCommentService.delete(dto.setPublisher(req.getHeader("username")));
     }
 
@@ -46,7 +49,7 @@ public class BlogCommentController {
     }
 
     @PostMapping("/blog/comment/hidden/{blogId}/{commentId}")
-    public RestResponse<Object> hidden(@PathVariable Integer blogId,@PathVariable Integer commentId, HttpServletRequest req) {
-        return blogCommentService.hidden(blogId,commentId, req.getHeader("username"));
+    public RestResponse<Object> hidden(@PathVariable Integer blogId, @PathVariable Integer commentId, HttpServletRequest req) {
+        return blogCommentService.hidden(blogId, commentId, req.getHeader("username"));
     }
 }

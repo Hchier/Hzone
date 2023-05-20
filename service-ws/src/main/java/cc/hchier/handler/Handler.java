@@ -17,5 +17,12 @@ import java.util.Map;
  * 4, 将处理器注册到{@link HandlerMap}中。<br>
  */
 public interface Handler {
+    /**
+     * 处理消息
+     *
+     * @param msg         消息
+     * @param onlineUsers 在线用户
+     * @throws IOException ioexception
+     */
     void handle(Object msg, Map<String, Session> onlineUsers) throws IOException;
 }
